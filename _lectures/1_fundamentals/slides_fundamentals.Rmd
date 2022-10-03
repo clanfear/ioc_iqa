@@ -1,0 +1,526 @@
+---
+title: "Fundamentals"
+subtitle: "IQA Lecture 1"
+author: "Charles Lanfear"
+date: "12 Oct 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+output:
+  xaringan::moon_reader:
+    css: [xaringan-themer.css, "../assets/cam_style.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: tomorrow-night-bright
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "../assets/cam_macros.js"
+      titleSlideClass: ["center","top"]
+---
+
+```{r setup}
+#| include: false
+knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_duo_accent(
+  white_color = "#f0f1eb",
+  black_color = "#28282B",
+  primary_color = "#003C71",
+  secondary_color = "#8A1538",
+  header_font_google = google_font("Montserrat"),
+  text_font_google   = google_font("Open Sans"),
+  code_font_google   = google_font("Fira Mono"),
+  padding = "16px 32px 16px 32px",
+  text_font_size = "1.3rem",
+  code_font_size = "1.1rem"
+)
+```
+
+# Today
+
+* Math Review
+   * Variables, vectors, and matrices
+   * Lines and curves
+   * Derivatives
+* Data manipulation with `dplyr`
+
+---
+class: inverse
+# Math Review
+
+---
+## Variables
+
+**Variables** are symbols representing sets of one or more **elements** which might take any number of values.
+
+* Letters like $x$, $y$, and $z$ are commonly used to indicate variables.
+
+  * e.g., $x = 3$
+
+--
+
+* Capital letters ($X$) or letters with an index ($x_i$) refer to variables with multiple values---that is, with *dimensions*.
+  * e.g.: $X = x_i = (3,4,5)$
+
+
+--
+
+* Subscripts like $x_i$ are used to **index** elements of vectors.
+
+   * $i$ here is itself a variable that indicates the position
+
+--
+
+   * $x_1 = 3$, $x_2 = 4$, $x_3 = 5$
+
+
+
+---
+## Vectors in R
+
+```{r}
+x <- c(3, 4, 5) # Create x
+x
+```
+
+--
+
+Getting $x_3$:
+
+```{r}
+x[3] # Get the third element of x
+```
+
+--
+
+We can index multiple elements.
+
+Get $x_2$ and $x_3$:
+
+```{r}
+x[c(2,3)] # Get the second and third elements of x
+```
+
+---
+## Matrices
+
+**Matrices** are rectangular tables of numbers. They're typically indicated by a capital letter, e.g., $X$
+
+&nbsp;
+
+$X_{i,j} = \begin{bmatrix}x_{1,1} & x_{1,2}\\x_{2,1} & x_{2,2}\end{bmatrix}$
+
+&nbsp;
+
+Matrices are indexed with subscripts for *rows*, *columns* (e.g., $x_{ij}$)
+
+--
+
+&nbsp;
+
+.pull-left[
+$X = \begin{bmatrix}3 & 5\\4 & 6\end{bmatrix}$
+]
+.pull-right[
+$x_{2,1} = 4$
+]
+
+
+
+---
+## Matrices in R
+
+```{r}
+(X <- matrix(c(3,4,5,6), nrow = 2))
+```
+
+Note R shows indices on the margins to tell you how to subset.
+
+```{r}
+X[2,1]
+```
+
+---
+## Summation
+
+$\sum_{i=1}^{n}x_i$
+
+"Sum all values of $x$ from the first ($i=1$) until the last ($n$)"
+
+--
+
+Given $x = [7, 11, 11, 13, 26]$
+
+$x_1 + x_2 + x_3 + x_4 = 7 + 11 + + 11 + 13 + 26$
+
+--
+
+```{r}
+x <- c(7, 11, 11, 13, 26)
+sum(x)
+```
+Often when summing all elements of a vector, the sub/super scripts are hidden
+
+* e.g. $\sum x_i = \sum_{i=1}^{n}x_i$
+
+---
+class: inverse
+
+# Measures of Central Tendency
+
+### Otherwise known as averages
+
+---
+
+## Mean
+
+The mean is the *expected value* of a set of variable.
+
+$\bar{x} = \frac{1}{n}\sum_{i=1}^{n}x_{i}$
+
+--
+
+That is, if you draw randomly from that variable, the mean would be the best guess.<sup>1</sup>
+
+.footnote[[1] Technically the mean minimizes the *squared error* of guesses.]
+
+--
+
+```{r}
+(1/length(x)) * sum(x)
+```
+
+```{r}
+mean(x)
+```
+
+
+---
+
+## Median
+
+The **median** has this heinous formula:
+
+$m(x_i) = \begin{cases} x_{\frac{n+1}{2}},& \text{if } n \text{ odd}\\ \frac{1}{2}(x_{\frac{n}{2}} + x_{\frac{n}{2} + 1}), &\text{if } n \text{ even}\end{cases}$
+
+
+"If $x$ has an odd number of elements, the median is the middle one. If it has an even number of elements, average the middle two."
+
+--
+
+```{r}
+x[(length(x) + 1) / 2]
+```
+
+
+```{r}
+median(x)
+```
+
+---
+
+## Mode
+
+The **mode** is the most common value in the variable.
+
+--
+
+There are formulas for the mode, but they aren't very intuitive, despite it being the most intuitive measure of central tendency.
+
+--
+
+You can use a `table()` to see frequencies of values:
+
+```{r}
+table(x)
+```
+
+--
+
+And you can find the mode directly:
+
+```{r}
+table(x)[table(x)==max(table(x))]
+```
+
+---
+# Extreme Values
+
+The mean is sensitive to extreme values:
+
+```{r}
+z <- c(2, 5, 3, 5, 95)
+mean(z)
+```
+
+--
+
+The median (and mode) are not:
+
+```{r}
+median(z)
+```
+
+--
+
+This means the median may be a more useful "average" when your data have a small number of extreme values.
+
+This is common with things like income or self-reported number of crimes committed.
+
+---
+
+# Measures of Dispersion
+
+---
+
+## Variance<sup>1</sup>
+
+The variance measures how dispersed data are around the mean. Typically we use the *sample* variance:
+
+$$
+s^2 = \frac{\sum (x_i - \bar{x})^2}{n - 1}
+$$
+
+We'll see this in action next week when we look at distributions.
+
+--
+
+```{r}
+(s2 <- sum((x - mean(x))^2) / (length(x) -1))
+var(x)
+```
+
+--
+
+If every value is the same, the variance is *zero*.
+
+---
+
+## Standard Deviation
+
+The standard deviation ($s$ or $sd$) is just the root of the variance:
+
+$s = sd = \sqrt{s^2}$
+
+--
+
+You can interpret it as the "typical" distance from values in the data from their mean.
+
+--
+
+```{r}
+sqrt(var(x))
+sd(x)
+```
+
+---
+class: inverse
+# Lines
+
+---
+
+# Slope-Intercept
+
+Mathematically, lines can be defined by a slope and an intercept.
+
+--
+
+You've seen this before, perhaps many moons ago:
+
+$y = mx + b$
+
+--
+
+We'll restate it this way:
+
+$y = a + bx$
+
+--
+
+$a$ is the **intercept**
+
+* The value of $y$ when $x = 0$
+
+--
+
+$b$ is the **slope**
+
+* The units of $y$ the line changes for every unit of $x$
+
+---
+
+# Intercept
+
+
+$y = 1 + 0.5x$
+
+
+```{r}
+#| fig.height: 4
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+abline(a = 1, b = 0.5)
+```
+
+
+The line *intercepts* the y-axis at 1.
+
+---
+# Intercept
+
+$y = 3 + 0.5x$
+
+```{r}
+#| fig.height: 4
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+abline(a = 3, b = 0.5)
+```
+
+The line *intercepts* the y-axis at 3.
+
+---
+# Intercept
+
+$y = 2 + 0.5x$
+
+```{r}
+#| fig.height: 4
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+abline(a = 2, b = 0.5)
+```
+
+The line *intercepts* the y-axis at 2.
+
+---
+# Slope
+
+$y = 2 + 0.5x$
+
+```{r}
+#| fig.height: 4
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+abline(a = 2, b = 0.5)
+```
+
+From 2, the line increases by 0.5 for every $x$.
+
+---
+# Slope
+
+$y = 2 + 0x$
+
+```{r}
+#| fig.height: 4
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+abline(a = 2, b = 0)
+```
+
+From 2, the line increases by 0 for every $x$.
+
+---
+# Slope
+
+$y = 2 + 2x$
+
+```{r}
+#| fig.height: 4
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+abline(a = 2, b = 2)
+```
+
+From 2, the line increases by 2 for every $x$.
+
+---
+class: inverse
+
+# Derivatives
+
+**Derivatives** ( $\frac{dy}{dx}$ ) are related to slopes.
+
+The derivative is the rate of change (the slope) at a given point of a function---the amount $y$ increases ( $dy$ ) for a unit of $x$ ( $dx$ ).
+
+--
+
+For a straight line, the slope is always the same and is equal to the derivative.
+
+--
+
+For curves, the slope is different depending on where on the curve you're looking.
+
+---
+class: inverse
+
+## Polynomials
+
+---
+# Quadratics
+
+You can define a curve by augmenting the slope-intercept formula:
+
+$y = 2 + 0.5x + 0.25x^2$
+
+--
+
+A *squared* or **quadratic** term ($x^2$) creates a *parabola*.
+
+```{r}
+#| fig.height = 4
+curve(2 + 0.5*x + 0.25*x^2, from = -2, to = 2, ylab = "y")
+```
+
+--
+
+.pull-right-30[
+.footnote[
+What is the slope of this curve?
+]
+]
+
+---
+# Taking the Derivative
+
+While a curve has many different slopes, all those slopes can be defined by a single derivative<sup>1</sup>
+
+.footnote[[1] At least for any curves we're going to talk about!]
+
+--
+
+Given $f(x) = a + x^n$, $\frac{d}{dx}f(x) = nx^{n-1}$
+
+Basic rules:
+
+* Delete any terms without $x$ (e.g., $a=2$)
+* Premultiply by exponents and decrement it
+
+--
+
+So...
+
+* $y = 2 + 0.5x + 0.25x^2$
+* $\frac{dy}{dx} = 0.5 + 0.5x$
+* When $x = 3$ the slope is $0.5 + 0.5*3 = 2$.
+
+---
+# Okay, that's enough maths
+
+---
+class: inverse
+# Oh, thank god
+
+---
+# Time for more code
+
+---
+class: inverse
+
+.text-align-center[
+# BOO
+]
+
+---
+class: inverse
+
+# Part II
+
+## Data manipulation with `dplyr`
+
+![](img/dplyr.svg)

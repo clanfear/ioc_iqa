@@ -1,9 +1,11 @@
 ---
-title: "Week 2: Second Week"
-description: "Post description"
+title: "Week 2: Distributions and Relationships"
+description: "Basic univariate and bivariate statistics and a pinch of plotting with `ggplot2`"
 author: "Charles Lanfear"
 date: "2022-10-19"
 draft: false
 ---
 
-This is a test for the second lecture
+Lecture Slides
+
+Reading (for *before* the seminar):

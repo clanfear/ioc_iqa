@@ -9,7 +9,7 @@ title-block-banner: true
 ::: {.grid style="text-align: left"}
 
 ::: {.g-col-4}
-Wednesday 14:00 - 16:00<br>Location TBA
+Wednesday 14:00 - 16:00<br>Computer Lab
 :::
 
 ::: {.g-col-4}
@@ -27,7 +27,7 @@ Charles C. Lanfear<br> [cl948\@cam.ac.uk](cl948@cam.ac.uk "Email")<br>Office 3.9
 
 # Materials
 
-There are two core texts for this course. They are available free online but may be ordered in print form.
+There are two core texts for this course. They are available free online but may be ordered in print form. For the first half of the course, you will mainly be reading about R, as you will be reading about stats in *Criminological Research Methods*.
 
 -   [Huntington-Klein, Nick. 2021 *The Effect: An Introduction to Research Design and Causality*](https://theeffectbook.net/)
 

@@ -1,9 +1,13 @@
 ---
-title: "Week 1: First Week"
-description: "Post description"
+title: "Week 1: Fundamentals"
+description: "Review of maths and a bit of `dplyr`"
 author: "Charles Lanfear"
 date: "2022-10-12"
 draft: false
 ---
 
-This is a test for the first lecture
+[Lecture Slides](https://clanfear.github.io/ioc_iqa/_lectures/1_fundamentals/slides_fundamentals.html)
+
+Reading (for *before* the seminar):
+
+Kaplan (2022), [Chapter 1](https://crimebythenumbers.com/a-soup-to-nuts-project-example.html) and [Chapter 2](https://crimebythenumbers.com/intro-to-r.html)
