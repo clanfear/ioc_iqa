@@ -32,46 +32,6 @@ class: center, top, title-slide
 
 
 
-# Test slide
-
-
-```r
-# Comment
-example &lt;- function(x){TRUE}
-5 * 7 
-c("Ham")
-```
-
-How hard is it to read `inline code` in this theme?
-
-What do **bold** and *italic* look like? .blink[Blink?]
-
-## Double hash?
-
-### Triple hash?
-
----
-class: inverse
-
-# Inverse test slide
-
-
-```r
-# Comment
-*example &lt;- function(x){TRUE}
-*5 * 7
-*c("Ham")
-```
-
-How hard is it to read `inline code` in this theme?
-
-What do **bold** and *italic* look like? .blink[Blink?]
-
-## Double hash?
-
-### Triple hash?
-
----
 
 # Course Goals
 
@@ -80,15 +40,21 @@ What do **bold** and *italic* look like? .blink[Blink?]
 
   * *We'll start this next week*
 
+&amp;nbsp;
+
 --
 
 * Develop intermediate R data management and visualization skills
 
   * *We'll start this today*
 
+&amp;nbsp;
+
 --
 
 * Prepare you for advanced topics in quantitative analysis
+
+&amp;nbsp;
 
 --
 
@@ -107,17 +73,27 @@ class: inverse
 
 --
 
-## You *will* read quantitative research
+### You *will* read quantitative research
 
 * Interpretation
 * Evaluation
 
 --
 
-## You *may* do quantitative research
+### You *may* do quantitative research
 
 * Analysis
 * Reporting
+
+--
+
+Pratt (2015):
+
+.text-72[
+&gt; And another good reason to have a strong – and more importantly, eclectic – methodological skill‐set is so that you will not have to define (and therefore confine) yourself as either a quantitative or qualitative criminologist (although some people enthusiastically embrace such labels). You can instead call yourself a criminologist and be safe in the knowledge that you have command of whatever methodological “tool” you will need to answer whatever criminological question you have decided to ask.
+
+]
+
 
 ---
 class: inverse
@@ -127,7 +103,7 @@ class: inverse
 ]
 
 ---
-# Data *analysis* is mostly data *wrangling*&lt;sup&gt;1&lt;/sup&gt;
+# Data *analysis* is mostly data *wrangling*
 
 .footnote[Credit: Kieran Healy]
 
@@ -285,6 +261,8 @@ If one already knows Excel, SPSS, or Stata, why use R?
 --
 
 * R is a *language* so it can do *everything*.&lt;sup&gt;1&lt;/sup&gt;
+
+.footnote[[1] Including making these slides and the course webpage.]
 
 --
 
@@ -1057,7 +1035,7 @@ summary(cars)
 hist(cars$speed) # Histogram
 ```
 
-&lt;img src="slides_intro-to-r_files/figure-html/unnamed-chunk-12-1.png" height="330px" /&gt;
+&lt;img src="slides_intro-to-r_files/figure-html/unnamed-chunk-10-1.png" height="330px" /&gt;
 ]
 
 .pull-right[
@@ -1066,7 +1044,7 @@ hist(cars$speed) # Histogram
 hist(cars$dist)
 ```
 
-&lt;img src="slides_intro-to-r_files/figure-html/unnamed-chunk-13-1.png" height="330px" /&gt;
+&lt;img src="slides_intro-to-r_files/figure-html/unnamed-chunk-11-1.png" height="330px" /&gt;
 ]
 
 ---
@@ -1081,7 +1059,7 @@ hist(cars$dist,
      main = "Observed stopping distances of cars") # Title
 ```
 
-&lt;img src="slides_intro-to-r_files/figure-html/unnamed-chunk-14-1.png" height="400px" /&gt;
+&lt;img src="slides_intro-to-r_files/figure-html/unnamed-chunk-12-1.png" height="400px" /&gt;
 
 
 ---
@@ -1124,7 +1102,7 @@ abline(h = dist_mean, col = "firebrick")
 abline(v = speed_mean, col = "cornflowerblue")
 ```
 
-&lt;img src="slides_intro-to-r_files/figure-html/unnamed-chunk-16-1.png" height="330px" /&gt;
+&lt;img src="slides_intro-to-r_files/figure-html/unnamed-chunk-14-1.png" height="330px" /&gt;
 ]
 
 .pull-right[

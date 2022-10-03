@@ -44,15 +44,21 @@ style_duo_accent(
 
   * *We'll start this next week*
 
+&nbsp;
+
 --
 
 * Develop intermediate R data management and visualization skills
 
   * *We'll start this today*
 
+&nbsp;
+
 --
 
 * Prepare you for advanced topics in quantitative analysis
+
+&nbsp;
 
 --
 
@@ -71,17 +77,27 @@ class: inverse
 
 --
 
-## You *will* read quantitative research
+### You *will* read quantitative research
 
 * Interpretation
 * Evaluation
 
 --
 
-## You *may* do quantitative research
+### You *may* do quantitative research
 
 * Analysis
 * Reporting
+
+--
+
+Pratt (2015):
+
+.text-72[
+> And another good reason to have a strong – and more importantly, eclectic – methodological skill‐set is so that you will not have to define (and therefore confine) yourself as either a quantitative or qualitative criminologist (although some people enthusiastically embrace such labels). You can instead call yourself a criminologist and be safe in the knowledge that you have command of whatever methodological “tool” you will need to answer whatever criminological question you have decided to ask.
+
+]
+
 
 ---
 class: inverse
@@ -91,7 +107,7 @@ class: inverse
 ]
 
 ---
-# Data *analysis* is mostly data *wrangling*<sup>1</sup>
+# Data *analysis* is mostly data *wrangling*
 
 .footnote[Credit: Kieran Healy]
 
@@ -245,6 +261,8 @@ If one already knows Excel, SPSS, or Stata, why use R?
 --
 
 * R is a *language* so it can do *everything*.<sup>1</sup>
+
+.footnote[[1] Including making these slides and the course webpage.]
 
 --
 

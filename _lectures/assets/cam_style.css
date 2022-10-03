@@ -1,3 +1,9 @@
+.title-slide {
+  background-image: url(img/ioc_entrance_far.jpg);
+  background-size: contain;
+  background-position: bottom;
+}
+
 /* Formatting */
 
 .hljs-tomorrow-night-bright .hljs {
