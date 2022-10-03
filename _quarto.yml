@@ -1,0 +1,19 @@
+project:
+  type: website
+
+website:
+  title: "Introduction to Quantitative Analysis"
+  navbar:
+    right:
+      - about.qmd
+      - r_resources.qmd
+      - stats_resources.qmd
+      - icon: github
+        href: https://github.com/clanfear/ioc_iqa
+format:
+  html:
+    theme: flatly
+    css: styles.css
+
+
+

@@ -1,0 +1,36 @@
+---
+title: "Course Information"
+image: ioc_entrance_far.jpg
+about:
+  template: marquee
+title-block-banner: true
+---
+
+::: {.grid style="text-align: left"}
+
+::: {.g-col-4}
+Wednesday 14:00 - 16:00<br>Location TBA
+:::
+
+::: {.g-col-4}
+&nbsp;
+:::
+
+::: {.g-col-4}
+Charles C. Lanfear<br> [cl948\@cam.ac.uk](cl948@cam.ac.uk "Email")<br>Office 3.9, drop-in times:<br>
+-- Tuesday, 14:00-15:00<br>
+-- Wednesday, 11:00-12:00
+:::
+
+:::
+
+
+# Materials
+
+There are two core texts for this course. They are available free online but may be ordered in print form.
+
+-   [Huntington-Klein, Nick. 2021 *The Effect: An Introduction to Research Design and Causality*](https://theeffectbook.net/)
+
+-   [Kaplan, Jacob. 2022. *Crime by the Numbers: A Criminologists Guide to R*](https://crimebythenumbers.com/)
+
+See the upper right for links to R Resources and Stats Resources for deeper examinations of covered topics and more advanced (but within reach) material. Return to the lecture view using the link in the upper left.

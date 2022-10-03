@@ -1,0 +1,12 @@
+---
+title: "Introduction to Quantitative Analysis"
+subtitle: "Institute of Criminology<br>University of Cambridge"
+listing:
+  contents: posts
+  sort: "date asc"
+  type: default
+  categories: false
+page-layout: full
+title-block-banner: true
+theme: flatly
+---

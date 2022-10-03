@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Introduction to R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Charles Lanfear" />
+    <script src="libs/header-attrs-2.15/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="../assets/cam_style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, top, title-slide
+
+.title[
+# Introduction to R
+]
+.subtitle[
+## IQA Lecture 0
+]
+.author[
+### Charles Lanfear
+]
+.date[
+### 6 Oct 2022<br>Updated: 03 Oct 2022
+]
+
+---
+
+
+
+
+
+
+# Test slide
+
+
+```r
+# Comment
+example &lt;- function(x){TRUE}
+5 * 7 
+c("Ham")
+```
+
+How hard is it to read `inline code` in this theme?
+
+What do **bold** and *italic* look like? .blink[Blink?]
+
+## Double hash?
+
+### Triple hash?
+
+---
+class: inverse
+
+# Inverse test slide
+
+
+```r
+# Comment
+*example &lt;- function(x){TRUE}
+*5 * 7
+*c("Ham")
+```
+
+How hard is it to read `inline code` in this theme?
+
+What do **bold** and *italic* look like? .blink[Blink?]
+
+## Double hash?
+
+### Triple hash?
+
+---
+
+# Course Goals
+
+
+* Cultivate basic competence with applied statistics
+
+  * *We'll start this next week*
+
+--
+
+* Develop intermediate R data management and visualization skills
+
+  * *We'll start this today*
+
+--
+
+* Prepare you for advanced topics in quantitative analysis
+
+--
+
+* Introduce reproducible research practices
+
+---
+class: inverse
+
+.text-align-center[
+# Why are you doing this to me?
+]
+
+---
+
+# Reasons
+
+--
+
+## You *will* read quantitative research
+
+* Interpretation
+* Evaluation
+
+--
+
+## You *may* do quantitative research
+
+* Analysis
+* Reporting
+
+---
+class: inverse
+
+.text-align-center[
+# Okay, but programming?
+]
+
+---
+# Data *analysis* is mostly data *wrangling*&lt;sup&gt;1&lt;/sup&gt;
+
+.footnote[Credit: Kieran Healy]
+
+--
+
+&amp;nbsp;
+
+## Data wrangling is **frustrating**
+
+---
+class: inverse
+
+.text-align-center[
+# Well, can we make it fun?
+]
+
+---
+
+&amp;nbsp;
+
+
+.text-big-center[
+**NO**
+]
+
+---
+class: inverse
+
+.text-align-center[
+# Can we at least make it not frustrating?
+]
+
+---
+
+&amp;nbsp;
+
+.text-big-center[
+**ALSO&lt;br&gt;NO**
+]
+
+---
+# Programming is *important*
+
+* Cleaning data by hand is:
+
+  * Error prone
+  * Time consuming
+  * Not **reproducible**
+
+--
+
+* It opens *many* doors
+
+--
+
+* Frustration is *always* present
+
+--
+
+* But what frustrates you *changes*
+
+---
+
+# Logistics
+
+Location: Computer Lab, Wed, 14:00-16:00
+
+My email: [cl948@cam.ac.uk]()
+
+Drop-in times:
+
+* 3.9, Tue, 14:00-15:00
+* 3.9, Wed, 11:00-12:00
+
+Materials: [http://clanfear.github.io/ioc_iqa]()
+
+---
+
+# Materials
+
+All course materials are on the course website. This includes:
+
+* These slides and the code used to generate them.
+* An R script for the slides to follow along in class.
+* Useful links to other resources.
+* **Formative assignments**
+
+If something doesn't work, email me.
+
+---
+
+# A Note on Slide Formatting
+
+**Bold** is an important term.
+
+--
+
+*Italics* are emphasis or mouse-click instructions
+
+* "Click *File \&gt; Print*"
+
+--
+
+`Code` is R code you type in or keystrokes for actions
+
+* "Press `Ctrl-P` to open the print dialogue."
+
+--
+
+Code chunks are *actual embedded R code*.
+
+
+```r
+*# Sometimes important stuff is highlighted!
+7 * 49
+```
+
+```
+## [1] 343
+```
+
+--
+
+`##` indicates the output from running the code chunk.
+
+---
+class: inverse
+
+# R and RStudio
+
+---
+
+# Why R?
+
+R is a programming language built for statistical computing.
+
+If one already knows Excel, SPSS, or Stata, why use R?
+
+--
+
+* R is *free*, so you don't need a terminal server or license.
+
+--
+
+* R has a *very* large community for support and packages.
+
+--
+
+* R can handle virtually any data format.
+
+--
+
+* R makes replication *easy*.
+
+--
+
+* R is a *language* so it can do *everything*.&lt;sup&gt;1&lt;/sup&gt;
+
+--
+
+* R is similar to other programming languages.
+
+
+---
+
+# R Studio
+
+R Studio is a "front-end" or integrated development environment (IDE) for R that can make your life *easier*.
+
+--
+
+We'll show RStudio can...
+
+* Organize your code, output, and plots
+
+--
+
+* Auto-complete code and highlight syntax
+
+--
+
+* Help view data and objects
+
+--
+
+* Enable easy integration of R code into documents with **Quarto**
+
+--
+
+It can also...
+
+* Manage `git` repositories
+
+* Run interactive tutorials
+
+* Handle other languages like Python, SQL, and HTML
+
+---
+
+# Selling you on Quarto
+
+The ability to create Quarto files is a powerful advantage of R:
+
+* Document analyses by combining text, code, and output
+
+--
+
+* No copying and pasting into Word
+
+--
+
+* Easy for collaborators to understand
+
+--
+
+* Show as little or as much code as you want
+
+--
+
+* Produce many different document types as output
+
+  * PDF documents
+  * HTML webpages and reports
+  * Word and PowerPoint documents
+  * Presentations
+
+--
+
+* Works with LaTeX and HTML for math and formatting
+
+--
+
+We'll get back to this shortly!
+
+---
+
+# Getting Started
+
+Open up RStudio now and choose *File \&gt; New File \&gt; R Script*.
+
+Then, let's get oriented with the interface:
+
+--
+
+* *Top Left*: Code **editor** pane, data viewer (browse with tabs)
+
+--
+
+* *Bottom Left*: **Console** for running code (`&gt;` prompt)
+
+--
+
+* *Top Right*: List of objects in **environment**, code **history** tab.
+
+--
+
+* *Bottom Right*: Tabs for browsing files, viewing plots, managing packages, and viewing help files.
+
+--
+
+You can change the layout in *Preferences \&gt; Pane Layout*
+
+---
+
+# Editing and Running Code
+
+There are several ways to run R code in RStudio:
+
+--
+
+* Highlight lines in the **editor** window and click *Run* at the top or hit `Ctrl+Enter` or `⌘+Enter` to run them all.
+
+--
+
+* With your **caret** (.blink[`|`]) on a line you want to run, hit `Ctrl+Enter` or `⌘+Enter`. Note your caret moves to the next line, so you can run code sequentially with repeated presses.
+
+--
+
+* Type individual lines in the **console** and press `Enter`.
+
+The console will show the lines you ran followed by any printed output.
+
+---
+
+# Incomplete Code
+
+If you mess up (e.g. leave off a parenthesis), R might show a `+` sign prompting you to finish the command:
+
+
+```r
+&gt; (11-2
++
+```
+
+Finish the command or hit `Esc` to get out of this.
+
+---
+
+# R as a Calculator
+
+In the **console**, type `123 + 456 + 789` and hit `Enter`.
+
+--
+
+
+```r
+123 + 456 + 789
+```
+
+```
+## [1] 1368
+```
+
+--
+
+The `[1]` in the output indicates the numeric **index** of the first element on that line.
+
+--
+
+Now in your blank R document in the **editor**, try typing the line `sqrt(400)` and either clicking *Run* or hitting `Ctrl+Enter` or `⌘+Enter`.
+
+--
+
+
+```r
+sqrt(400)
+```
+
+```
+## [1] 20
+```
+
+---
+# Functions and Help
+
+`sqrt()` is an example of a **function** in R.
+
+--
+
+If we didn't have a good guess as to what `sqrt()` will do, we can type `?sqrt` in the console and look at the **Help** panel on the right.
+
+
+```r
+?sqrt
+```
+
+--
+
+**Arguments** are the *inputs* to a function. In this case, the only argument to `sqrt()` is `x` which can be a number or a vector of numbers.
+
+Help files provide documentation on how to use functions and what functions produce.
+
+---
+
+# Creating Objects
+
+R stores *everything* as an **object**, including data, functions, models, and output.
+
+--
+
+Creating an object can be done using the **assignment operator**: `&lt;-`
+
+--
+
+
+```r
+new.object &lt;- 144
+```
+
+--
+
+**Operators** like `&lt;-` are functions that look like symbols but typically sit between their arguments (e.g. numbers or objects) instead of having them inside `()` like in `sqrt(x)`.&lt;sup&gt;1&lt;/sup&gt;
+
+.footnote[[1] We can call operators like other functions using backticks: &lt;code&gt;\`+\`(x,y)&lt;/code&gt;]
+
+--
+
+We do math with operators, e.g., `x + y`. `+` is the addition operator!
+
+---
+
+# Calling Objects
+
+You can display or "call" an object simply by using its name.
+
+
+```r
+new.object
+```
+
+```
+## [1] 144
+```
+
+--
+
+Object names can contain `_` and `.` in them, but cannot *begin* with numbers. Try to be consistent in naming objects.
+
+--
+
+Auto-complete means *long names are better than vague ones*!
+
+*Good names*&lt;sup&gt;1&lt;/sup&gt; save confusion later.
+
+.footnote[[1] *"There are only two hard things in Computer Science: cache invalidation and naming things." - Phil Karlton*]
+
+---
+
+# Using Objects
+
+You can treat the object's **name** as if it were the values stored inside.
+
+--
+
+
+```r
+new.object + 10
+```
+
+```
+## [1] 154
+```
+
+```r
+new.object + new.object
+```
+
+```
+## [1] 288
+```
+
+```r
+sqrt(new.object)
+```
+
+```
+## [1] 12
+```
+
+---
+
+# Creating Vectors
+
+A **vector** is a series of **elements**, such as numbers.
+
+--
+
+You can create a vector using the function `c()` which stands for "combine".
+
+--
+
+
+```r
+new.object &lt;- c(4, 9, 16, 25, 36)
+new.object
+```
+
+```
+## [1]  4  9 16 25 36
+```
+
+--
+
+Assigning to an existing name *overwrites that object*.
+
+--
+
+You can provide a vector as an argument for many functions.
+
+--
+
+
+```r
+sqrt(new.object)
+```
+
+```
+## [1] 2 3 4 5 6
+```
+
+---
+
+# More Complex Objects
+
+The same principles can be used to create more complex objects:
+
+* **matrices**
+* **arrays**
+* **lists**
+* **dataframes**
+
+--
+
+Most data sets you will work with will be read into R and stored as a **dataframe**. 
+
+Consequently, we will focus on manipulating and analyzing these dataframes.
+
+--
+
+Before we get into these, let's revisit **Quarto**.
+
+---
+class: inverse
+# Quarto
+
+![](img/quarto.svg)
+
+---
+
+## Quarto Documents
+
+Let's try making a Quarto file:
+
+1.  Choose *File \&gt; New File \&gt; Quarto Document...*
+2.  Make sure *HTML* is selected and click OK
+3.  Save the file somewhere, call it `my_first_qmd.qmd`
+4.  Click the *Render* button
+5.  Watch the progress in the jobs pane, then gaze upon your result!
+
+You may also open up the file in your computer's browser if you so desire, using the *Open in Browser* button at the top of the preview window.
+
+---
+
+# YAML Frontmatter
+
+The frontmatter (or header) of a `.qmd` file is a [YAML](http://yaml.org/) code block, and everything else is part of the main document.
+
+
+```
+---
+title: "Untitled"
+author: "Your name"
+format: html
+editor: visual
+---
+```
+
+--
+
+To change how the document looks, [you can modify the header with themes](https://quarto.org/docs/output-formats/html-themes.html).&lt;sup&gt;1&lt;/sup&gt;
+
+
+```
+format: 
+  html: 
+    theme: darkly
+```
+
+---
+
+# Markdown Syntax
+
+.pull-left[
+## Output
+
+**bold/strong emphasis**
+
+*italic/normal emphasis*
+
+# Header
+
+## Subheader
+
+### Subsubheader
+
+&gt; Block quote from famous person
+
+]
+
+.pull-right[
+## Syntax
+
+&lt;pre&gt;
+**bold/strong emphasis**
+*italic/normal emphasis*
+
+# Header
+
+## Subheader
+
+### Subsubheader
+
+&gt; Block quote from
+&gt; famous person
+&lt;/pre&gt;
+]
+
+---
+
+# More Markdown Syntax
+
+.pull-left[
+## Output
+
+1.  Ordered lists
+2.  Are real easy
+  3.  Even with sublists
+  4.  Or when lazy with numbering
+
+* Unordered lists
+* Are also real easy
+    * Also even with sublists
+
+[URLs are trivial](http://www.uw.edu)
+
+![:width 200px](https://www.cam.ac.uk/sites/www.cam.ac.uk/themes/fresh/images/interface/cambridge_university2.svg)
+]
+
+.pull-right[
+## Syntax
+
+&lt;pre&gt;
+1. Ordered lists
+1. Are real easy
+  1. Even with sublists
+  1. Or when lazy with numbering
+
+
+* Unordered lists
+* Are also real easy
+  + Also even with sublists
+
+[URLs are trivial](http://www.uw.edu)
+![Images too](https://www.cam.ac.uk/sites/www.cam.ac.uk/themes/fresh/images/interface/cambridge_university2.svg)
+&lt;/pre&gt;
+]
+
+---
+
+# Formulae and Syntax
+
+.pull-left[
+### Output
+
+You can put some math `\(y= \left( \frac{2}{3} \right)^2\)` right up in there.
+
+`$$\frac{1}{n} \sum_{i=1}^{n} x_i = \bar{x}_n$$`
+
+Or a sentence with `code-looking font`.
+
+Or a block of code:
+
+```
+y &lt;- 1:5
+z &lt;- y^2
+
+```
+]
+
+.pull-right[
+### Syntax
+
+```
+You can put some math $y= 
+\left(\frac{2}{3} \right)^2$ 
+right up in there
+
+$$\frac{1}{n} \sum_{i=1}^{n}
+x_i = \bar{x}_n$$
+
+Or a sentence with `code-
+looking font`.
+```
+
+&lt;pre&gt;
+Or a block of code:
+
+```
+y &lt;- 1:5
+z &lt;- y^2
+```
+&lt;/pre&gt;
+]
+
+---
+
+# Quarto Tinkering
+
+Quarto docs can be modified in many ways. Visit these links for more information.
+
+* [The Quarto Guide](https://quarto.org/docs/guide/)
+* [Ways to modify the overall document appearance](https://quarto.org/docs/output-formats/html-themes.html)
+
+---
+
+# Formatting Caveats
+
+To keep Quarto simple, it lacks some features you might want to use. Your options for fancier documents are:
+
+* Templates
+* Use HTML with CSS for custom formatting&lt;sup&gt;5&lt;/sup&gt;
+* Use custom LaTeX templates&lt;sup&gt;6&lt;/sup&gt;
+
+.footnote[
+[5] These slides were created using using custom CSS&lt;br&gt;
+[6] Here be dragons! LaTeX is powerful but exacts a terrible price
+]
+
+For day-to-day use, plain vanilla R Markdown does the job.
+
+For handouts, memos, and assignments, default R Markdown PDFs look surprisingly good!
+
+---
+
+# R Code in R Markdown
+
+Inside quarto,yu can place lines of code in **chunks**. This chunk...
+
+
+````markdown
+```{r}
+summary(cars)
+```
+````
+
+Produces this output in your document:
+
+
+```r
+summary(cars)
+```
+
+```
+##      speed           dist       
+##  Min.   : 4.0   Min.   :  2.00  
+##  1st Qu.:12.0   1st Qu.: 26.00  
+##  Median :15.0   Median : 36.00  
+##  Mean   :15.4   Mean   : 42.98  
+##  3rd Qu.:19.0   3rd Qu.: 56.00  
+##  Max.   :25.0   Max.   :120.00
+```
+
+---
+
+
+# Chunk Options
+
+Chunks have options that control what happens with their code, such as:
+
+* `echo: false`: Hides R code in the document
+
+* `eval: false`: Prevents R code from running
+
+* `include: false`: Hides output but still runs code
+
+* `results: 'hide'`: Hides non-plot output
+
+* `cache: true`: Saves results so you won't have to re-run it each time you render the document
+
+* `fig.height: 5, fig.width: 5`: modify the dimensions of any plots that are generated in the chunk (units are in inches)
+
+[See a lot more about chunk options here](https://yihui.name/knitr/options/).
+
+---
+
+# Playing with Chunk Options
+
+Try adding or changing the chunk options (separated by commas) for the two chunks in `my_first_qmd.qmd` and re-knitting to check what happens.
+
+--
+
+You can name chunks by putting a name on the first `#|` line.
+
+
+````markdown
+```{r}
+#| summarize_cars
+#| echo: false
+summary(cars)
+```
+````
+
+After you name your chunks, look what happens in the dropdown on the bottom left of your editor pane.
+
+--
+
+You can browse through an RMarkdown document by named chunks! 
+
+You can also browse by sections named using headers (`#`) and subheaders (`##`).
+
+---
+
+# In-Line R code
+
+Sometimes we want to insert a value directly into our text. We do that using code in single backticks starting off with `r`.
+
+--
+
+
+
+```
+Four score and seven years ago is the same as `r 4*20 + 7` years.
+```
+
+--
+
+Four score and seven years ago is the same as 87 years.
+
+--
+
+Maybe we've saved a variable in a chunk we want to reference in the text:
+
+
+```r
+x &lt;- sqrt(77) # &lt;- is how we assign objects
+```
+
+--
+
+```
+The value of `x` rounded to the nearest two decimals is 
+`r round(x, 2)`.
+``` 
+
+--
+
+The value of `x` rounded to the nearest two decimals is 8.77.
+
+---
+
+# This is Amazing!
+
+Having R dump values directly into your document protects you from silly mistakes:
+
+--
+
+* Never wonder "how did I come up with this quantity?" ever again: Just look at your formula in your .qmd file!
+
+--
+
+* Consistency! Reference a variable in-line throughout your document without manually updating if the calculation changes (e.g. reporting sample sizes).
+
+--
+
+* You are more likely to make a typo in a "hard-coded" number than you are to write R code that somehow runs but gives you the wrong thing.
+
+---
+class: inverse
+
+# Data Frames
+
+---
+
+# What's Up with `cars`?
+
+In our Quarto doc, let's load the built-in dataframe `cars`. 
+
+--
+
+`data(cars)` loads this dataframe into the **Global Environment** (as a *promise*&lt;sup&gt;1&lt;/sup&gt;).
+
+.pull-right[.footnote[[1] Promises are *unevaluated arguments*. Read more about R's [lazy evaluation here](http://adv-r.had.co.nz/Functions.html).]]
+
+--
+
+`View(cars)` pops up a **Viewer** pane ("interactive" use only, don't put in R Markdown document!) or...
+
+--
+
+
+```r
+head(cars, 5) # prints first 5 rows, see tail() too
+```
+
+```
+##   speed dist
+## 1     4    2
+## 2     4   10
+## 3     7    4
+## 4     7   22
+## 5     8   16
+```
+
+
+
+---
+
+# Tell Me More About `cars`
+
+`str()` displays the structure of an object:
+
+.text-85[
+
+```r
+str(cars) # str[ucture]
+```
+
+```
+## 'data.frame':	50 obs. of  2 variables:
+##  $ speed: num  4 4 7 7 8 9 10 10 10 11 ...
+##  $ dist : num  2 10 4 22 16 10 18 26 34 17 ...
+```
+]
+
+--
+
+`summary()` displays summary information&lt;sup&gt;1&lt;/sup&gt;:
+
+.text-85[
+
+```r
+summary(cars)
+```
+
+```
+##      speed           dist       
+##  Min.   : 4.0   Min.   :  2.00  
+##  1st Qu.:12.0   1st Qu.: 26.00  
+##  Median :15.0   Median : 36.00  
+##  Mean   :15.4   Mean   : 42.98  
+##  3rd Qu.:19.0   3rd Qu.: 56.00  
+##  Max.   :25.0   Max.   :120.00
+```
+]
+
+.pull-right-40[.footnote[[1] [Note R is **object-oriented**](https://adv-r.hadley.nz/oo.html): `summary()` provides different information for different types of objects!]]
+
+---
+
+# Ugly Pictures of `cars`
+
+`hist()` generates a histogram of a vector. Note you can access a vector that is a column of a dataframe using `$`, the **extract operator**.
+
+.pull-left[
+
+```r
+hist(cars$speed) # Histogram
+```
+
+&lt;img src="slides_intro-to-r_files/figure-html/unnamed-chunk-12-1.png" height="330px" /&gt;
+]
+
+.pull-right[
+
+```r
+hist(cars$dist)
+```
+
+&lt;img src="slides_intro-to-r_files/figure-html/unnamed-chunk-13-1.png" height="330px" /&gt;
+]
+
+---
+
+## Drawing Slightly Less Ugly Pictures
+
+
+
+```r
+hist(cars$dist,
+     xlab = "Distance (ft)", # X axis label
+     main = "Observed stopping distances of cars") # Title
+```
+
+&lt;img src="slides_intro-to-r_files/figure-html/unnamed-chunk-14-1.png" height="400px" /&gt;
+
+
+---
+
+# Math with `cars`
+
+If you put an assignment such as `x &lt;- y` in parentheses `()`, R will print the output of the assignment out for you in your document. Otherwise, it won't show the value.
+--
+
+
+```r
+( dist_mean  &lt;- mean(cars$dist) )
+```
+
+```
+## [1] 42.98
+```
+
+```r
+( speed_mean &lt;- mean(cars$speed) )
+```
+
+```
+## [1] 15.4
+```
+
+---
+
+# Drawing Still Ugly Pictures
+
+.text-72[
+
+```r
+*plot(dist ~ speed, data = cars,
+     xlab = "Speed (mph)",
+     ylab = "Stopping distance (ft)",
+     main = "Speeds and stopping distances of cars",
+     pch = 16) # Point size
+abline(h = dist_mean, col = "firebrick")
+abline(v = speed_mean, col = "cornflowerblue")
+```
+
+&lt;img src="slides_intro-to-r_files/figure-html/unnamed-chunk-16-1.png" height="330px" /&gt;
+]
+
+.pull-right[
+.footnote[Note that `dist ~ speed` is a **formula** of the type `y ~ x`. The first element (`dist`) gets plotted on the y-axis and the second (`speed`) goes on the x-axis. Regression formulae follow this convention as well!]
+]
+
+---
+# Installing Packages
+
+Let's make a table that looks a little less code-y in the output. To do this, we'll 
+want to install a **package** called `pander`. Packages contain premade functions 
+and/or data we can use. R's strength is its wide variety of packages!
+
+In the console: `install.packages("pander")`.
+
+--
+
+* Note that unlike the `library()` command, *the name of a package to be installed must be in quotes*. This is because the name here is a search term (text, not an object!) while for `library()` it is an actual R object.
+
+--
+
+* Once you install a package, you don't need to re-install it until you update R. *Consequently, you should not include* `install.packages()` *in any markdown document or R script!*
+
+---
+
+# Making Tables
+
+
+```r
+library(pander) # loads pander, do once in your session
+*pander(summary(cars), style = "rmarkdown")
+```
+
+.text-72[
+
+|    speed     |      dist      |
+|:------------:|:--------------:|
+| Min.   : 4.0 | Min.   :  2.00 |
+| 1st Qu.:12.0 | 1st Qu.: 26.00 |
+| Median :15.0 | Median : 36.00 |
+| Mean   :15.4 | Mean   : 42.98 |
+| 3rd Qu.:19.0 | 3rd Qu.: 56.00 |
+| Max.   :25.0 | Max.   :120.00 |
+]
+
+.footnote[Note that we put the `summary(cars)` function call inside the `pander()` call. This is called *nesting functions*. I'll introduce a method next week to simplify this!]
+
+
+---
+class: inverse
+
+# For Next Time
+
+* Read first two chapters of Kaplan (2022)
+   * Try to run the code in Chapter 2 as you read&lt;sup&gt;1&lt;/sup&gt;
+
+* Spend 30-60 minutes playing with your `.qmd` file
+   * Use the `cars` data to calculate basic numbers (e.g., `mean()`)
+   * Try some in-line calculations
+   * Make a table and/or a plot
+   
+.footnote[[1] If you run into problems you can't get past quickly, set it aside until next week!]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/cam_macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "tomorrow-night-bright",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

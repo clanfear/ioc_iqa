@@ -1,0 +1,122 @@
+/* Formatting */
+
+.hljs-tomorrow-night-bright .hljs {
+  background: #28282B;
+  border-radius: 5px;
+}
+
+.remark-inline-code {
+  background: #85B09A;
+  color: #10102c;
+  border-radius: 3px;
+  padding: 2px;
+}
+.inverse .remark-inline-code {
+  background: #115E67;
+  color: #f0f1eb;
+  border-radius: 3px;
+  padding: 2px;
+}
+.remark-code-line-highlighted {
+  background-color: #3F2A56;
+}
+sup {
+  font-size: 14px;
+}
+h1 {
+  color: #8A1538;
+}
+h1 .inverse{
+  color: #f0f1eb;
+}
+h1, h2, h3 {
+  margin-top: .25em;
+  margin-bottom: .25em;
+}
+a {
+  text-decoration: underline;
+}
+body {
+  line-height: 1.25;
+}
+strong {
+  text-shadow: 0.5px 0.5px 0.5px black;
+}
+.inverse strong {
+  color: #64A70B;
+}
+p {
+  margin: 12px 0;
+}
+/* Functionality */
+
+/* Text size */
+.text-big-center {
+  text-align: center;
+  font-size: 10rem;
+}
+
+.text-150 {
+  font-size: 150%;
+}
+
+.text-85 {
+  font-size: 85%;
+}
+.text-72 {
+  font-size: 72.5%;
+}
+.text-60 {
+  font-size: 60%;
+}
+
+/* Columns */
+.pull-left-70 {
+  float: left;
+  width: 70%;
+}
+.pull-right-70 {
+  float: right;
+  width: 70%;
+}
+.pull-left-60 {
+  float: left;
+  width: 60%;
+}
+
+.pull-right-60 {
+  float: right;
+  width: 60%;
+}
+.pull-right-40 {
+  float: right;
+  width: 40%;
+}
+.pull-left-40 {
+  float: left;
+  width: 40%;
+}
+.pull-right-30 {
+  float: right;
+  width: 30%;
+}
+.pull-left-30 {
+  float: left;
+  width: 30%;
+}
+
+/* alignment */
+
+.text-align-center {
+  text-align: center;
+}
+
+/* Ripped blink from stack overflow result */
+.blink {
+  animation: blinker 1s linear infinite;
+}
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}

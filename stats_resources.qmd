@@ -1,0 +1,7 @@
+---
+title: "Stats Resources"
+format: html
+page-layout: full
+title-block-banner: true
+theme: flatly
+---

@@ -1,0 +1,9 @@
+---
+title: "Week 1: First Week"
+description: "Post description"
+author: "Charles Lanfear"
+date: "2022-10-12"
+draft: false
+---
+
+This is a test for the first lecture
