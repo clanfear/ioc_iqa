@@ -576,6 +576,60 @@ class: inverse
 
 ---
 
+# Installing Tidyverse
+
+We're going to practice loading files and manipulating data.
+
+--
+
+We will use a packages called `readr` and `dplyr` to do this neatly.
+
+These packages are part of the [tidyverse](http://tidyverse.org/) family of R packages that are the focus of this course.
+
+--
+
+If you have not already installed the tidyverse, type, in the console: `install.packages("tidyverse")`
+
+--
+
+This will install a *large* number of R packages we will use throughout the term, including `readr` and `dplyr`.
+
+`dplyr` is a particularly useful package that we will talk more about next week, but today we're just going to use it for "filtering" data.
+
+---
+
+# Loading dplyr
+
+```{r, message=TRUE}
+library(dplyr)
+library(readr)
+```
+
+---
+
+# Wait, was that an error?
+
+When you load packages in R that have functions sharing the same name as functions you already have, the more recently loaded functions overwrite the previous ones ("masks them").
+
+--
+
+This **message** is just letting you know that. To avoid showing this in your R Markdown file, add `message=FALSE` or `include=FALSE` to your chunk options when loading packages.
+
+--
+
+Sometimes you may get a **warning message** when loading packages---usually because you aren't running the latest version of R:
+
+```
+Warning message:
+package `dplyr' was built under R version 4.2.0
+```
+Chunk options `message=FALSE` or `include=FALSE` will hide this. *Update R* to deal with it completely!
+
+---
+class: inverse
+# Importing and Exporting Data
+
+---
 # Saving Files
 
 You can save an R object on your computer as a file to open later:
@@ -599,127 +653,118 @@ But where are these files being saved and loaded from?
 
 # Working Directories
 
-R saves files and looks for files to open in your current **working directory**. You
-can ask R what this is:
+R saves files and looks for files to open in your current **working directory**. 
+
+You can find out what it is using the function `getwd()`.
+
+On my computer when I knitted these slides, it happened to be:
 
 ```{r}
 getwd()
 ```
 
+---
+# Changing Your Working Directory
+
+You can use `setwd(dir = "C:/path/to/new/working/directory")` to change the working directory.
+
+Working Directory Suggestions:
+
+* `.Rmd` files use their current directory as a working directory: Just put everything you need in there!
+
 --
 
-Similarly, we can set a working directory like so:
+* For larger projects, instead of setting a working directory, it is usually better to use [RStudio projects](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects) to manage working directories.
 
-```{r, eval=FALSE}
-setwd("C:/Users/cclan/Documents")
+--
+
+* Windows users: If you copy a path from Explorer, make sure to change back slashes (`\`) to forward slashes (`/`) for the filepaths
+
+--
+
+* If you need to set a working, put `setwd()` at the start of your file so that someone using another computer knows they need to modify it
+
+---
+# Projects in RStudio
+
+A better way to deal with working directories: RStudio's **project** feature in the top-right dropdown. This has lots of advantages:
+
+--
+
+* Sets your working directory to be the project directory.
+
+--
+
+* Remembers objects in your workspace, command history, etc. next time you re-open that project.
+
+--
+
+* Reduces risk of intermingling different work using the same variable names (e.g. `n`) by using separate RStudio instances for each project.
+
+--
+
+* Easy to integrate with version control systems (e.g. `git`)
+
+--
+
+   * I usually make each RStudio project its own GitHub repository.
+
+---
+# Delimited Text Files
+
+One of the most common ways for data to be stored is in a *delimited* text file, e.g. comma-separated values (**.csv**) or tab-separated values (**.tsv**). Here is **.csv** data:
+
+```
+"Id","Offense","Sex","Month"
+101,"Battery","Male",1,
+101,"Battery","Male",1,
+101,"Robbery","Male",1,
+101,"Battery","Male",2,
+101,"Robbery","Male",2,
+101,"Homicide","Male",3,
+103,"Robbery","Female",1,
+103,"Robbery","Female",3,
+103,"Battery","Female",4,
 ```
 
---
+---
+# `readr`
 
-*Don't set a working directory in QUarto documents!* They automatically use the directory they are in as the working directory.
+R has a variety of built-in functions for importing delimited text, like `read.table()` and `read.csv()`. I recommend using the versions in the `readr` package instead: `read_csv()`, `read_tsv()`, and `read_delim()`:
+
+`readr` function features:
+
+* Faster!
+* A *little* smarter about dates and times
+* Handy function `problems()` you can run if there are errors
+* Loading bars for large files
 
 ---
-# Better: RStudio Projects
+# `readr` Importing Example
 
-* In the top right of RStudio, there is a Project menu.
+Let's import some data about fatal police shootings from Kaplan (2022).
 
---
-
-* This can be used to create or switch between RStudio projects
-
---
-
-* When you open a project, it sets your working directory to the project folder
-
---
-
-* It also preserves open scripts
-
----
-# Organization Systems
-
-Organizing research projects is something you either do accidentally—and badly—or purposefully with some upfront labor.
-
---
-
-Uniform organization makes switching between or revisiting projects easier.
-
---
-
-I suggest something like the following:
-
-.pull-left[
-```
-project/
-   readme.md
-   data/
-     derived/
-       processed_data.RData
-     raw/
-       core_data.csv
-   docs/
-     paper.Rmd
-   syntax/
-     functions.R
-     models.R
-```
-]
-.pull-right[
-1. There is a clear hierarchy
-   * Written content is in `docs`
-   * Code is in `syntax`
-   * Data is in `data`
-2. Naming is uniform
-   * All lower case
-   * Words separated by underscores
-3. Names are self-descriptive
-
-]
-
-
----
-
-# File Types
-
-We mainly work with three types of file in this class:
-
---
-
-* `.qmd`: These are **Quarto** *syntax* files, where you write code to *make documents*.
-
---
-
-* `.R`: These are **R** *syntax* files, where you write code to process and analyze data *without making an output document*.<sup>1</sup>
-
-.footnote[[1] While beyond the scope of this class, you can use the `source()` function to run a `.R` script file inside a `.Rmd` or `.R` file. Using this you can break a large project up into multiple files but still run it all at once!]
-
---
-
-* `.html` or `.pdf`: These are the output documents created when you *render* a Quarto document.
-
---
-
-Make sure you understand the difference between the uses of these file types! Please
-ask for clarification if needed!
-
----
-class: inverse
-
-# Data and Subsetting
-
----
-
-# Shootings data
-
----
-
-# Check Out Shootdings
-
- Let's see its structure:
+We can use `read_csv()` from `readr` to assign the contents of a `.csv` file to a new dataframe.
 
 .small[
 ```{r}
-str(shootings)
+shootings <- 
+  read_csv( 
+    "https://clanfear.github.io/ioc_iqa/_data/fatal-police-shootings-data.csv"
+    )
+```
+]
+
+---
+
+# Check Out Shootings
+
+`dplyr` gives us access to the handy `glimpse()` for inspecting dataframes.
+
+.text-62[
+```{r}
+
+glimpse(shootings)
 ```
 ]
 
@@ -727,20 +772,15 @@ str(shootings)
 
 # What's Interesting Here?
 
-* **Factor** variables `country` and `continent`
-
-   + Factors are categorical data with an underlying numeric representation
-   + We'll spend a lot of time on factors later!
+* **Character** variables, e.g. `state`, `manner_of_death`, `armed`
 
 --
 
-* Many observations: $n=`r nrow(gapminder)`$ rows
+* Many observations: $n=`r nrow(shootings)`$ rows
 
 --
 
-* A nested/hierarchical structure: `year` in `country` in `continent`
-
-   + These are panel data!
+* A nested/hierarchical structure: `people` in `states` in `continent`
 
 ---
 class: inverse

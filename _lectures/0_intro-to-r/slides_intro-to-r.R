@@ -23,54 +23,30 @@ new.object
 
 sqrt(new.object)
 
-## ```{r}
+head(USArrests, 5) # prints first 5 rows, see tail() too
 
-## summary(cars)
+str(USArrests) # str[ucture]
 
-## ```
+summary(USArrests)
 
+hist(USArrests$Murder)
 
-summary(cars)
+hist(USArrests$UrbanPop)
 
-## ```{r}
+hist(USArrests$Murder,
+     xlab = "Homicide Rate", # X axis label
+     main = "Homicide Rates of US States") # Title
 
-## #| summarize_cars
+( murder_mean  <- mean(USArrests$Murder) )
+( pop_mean <- mean(USArrests$UrbanPop) )
 
-## #| echo: false
-
-## summary(cars)
-
-## ```
-
-
-library(knitr)
-
-x <- sqrt(77) # <- is how we assign objects
-
-head(cars, 5) # prints first 5 rows, see tail() too
-
-str(cars) # str[ucture]
-
-summary(cars)
-
-hist(cars$speed) # Histogram
-
-hist(cars$dist)
-
-hist(cars$dist,
-     xlab = "Distance (ft)", # X axis label
-     main = "Observed stopping distances of cars") # Title
-
-( dist_mean  <- mean(cars$dist) )
-( speed_mean <- mean(cars$speed) )
-
-plot(dist ~ speed, data = cars, #<<
-     xlab = "Speed (mph)",
-     ylab = "Stopping distance (ft)",
-     main = "Speeds and stopping distances of cars",
+plot(Murder ~ UrbanPop, data = USArrests, #<<
+     xlab = "Urban Population (100k)",
+     ylab = "Homicides (per 100k)",
+     main = "Homicide and urban populations in the US",
      pch = 16) # Point size
-abline(h = dist_mean, col = "firebrick")
-abline(v = speed_mean, col = "cornflowerblue")
+abline(h = murder_mean, col = "firebrick")
+abline(v = pop_mean, col = "cornflowerblue")
 
 ## library(pander) # loads pander, do once in your session
 ## pander(summary(cars), style = "rmarkdown") #<<
