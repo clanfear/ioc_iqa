@@ -2,7 +2,7 @@
 title: "Introduction to R"
 subtitle: "IQA Lecture 0"
 author: "Charles Lanfear"
-date: "6 Oct 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "6 Oct 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%e %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: [xaringan-themer.css, "../assets/cam_style.css"]
@@ -15,12 +15,12 @@ output:
       titleSlideClass: ["center","top"]
 ---
 
-```{r setup}
+```{r setup, purl=FALSE}
 #| include: false
-knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE)
+knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "svg")
 ```
 
-```{r xaringan-themer, include=FALSE, warning=FALSE}
+```{r xaringan-themer, include=FALSE, warning=FALSE, purl=FALSE}
 library(xaringanthemer)
 style_duo_accent(
   white_color = "#f0f1eb",
@@ -31,7 +31,7 @@ style_duo_accent(
   text_font_google   = google_font("Open Sans"),
   code_font_google   = google_font("Fira Mono"),
   padding = "16px 32px 16px 32px",
-  text_font_size = "1.3rem",
+  text_font_size = "1.1rem",
   code_font_size = "1.1rem"
 )
 ```
@@ -175,20 +175,26 @@ class: inverse
 
 Location: Computer Lab, Wed, 14:00-16:00
 
+Jing's email: [ss2826@cam.ac.uk]()
+
+* Your first point of contact for troubleshooting!
+
 My email: [cl948@cam.ac.uk]()
 
-Drop-in times:
+* For non-troubleshooting questions---or *really* broken stuff
+
+My drop-in times:
 
 * 3.9, Tue, 14:00-15:00
 * 3.9, Wed, 11:00-12:00
-
-Materials: [http://clanfear.github.io/ioc_iqa]()
 
 ---
 
 # Materials
 
-All course materials are on the course website. This includes:
+All course materials are on the course website: [http://clanfear.github.io/ioc_iqa](). 
+
+This includes:
 
 * These slides and the code used to generate them.
 * An R script for the slides to follow along in class.
@@ -562,9 +568,15 @@ Before we get into these, let's revisit **Quarto**.
 
 ---
 class: inverse
-# Quarto
+background-color: white
 
-![](img/quarto.svg)
+&nbsp;
+
+&nbsp;
+
+&nbsp;
+
+![:width 100%](img/quarto_band.svg)
 
 ---
 
@@ -765,7 +777,7 @@ For handouts, memos, and assignments, default R Markdown PDFs look surprisingly 
 
 # R Code in R Markdown
 
-Inside quarto,yu can place lines of code in **chunks**. This chunk...
+Inside quarto, you can place lines of code in **chunks**. This chunk...
 
 ````{verbatim, lang = "markdown"}
 ```{r}

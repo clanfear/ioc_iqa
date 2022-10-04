@@ -22,7 +22,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 12 Oct 2022<br>Updated: 03 Oct 2022
+### 12 Oct 2022<br>Updated: 04 Oct 2022
 ]
 
 ---
@@ -38,7 +38,7 @@ class: center, top, title-slide
    * Variables, vectors, and matrices
    * Lines and curves
    * Derivatives
-* Plotting with `ggplot2`
+* Data manipulation with `dplyr`
 
 ---
 class: inverse
@@ -441,6 +441,7 @@ We'll restate it this way:
 `\(b\)` is the **slope**
 
 * The units of `\(y\)` the line changes for every unit of `\(x\)`
+* You can restate this as the *ratio* that `\(y\)` increases relative to `\(x\)`
 
 ---
 
@@ -456,7 +457,7 @@ plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 1, b = 0.5)
 ```
 
-![](slides_fundamentals_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
+![](slides_fundamentals_files/figure-html/unnamed-chunk-17-1.svg)&lt;!-- --&gt;
 
 
 The line *intercepts* the y-axis at 1.
@@ -472,7 +473,7 @@ plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 3, b = 0.5)
 ```
 
-![](slides_fundamentals_files/figure-html/unnamed-chunk-18-1.png)&lt;!-- --&gt;
+![](slides_fundamentals_files/figure-html/unnamed-chunk-18-1.svg)&lt;!-- --&gt;
 
 The line *intercepts* the y-axis at 3.
 
@@ -487,7 +488,7 @@ plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 0.5)
 ```
 
-![](slides_fundamentals_files/figure-html/unnamed-chunk-19-1.png)&lt;!-- --&gt;
+![](slides_fundamentals_files/figure-html/unnamed-chunk-19-1.svg)&lt;!-- --&gt;
 
 The line *intercepts* the y-axis at 2.
 
@@ -502,7 +503,7 @@ plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 0.5)
 ```
 
-![](slides_fundamentals_files/figure-html/unnamed-chunk-20-1.png)&lt;!-- --&gt;
+![](slides_fundamentals_files/figure-html/unnamed-chunk-20-1.svg)&lt;!-- --&gt;
 
 From 2, the line increases by 0.5 for every `\(x\)`.
 
@@ -517,7 +518,7 @@ plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 0)
 ```
 
-![](slides_fundamentals_files/figure-html/unnamed-chunk-21-1.png)&lt;!-- --&gt;
+![](slides_fundamentals_files/figure-html/unnamed-chunk-21-1.svg)&lt;!-- --&gt;
 
 From 2, the line increases by 0 for every `\(x\)`.
 
@@ -532,34 +533,46 @@ plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 2)
 ```
 
-![](slides_fundamentals_files/figure-html/unnamed-chunk-22-1.png)&lt;!-- --&gt;
+![](slides_fundamentals_files/figure-html/unnamed-chunk-22-1.svg)&lt;!-- --&gt;
 
 From 2, the line increases by 2 for every `\(x\)`.
 
 ---
 class: inverse
 
-# Derivatives
+# A little bit of calculus
 
-**Derivatives** ( `\(\frac{dy}{dx}\)` ) are related to slopes.
+---
 
-The derivative is the rate of change (the slope) at a given point of a function---the amount `\(y\)` increases ( `\(dy\)` ) for a unit of `\(x\)` ( `\(dx\)` ).
+## Derivatives
+
+* The **derivative** (e.g.,  `\(\frac{dy}{dx}\)` ) is a *function* giving the rate of change (the slope) at a given point of another function (like a line or curve)
 
 --
 
-For a straight line, the slope is always the same and is equal to the derivative.
+* Interpret `\(d\)` as "a little bit of"
+
 
 --
 
-For curves, the slope is different depending on where on the curve you're looking.
+* `\(\frac{dy}{dx}\)` is the little increase in `\(y\)` given a little increase in `\(x\)` *at any given point of the function*
+
+
+--
+
+* For a straight line, this is the same everywhere---it has a constant slope.
+
+--
+
+* For curves, the slope is different depending on where on the curve you're looking.
+
+--
+
+* A derivative lets us find exactly what that slope is wherever we want to look
+
 
 ---
-class: inverse
-
-## Polynomials
-
----
-# Quadratics
+# Polynomial curves
 
 You can define a curve by augmenting the slope-intercept formula:
 
@@ -574,7 +587,7 @@ A *squared* or **quadratic** term ($x^2$) creates a *parabola*.
 curve(2 + 0.5*x + 0.25*x^2, from = -2, to = 2, ylab = "y")
 ```
 
-![](slides_fundamentals_files/figure-html/unnamed-chunk-23-1.png)&lt;!-- --&gt;
+![](slides_fundamentals_files/figure-html/unnamed-chunk-23-1.svg)&lt;!-- --&gt;
 
 --
 
@@ -609,6 +622,41 @@ So...
 * When `\(x = 3\)` the slope is `\(0.5 + 0.5*3 = 2\)`.
 
 ---
+class: inverse
+# Why am I learning this?
+
+---
+# Reasons
+
+It will be clear soon, but for now:
+
+--
+
+* Most statistical models are estimators of *conditional* means, medians, or modes
+
+   * e.g., the mean of `\(y\)` when `\(x\)` takes some value
+
+--
+
+* Model uncertainty is estimated using *variances*
+
+--
+
+* Models are estimated using matrices and calculus
+
+   * *Which I won't make you do by manually*
+
+--
+
+* The most used model parameters tell us how `\(y\)` changes when `\(x\)` changes
+
+   * e.g., coefficients or marginal effects
+
+--
+
+* Those are *derivatives*
+
+---
 # Okay, that's enough maths
 
 ---
@@ -630,9 +678,9 @@ class: inverse
 
 # Part II
 
-## Visualisation with `ggplot2`
+## Data manipulation with `dplyr`
 
-![](img/ggplot.svg)
+![](img/dplyr.svg)
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

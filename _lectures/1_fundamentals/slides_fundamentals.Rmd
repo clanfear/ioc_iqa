@@ -15,12 +15,12 @@ output:
       titleSlideClass: ["center","top"]
 ---
 
-```{r setup}
+```{r setup, purl=FALSE}
 #| include: false
 knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE)
 ```
 
-```{r xaringan-themer, include=FALSE, warning=FALSE}
+```{r xaringan-themer, include=FALSE, warning=FALSE, purl=FALSE}
 library(xaringanthemer)
 style_duo_accent(
   white_color = "#f0f1eb",
@@ -31,7 +31,7 @@ style_duo_accent(
   text_font_google   = google_font("Open Sans"),
   code_font_google   = google_font("Fira Mono"),
   padding = "16px 32px 16px 32px",
-  text_font_size = "1.3rem",
+  text_font_size = "1.1rem",
   code_font_size = "1.1rem"
 )
 ```
@@ -346,6 +346,7 @@ $a$ is the **intercept**
 $b$ is the **slope**
 
 * The units of $y$ the line changes for every unit of $x$
+* You can restate this as the *ratio* that $y$ increases relative to $x$
 
 ---
 
@@ -356,7 +357,7 @@ $y = 1 + 0.5x$
 
 
 ```{r}
-#| fig.height: 4
+#| fig.height: 3.5
 plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 1, b = 0.5)
 ```
@@ -370,7 +371,7 @@ The line *intercepts* the y-axis at 1.
 $y = 3 + 0.5x$
 
 ```{r}
-#| fig.height: 4
+#| fig.height: 3.5
 plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 3, b = 0.5)
 ```
@@ -383,7 +384,7 @@ The line *intercepts* the y-axis at 3.
 $y = 2 + 0.5x$
 
 ```{r}
-#| fig.height: 4
+#| fig.height: 3.5
 plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 0.5)
 ```
@@ -396,7 +397,7 @@ The line *intercepts* the y-axis at 2.
 $y = 2 + 0.5x$
 
 ```{r}
-#| fig.height: 4
+#| fig.height: 3.5
 plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 0.5)
 ```
@@ -409,7 +410,7 @@ From 2, the line increases by 0.5 for every $x$.
 $y = 2 + 0x$
 
 ```{r}
-#| fig.height: 4
+#| fig.height: 3.5
 plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 0)
 ```
@@ -422,7 +423,7 @@ From 2, the line increases by 0 for every $x$.
 $y = 2 + 2x$
 
 ```{r}
-#| fig.height: 4
+#| fig.height: 3.5
 plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 2)
 ```
@@ -432,27 +433,39 @@ From 2, the line increases by 2 for every $x$.
 ---
 class: inverse
 
-# Derivatives
+# A little bit of calculus
 
-**Derivatives** ( $\frac{dy}{dx}$ ) are related to slopes.
+---
 
-The derivative is the rate of change (the slope) at a given point of a function---the amount $y$ increases ( $dy$ ) for a unit of $x$ ( $dx$ ).
+## Derivatives
+
+* The **derivative** (e.g.,  $\frac{dy}{dx}$ ) is a *function* giving the rate of change (the slope) at a given point of another function (like a line or curve)
 
 --
 
-For a straight line, the slope is always the same and is equal to the derivative.
+* Interpret $d$ as "a little bit of"
+
 
 --
 
-For curves, the slope is different depending on where on the curve you're looking.
+* $\frac{dy}{dx}$ is the little increase in $y$ given a little increase in $x$ *at any given point of the function*
+
+
+--
+
+* For a straight line, this is the same everywhere---it has a constant slope.
+
+--
+
+* For curves, the slope is different depending on where on the curve you're looking.
+
+--
+
+* A derivative lets us find exactly what that slope is wherever we want to look
+
 
 ---
-class: inverse
-
-## Polynomials
-
----
-# Quadratics
+# Polynomial curves
 
 You can define a curve by augmenting the slope-intercept formula:
 
@@ -463,7 +476,8 @@ $y = 2 + 0.5x + 0.25x^2$
 A *squared* or **quadratic** term ($x^2$) creates a *parabola*.
 
 ```{r}
-#| fig.height = 4
+#| fig.height: 3.5
+#| fig.width: 6
 curve(2 + 0.5*x + 0.25*x^2, from = -2, to = 2, ylab = "y")
 ```
 
@@ -500,6 +514,41 @@ So...
 * When $x = 3$ the slope is $0.5 + 0.5*3 = 2$.
 
 ---
+class: inverse
+# Why am I learning this?
+
+---
+# Reasons
+
+It will be clear soon, but for now:
+
+--
+
+* Most statistical models are estimators of *conditional* means, medians, or modes
+
+   * e.g., the mean of $y$ when $x$ takes some value
+
+--
+
+* Model uncertainty is estimated using *variances*
+
+--
+
+* Models are estimated using matrices and calculus
+
+   * *Which I won't make you do by manually*
+
+--
+
+* The most used model parameters tell us how $y$ changes when $x$ changes
+
+   * e.g., coefficients or marginal effects
+
+--
+
+* Those are *derivatives*
+
+---
 # Okay, that's enough maths
 
 ---
@@ -521,6 +570,378 @@ class: inverse
 
 # Part II
 
-## Data manipulation with `dplyr`
+## Files and basic `dplyr`
 
 ![](img/dplyr.svg)
+
+---
+
+# Saving Files
+
+You can save an R object on your computer as a file to open later:
+```{r}
+new.object <- 1:10 # Making vector of 1 to 10 
+save(new.object, file="new_object.RData")
+```
+
+--
+
+You can open saved files in R as well:
+```{r}
+load("new_object.RData")
+```
+
+--
+
+But where are these files being saved and loaded from?
+
+---
+
+# Working Directories
+
+R saves files and looks for files to open in your current **working directory**. You
+can ask R what this is:
+
+```{r}
+getwd()
+```
+
+--
+
+Similarly, we can set a working directory like so:
+
+```{r, eval=FALSE}
+setwd("C:/Users/cclan/Documents")
+```
+
+--
+
+*Don't set a working directory in QUarto documents!* They automatically use the directory they are in as the working directory.
+
+---
+# Better: RStudio Projects
+
+* In the top right of RStudio, there is a Project menu.
+
+--
+
+* This can be used to create or switch between RStudio projects
+
+--
+
+* When you open a project, it sets your working directory to the project folder
+
+--
+
+* It also preserves open scripts
+
+---
+# Organization Systems
+
+Organizing research projects is something you either do accidentally—and badly—or purposefully with some upfront labor.
+
+--
+
+Uniform organization makes switching between or revisiting projects easier.
+
+--
+
+I suggest something like the following:
+
+.pull-left[
+```
+project/
+   readme.md
+   data/
+     derived/
+       processed_data.RData
+     raw/
+       core_data.csv
+   docs/
+     paper.Rmd
+   syntax/
+     functions.R
+     models.R
+```
+]
+.pull-right[
+1. There is a clear hierarchy
+   * Written content is in `docs`
+   * Code is in `syntax`
+   * Data is in `data`
+2. Naming is uniform
+   * All lower case
+   * Words separated by underscores
+3. Names are self-descriptive
+
+]
+
+
+---
+
+# File Types
+
+We mainly work with three types of file in this class:
+
+--
+
+* `.qmd`: These are **Quarto** *syntax* files, where you write code to *make documents*.
+
+--
+
+* `.R`: These are **R** *syntax* files, where you write code to process and analyze data *without making an output document*.<sup>1</sup>
+
+.footnote[[1] While beyond the scope of this class, you can use the `source()` function to run a `.R` script file inside a `.Rmd` or `.R` file. Using this you can break a large project up into multiple files but still run it all at once!]
+
+--
+
+* `.html` or `.pdf`: These are the output documents created when you *render* a Quarto document.
+
+--
+
+Make sure you understand the difference between the uses of these file types! Please
+ask for clarification if needed!
+
+---
+class: inverse
+
+# Data and Subsetting
+
+---
+
+# Shootings data
+
+---
+
+# Check Out Shootdings
+
+ Let's see its structure:
+
+.small[
+```{r}
+str(shootings)
+```
+]
+
+---
+
+# What's Interesting Here?
+
+* **Factor** variables `country` and `continent`
+
+   + Factors are categorical data with an underlying numeric representation
+   + We'll spend a lot of time on factors later!
+
+--
+
+* Many observations: $n=`r nrow(gapminder)`$ rows
+
+--
+
+* A nested/hierarchical structure: `year` in `country` in `continent`
+
+   + These are panel data!
+
+---
+class: inverse
+
+# Subsetting Data
+
+
+---
+
+# Installing Tidyverse
+
+We'll want to be able to slice up this data frame into subsets (e.g. just the rows for Afghanistan, just the rows for 1997).
+
+We will use a package called `dplyr` to do this neatly.
+
+`dplyr` is part of the [tidyverse](http://tidyverse.org/) family of R packages that are the focus of this course.
+
+--
+
+If you have not already installed the tidyverse, type, in the console: `install.packages("tidyverse")`
+
+--
+
+This will install a *large* number of R packages we will use throughout the term, including `dplyr`.
+
+`dplyr` is a very useful and powerful package that we will talk more about soon, but today we're just going to use it for "filtering" data.
+
+---
+
+# Loading dplyr
+
+```{r, message=TRUE}
+library(dplyr)
+```
+
+---
+
+# Wait, was that an error?
+
+When you load packages in R that have functions sharing the same name as functions you already have, the more recently loaded functions overwrite the previous ones ("masks them").
+
+--
+
+This **message** is just letting you know that. To avoid showing this in your R Markdown file, add `message=FALSE` or `include=FALSE` to your chunk options when loading packages.
+
+--
+
+Sometimes you may get a **warning message** when loading packages---usually because you aren't running the latest version of R:
+
+```
+Warning message:
+package `gapminder' was built under R version 3.5.3 
+```
+Chunk options `message=FALSE` or `include=FALSE` will hide this. *Update R* to deal with it completely!
+
+---
+
+# Pipes
+
+We can use pipe operators (`|>`) to send data between functions. So instead of nesting functions like this:
+
+```{r}
+log(mean(gapminder$pop))
+```
+
+--
+
+We can pipe them like this:
+
+```{r}
+gapminder$pop |> mean() |> log()
+```
+
+--
+
+Read this as, "send `gapminder$pop` to `mean()`, then send the output of that to `log()`."
+In essence, pipes read "left to right" while nested functions read "inside to out."
+This may be confusing... we'll cover it more later!
+
+---
+
+# `filter` Data Frames
+
+```{r}
+gapminder %>% filter(country == "Algeria")
+```
+
+What is this doing?
+
+---
+
+# How Expressions Work
+
+What does `country == "Algeria"` actually do? 
+
+--
+
+```{r}
+head(gapminder$country == "Algeria", 50) # display first 50 elements
+```
+
+--
+
+It returns a vector of `TRUE` or `FALSE` values.
+
+When used with the subset operator (`[]`), elements for which a `TRUE` is given are returned while those corresponding to `FALSE` are dropped.
+
+---
+
+# Logical Operators
+
+We used `==` for testing "equals": `country == "Algeria"`.
+
+--
+
+There are many other [logical operators](http://www.statmethods.net/management/operators.html):
+
+--
+
+* `!=`: not equal to
+--
+
+* `>`, `>=`, `<`, `<=`: less than, less than or equal to, etc.
+--
+
+* `%in%`: used with checking equal to one of several values
+
+--
+
+Or we can combine multiple logical conditions:
+
+* `&`: both conditions need to hold (AND)
+--
+
+* `|`: at least one condition needs to hold (OR)
+--
+
+* `!`: inverts a logical condition (`TRUE` becomes `FALSE`, `FALSE` becomes `TRUE`)
+
+--
+
+We'll use these a lot so don't worry too much right now!
+
+---
+
+# Multiple Conditions Example
+
+
+```{r}
+gapminder %>%
+    filter(country == "Oman" & year > 1980)
+```
+
+---
+# Multiple Conditions
+
+.pull-left[
+
+### And: `&`
+
+```{r, eval=FALSE}
+gapminder %>% 
+  filter(country == "Oman" &
+         year > 1980)
+```
+
+.image-100[
+![](img/country_and_year.svg)
+]
+
+*Give me rows where the country is Oman **and** the year is after 1980.*
+
+]
+
+--
+
+.pull-right[
+
+### Or: `|`
+
+```{r, eval=FALSE}
+gapminder %>%
+  filter(country == "Oman" |
+         year > 1980)
+```
+
+.image-100[
+![](img/country_or_year.svg)
+]
+
+*Give me rows where the country is Oman **or** the year is after 1980... or **both**.*
+
+]
+
+---
+
+# Saving a Subset
+
+If we think a particular subset will be used repeatedly, we can save it and give it a name like any other object:
+
+```{r}
+China <- gapminder %>% filter(country == "China")
+head(China, 4)
+```
