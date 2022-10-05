@@ -24,6 +24,8 @@ Charles C. Lanfear<br> [cl948\@cam.ac.uk](cl948@cam.ac.uk "Email")<br>Office 3.9
 
 :::
 
+*Introduction to Quantitative Analysis* (IQA) focuses on training quantitative research methods. Students will learn how to apply the most common and flexible statistical analysis techniques and interpret their results. To facilitate analysis, students will learn modern programming approaches for preparing data for analyses using the R programming language. They will also be introduced to project management and open science principles. IQA is equivalent to two SSRMC courses and covers similar material to *Foundations in Applied Statistics* and *Basic Quantitative Analysis* as well as *Introduction to R*.
+
 
 # Materials
 
@@ -33,4 +35,8 @@ There are two core texts for this course. They are available free online but may
 
 -   [Kaplan, Jacob. 2022. *Crime by the Numbers: A Criminologists Guide to R*](https://crimebythenumbers.com/)
 
-See the upper right for links to R Resources and Stats Resources for deeper examinations of covered topics and more advanced (but within reach) material. Return to the lecture view using the link in the upper left.
+See the upper right for links to R Resources and Stats Resources for deeper examinations of covered topics and more advanced (but within reach) material.
+
+# Schedule
+
+To see the term schedule, use the link in the upper left to the front page. All content is subject to change as the term develops.

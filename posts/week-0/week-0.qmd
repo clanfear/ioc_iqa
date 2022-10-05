@@ -1,6 +1,6 @@
 ---
 title: "Week 0: Introduction to R"
-description: "Overview of R, RStudio, Quarto, plus some basic R syntax."
+description: "Overview of R and RStudio plus some basic R syntax."
 author: "Charles Lanfear"
 date: "2022-10-06"
 draft: false

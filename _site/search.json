@@ -4,14 +4,14 @@
     "href": "index.html",
     "title": "Introduction to Quantitative Analysis",
     "section": "",
-    "text": "Overview of R, RStudio, Quarto, plus some basic R syntax.\n\n\n\n\n\n\nOct 6, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nReview of maths and a bit of dplyr\n\n\n\n\n\n\nOct 12, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nBasic univariate and bivariate statistics and a pinch of plotting with ggplot2\n\n\n\n\n\n\nOct 19, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nPost description\n\n\n\n\n\n\nOct 26, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nPost description\n\n\n\n\n\n\nNov 2, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nPost description\n\n\n\n\n\n\nNov 9, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nPost description\n\n\n\n\n\n\nNov 16, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nPost description\n\n\n\n\n\n\nNov 23, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nPost description\n\n\n\n\n\n\nNov 30, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\nNo matching items"
+    "text": "Overview of R and RStudio plus some basic R syntax.\n\n\n\n\n\n\nOct 6, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nReview of maths and introduction to dplyr\n\n\n\n\n\n\nOct 12, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nBasic univariate and bivariate statistics and a pinch of plotting with ggplot2\n\n\n\n\n\n\nOct 19, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nBasic statistical inference and more data manipulation\n\n\n\n\n\n\nOct 26, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nMost common quantitative questions are nails and the linear model is an excellent hammer\n\n\n\n\n\n\nNov 2, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nMixing up models with continuous covariates.\n\n\n\n\n\n\nNov 9, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nPolynomials and interactions: You thought you’d escaped calculus, but you were wrong\n\n\n\n\n\n\nNov 16, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nAdapting the linear model to new problems.\n\n\n\n\n\n\nNov 23, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\n\n\n\n\n\n\nTime, space, death, and other sources of existential statistical dread.\n\n\n\n\n\n\nNov 30, 2022\n\n\nCharles Lanfear\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
     "title": "Course Information",
     "section": "",
-    "text": "Materials\nThere are two core texts for this course. They are available free online but may be ordered in print form. For the first half of the course, you will mainly be reading about R, as you will be reading about stats in Criminological Research Methods.\n\nHuntington-Klein, Nick. 2021 The Effect: An Introduction to Research Design and Causality\nKaplan, Jacob. 2022. Crime by the Numbers: A Criminologists Guide to R\n\nSee the upper right for links to R Resources and Stats Resources for deeper examinations of covered topics and more advanced (but within reach) material. Return to the lecture view using the link in the upper left."
+    "text": "Introduction to Quantitative Analysis (IQA) focuses on training quantitative research methods. Students will learn how to apply the most common and flexible statistical analysis techniques and interpret their results. To facilitate analysis, students will learn modern programming approaches for preparing data for analyses using the R programming language. They will also be introduced to project management and open science principles. IQA is equivalent to two SSRMC courses and covers similar material to Foundations in Applied Statistics and Basic Quantitative Analysis as well as Introduction to R.\n\nMaterials\nThere are two core texts for this course. They are available free online but may be ordered in print form. For the first half of the course, you will mainly be reading about R, as you will be reading about stats in Criminological Research Methods.\n\nHuntington-Klein, Nick. 2021 The Effect: An Introduction to Research Design and Causality\nKaplan, Jacob. 2022. Crime by the Numbers: A Criminologists Guide to R\n\nSee the upper right for links to R Resources and Stats Resources for deeper examinations of covered topics and more advanced (but within reach) material.\n\n\nSchedule\nTo see the term schedule, use the link in the upper left to the front page. All content is subject to change as the term develops."
   },
   {
     "objectID": "posts/week-0/week-0.html",
@@ -23,7 +23,7 @@
   {
     "objectID": "posts/week-1/week-1.html",
     "href": "posts/week-1/week-1.html",
-    "title": "Week 1: First Week",
+    "title": "Week 1: Fundamentals",
     "section": "",
     "text": "Reading (for before the seminar):\nKaplan (2022), Chapter 1 and Chapter 2"
   },
@@ -32,48 +32,132 @@
     "href": "posts/week-2/week-2.html",
     "title": "Week 2: Distributions and Relationships",
     "section": "",
-    "text": "Reading (for before the seminar):"
+    "text": "Reading (for before the seminar):\nKaplan (2022), Chapter 3 and Chapter 4"
   },
   {
     "objectID": "posts/week-3/week-3.html",
     "href": "posts/week-3/week-3.html",
-    "title": "Week 3",
+    "title": "Week 3: Statistical Inference",
     "section": "",
-    "text": "This is a test for the first lecture"
+    "text": "Reading forthcoming"
   },
   {
     "objectID": "posts/week-4/week-4.html",
     "href": "posts/week-4/week-4.html",
-    "title": "Week 4",
+    "title": "Week 4: Linear Models I",
     "section": "",
-    "text": "This is a test for the first lecture"
+    "text": "Reading forthcoming"
   },
   {
     "objectID": "posts/week-5/week-5.html",
     "href": "posts/week-5/week-5.html",
-    "title": "Week 5",
+    "title": "Week 5: Linear Models II",
     "section": "",
-    "text": "This is a test for the first lecture"
+    "text": "Reading forthcoming"
   },
   {
     "objectID": "posts/week-6/week-6.html",
     "href": "posts/week-6/week-6.html",
-    "title": "Week 6",
+    "title": "Week 6: Linear Models III",
     "section": "",
-    "text": "This is a test for the first lecture"
+    "text": "Reading forthcoming"
   },
   {
     "objectID": "posts/week-7/week-7.html",
     "href": "posts/week-7/week-7.html",
-    "title": "Week 7",
+    "title": "Week 7: Generalized Linear Models",
     "section": "",
-    "text": "This is a test for the first lecture"
+    "text": "Reading forthcoming"
   },
   {
     "objectID": "posts/week-8/week-8.html",
     "href": "posts/week-8/week-8.html",
-    "title": "Week 8",
+    "title": "Week 8: Further Complications",
     "section": "",
-    "text": "This is a test for the first lecture"
+    "text": "Reading forthcoming"
+  },
+  {
+    "objectID": "compiling.html",
+    "href": "compiling.html",
+    "title": "Compiling Packages",
+    "section": "",
+    "text": "The newest versions of R packages are often available only as source code. When you install or update the package, it may indicate it needs compilation. To enable your computer to compile the code in these packages, you need to do a small amount of additional setup. Before you start, make sure R is closed. I recommend rebooting after installing, as well, but it is not a requirement."
+  },
+  {
+    "objectID": "compiling.html#mac",
+    "href": "compiling.html#mac",
+    "title": "Compiling Packages",
+    "section": "Mac",
+    "text": "Mac\nOn a Mac, you only need to install Xcode Command Line Tools. This is simple:\n\nOpen a terminal window\n\nClick Spotlight search in the top right of your screen, then search for “Terminal”\n\nCopy and paste the following into the terminal, then press enter.\n\nxcode-select --install\n\nYou will probably need to provide your password to enable installing the software.\nFollow any onscreen instructions and wait for it to finish.\nYou can now compile R packages!"
+  },
+  {
+    "objectID": "compiling.html#windows",
+    "href": "compiling.html#windows",
+    "title": "Compiling Packages",
+    "section": "Windows",
+    "text": "Windows\nOn a PC, you need to obtain a toolchain for compiling. The easiest way to do this is with RTools:\n\nBrowse to this page.\nDownload the newest 64-bit Rtools installer.\nRun the file to install, following all onscreen instructions. If you are unsure about anything, leave the default settings.\nGo back to this page. Follow the remaining instructions. But, first, run Sys.which(\"make\") and see if it finds a make.exe file. If so, you’re good to go. If not, do the path stuff.\nYou can now compile R packages!"
+  },
+  {
+    "objectID": "installation.html",
+    "href": "installation.html",
+    "title": "Installing R and RStudio",
+    "section": "",
+    "text": "This document walks you through installing R and RStudio on your personal computer.\nIn the instructions below, anywhere it says (version), there will be a series of numbers such as 4.2.1. The specific version does not matter, but we want to always use the most recent one."
+  },
+  {
+    "objectID": "installation.html#installing-r",
+    "href": "installation.html#installing-r",
+    "title": "Installing R and RStudio",
+    "section": "Installing R",
+    "text": "Installing R\n\nWindows\n\nGo to the Windows Installers page.\n\nClick Download R (version) to download: Whatever version is listed will be the most current.\n\nRun the installer.\n\nIf the installer asks, grant it administrative privileges to install.\nFollow the on-screen instructions.\nYou do not need to change any default values unless you have a good reason.\n\nOnce it completes, R is installed!\n\nThere may now be R icons on your desktop or start menu, but we typically do not use R directly.\n\n\n\n\nMacOS\n\nGo to the MacOS Installers page.\n\nScroll to “Latest release”\nClick R-(version).pkg to download: Whatever version is listed will be the most current.\n\nRun the installer.\n\nFollow the on-screen instructions.\nYou do not need to change any default values unless you have a good reason.\n\nOnce it completes, R is installed!\n\nThere may now be R icons on your desktop or start menu, but we typically do not use R directly.\n\nBrowse to the XQuartz download page\n\nClick XQuartz-(version).dmg to download.\n\nRun XQuartz installer.\n\nXQuartz is needed to create windows to display many types of R graphics: this used to be included in MacOS until version 10.8 but now must be downloaded separately."
+  },
+  {
+    "objectID": "installation.html#installing-rstudio",
+    "href": "installation.html#installing-rstudio",
+    "title": "Installing R and RStudio",
+    "section": "Installing RStudio",
+    "text": "Installing RStudio\n\nWindows\n\nGo to the Installers page.\n\nClick Download RStudio for Windows or, under All Installers, the link next to Windows 10/11 to download: Whatever version is listed will be the most current.\n\nRun the installer.\n\nIf the installer asks, grant it administrative privileges to install.\nFollow the on-screen instructions.\nYou do not need to change any default values unless you have a good reason.\n\nOnce it completes, RStudio is installed!\n\nWe will use the RStudio icon to load RStudio and use R.\n\nOpen RStudio and verify it loads.\n\nIn the bottom-left panel of RStudio, you should see something vaguely like the image at the end of this document.\nIf there are any problems, email me at cl948@cam.ac.uk\n\n\n\n\nMacOS\n\nGo to the Installers page.\n\nClick Download RStudio for MacOS or, under All Installers, the link next to macOS 10.15+ to download: Whatever version is listed will be the most current.\n\nRun the installer.\n\nFollow the on-screen instructions.\nYou do not need to change any default values unless you have a good reason.\n\nOnce it completes, RStudio is installed!\n\nWe will use the RStudio icon to load RStudio and use R.\n\nOpen RStudio and verify it loads.\n\nIn the bottom-left panel of RStudio, you should see something vaguely like the image below.\nIf there are any problems, email me at cl948@cam.ac.uk\n\n\nWhen you open RStudio, you should see something similar to this in the bottom-left:\n\nIf so, your installation was successful! If not, post on Slack or the mailing list."
+  },
+  {
+    "objectID": "r_resources.html",
+    "href": "r_resources.html",
+    "title": "R Resources",
+    "section": "",
+    "text": "R and RStudio installation instructions\nEnabling compilation of packages"
+  },
+  {
+    "objectID": "r_resources.html#general-r-resources",
+    "href": "r_resources.html#general-r-resources",
+    "title": "R Resources",
+    "section": "General R Resources:",
+    "text": "General R Resources:\n\nUW CSSS508: My University of Washington Introduction to R course which forms the basis for the R component of this course. There’s more depth here but some of it may be out of date. All content is freely available including lecture recordings.\nR for Data Science online textbook by Garrett Grolemund and Hadley Wickham. One of many good R texts available, but importantly it is free and focuses on the tidyverse collection of R packages which are the modern standard for data manipulation and visualization in R.\nAdvanced R online textbook by Hadley Wickham. A great source for more in-depth and advanced R programming.\nWhat They Forgot to Teach You About R by Jenny Bryan and Jim Hester. Important overview of project management, maintaining your R installation, and debugging code. A must read!\nR Studio Primers: Online tutorials in R.\nswirl: Interactive tutorials inside R.\nUseful RStudio cheatsheets on R Markdown, RStudio shortcuts, etc.\nCode style guide for writing functions, etc.\nGood Enough Practices in Scientific Computing: From abstract, “This paper presents a set of good computing practices that every researcher can adopt, regardless of their current level of computational skill.”"
+  },
+  {
+    "objectID": "r_resources.html#plotting",
+    "href": "r_resources.html#plotting",
+    "title": "R Resources",
+    "section": "Plotting",
+    "text": "Plotting\n\nBase R graphics\n\nShapes and line types in base R\nColor names (PDF) in base R\n\nggplot2\n\nggplot2 documentation\nggplot2 Cheat Sheet\n\nData Visualization: A practical introduction by Kieran Healy. The best modern book on R Data Visualization\nVisualization chapter in R for Data Science\nCookbook for R graph reference\nR graph catalog at UBC"
+  },
+  {
+    "objectID": "r_resources.html#data-manipulation",
+    "href": "r_resources.html#data-manipulation",
+    "title": "R Resources",
+    "section": "Data Manipulation",
+    "text": "Data Manipulation\n\nData Transformation chapter in R for Data Science\ndplyr:\n\ndplyr cheatsheets with diagrams to help you remember functions\nIntroduction to dplyr\nWindow functions in dplyr\nJoining data in dplyr\nMore advanced joins: sqldf for easy SQL in R\n\nData Structures chapter in Advanced R\nTidying:\n\ntidyr vignette\nlubridate vignette\n\nCharacter Data:\n\nstringr vignette\nBlog post explaining paste() for combining strings\nSite for regular expression testing with a good cheatsheet and hover explanations"
+  },
+  {
+    "objectID": "r_resources.html#importing-and-exporting-data",
+    "href": "r_resources.html#importing-and-exporting-data",
+    "title": "R Resources",
+    "section": "Importing and Exporting Data",
+    "text": "Importing and Exporting Data\n\nData import and export:\n\nreadr documentation\nColumn types in readr\nUsing dput() when asking for help\nreadxl and openxlsx packages for Excel"
+  },
+  {
+    "objectID": "stats_resources.html",
+    "href": "stats_resources.html",
+    "title": "Stats Resources",
+    "section": "",
+    "text": "Library of Statistical Techniques curated by Nick Huntington-Klein.\nCommon statistical tests are linear models by Jonas Lindeløv\nStatistics textbooks by level of difficulty and complexity of maths:\n\nLow:\n\nThe two textbooks for this course!\nOpenIntro Statistics by Diez et al. A free and open source introduction general statistics suitable for pretty much anyone.\nIntroduction to Modern Statistics by Cetinkaya-Rundel et al. A free and open source stats introduction emphasizing R programming. Still suitable for pretty much anyone. Has interactive R tutorials.\n\nMedium-Low:\n\nData Analysis Using Regression and Multilevel/Hierarchical Models by Gelman & Hill. A classic introduction and reference for multilevel models. Comprehensive.\nStatistical Rethinking by McElreath. A course in bayesian stats that made a big impact on making these methods accessible.\nCounterfactuals and Causal Inference by Morgan & Winship. Classic introduction to causal inference for social scientists. Accessible yet one of the best desktop references.\n[Introductory Econometrics: A Modern Approach] by Wooldridge. One of the most used introductory textbooks in public policy and sociology. Rigorous but accessible.\n\nMedium-High:\n\nHierarchical Linear Models by Raudenbush & Bryk. The canonical reference for hierarchical models.\nEconometric Analysis of Cross Section and Panel Data by Wooldridge. The canonical reference for econometrics. Covers nearly everything and in depth.\n\nHigh:\n\nStatistical Inference by Casella & Berger. Often seen as the best first year textbook for statistics graduate students. Deep coverage of fundamentals."
   }
 ]

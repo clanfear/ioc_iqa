@@ -1,9 +1,11 @@
 ---
-title: "Week 8"
-description: "Post description"
+title: "Week 8: Further Complications"
+description: "Time, space, death, and other sources of ~~existential~~ statistical dread."
 author: "Charles Lanfear"
 date: "2022-11-30"
 draft: false
 ---
 
-This is a test for the first lecture
+Lecture Slides forthcoming
+
+Reading forthcoming

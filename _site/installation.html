@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Introduction to Quantitative Analysis</title>
+<title>Introduction to Quantitative Analysis - Installing R and RStudio</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,8 +25,6 @@ ul.task-list{list-style: none;}
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -55,37 +53,7 @@ ul.task-list{list-style: none;}
     "search-submit-button-title": "Submit"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-description"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -128,8 +96,7 @@ ul.task-list{list-style: none;}
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page">
-      <h1 class="title">Introduction to Quantitative Analysis</h1>
-            <p class="subtitle lead">Institute of Criminology<br>University of Cambridge</p>
+      <h1 class="title">Installing R and RStudio</h1>
                       </div>
   </div>
     
@@ -151,242 +118,114 @@ ul.task-list{list-style: none;}
 
 
 
+<p>This document walks you through installing R and RStudio on your personal computer.</p>
+<p>In the instructions below, anywhere it says (version), there will be a series of numbers such as <code>4.2.1</code>. The specific version does not matter, but we want to always use the most recent one.</p>
+<section id="installing-r" class="level2">
+<h2 class="anchored" data-anchor-id="installing-r">Installing R</h2>
+<section id="windows" class="level3">
+<h3 class="anchored" data-anchor-id="windows">Windows</h3>
+<ol type="1">
+<li>Go to the <a href="https://cran.r-project.org/bin/windows/base/">Windows Installers page</a>.
+<ul>
+<li>Click <code>Download R (version)</code> to download: Whatever version is listed will be the most current.</li>
+</ul></li>
+<li>Run the installer.
+<ul>
+<li>If the installer asks, grant it administrative privileges to install.</li>
+<li>Follow the on-screen instructions.</li>
+<li>You do not need to change any default values unless you have a good reason.</li>
+</ul></li>
+<li>Once it completes, R is installed!
+<ul>
+<li>There may now be R icons on your desktop or start menu, but we typically do not use R directly.</li>
+</ul></li>
+</ol>
+</section>
+<section id="macos" class="level3">
+<h3 class="anchored" data-anchor-id="macos">MacOS</h3>
+<ol type="1">
+<li>Go to the <a href="https://cran.r-project.org/bin/macosx/">MacOS Installers page</a>.
+<ul>
+<li>Scroll to “Latest release”</li>
+<li>Click <code>R-(version).pkg</code> to download: Whatever version is listed will be the most current.</li>
+</ul></li>
+<li>Run the installer.
+<ul>
+<li>Follow the on-screen instructions.</li>
+<li>You do not need to change any default values unless you have a good reason.</li>
+</ul></li>
+<li>Once it completes, R is installed!
+<ul>
+<li>There may now be R icons on your desktop or start menu, but we typically do not use R directly.</li>
+</ul></li>
+<li>Browse to the <a href="https://www.xquartz.org/">XQuartz download page</a>
+<ul>
+<li>Click <code>XQuartz-(version).dmg</code> to download.</li>
+</ul></li>
+<li>Run XQuartz installer.
+<ul>
+<li>XQuartz is needed to create windows to display many types of R graphics: this used to be included in MacOS until version 10.8 but now must be downloaded separately.</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="installing-rstudio" class="level2">
+<h2 class="anchored" data-anchor-id="installing-rstudio">Installing RStudio</h2>
+<section id="windows-1" class="level3">
+<h3 class="anchored" data-anchor-id="windows-1">Windows</h3>
+<ol type="1">
+<li>Go to the <a href="https://www.rstudio.com/products/rstudio/download/#download">Installers page</a>.
+<ul>
+<li>Click <code>Download RStudio for Windows</code> or, under All Installers, the link next to <code>Windows 10/11</code> to download: Whatever version is listed will be the most current.</li>
+</ul></li>
+<li>Run the installer.
+<ul>
+<li>If the installer asks, grant it administrative privileges to install.</li>
+<li>Follow the on-screen instructions.</li>
+<li>You do not need to change any default values unless you have a good reason.</li>
+</ul></li>
+<li>Once it completes, RStudio is installed!
+<ul>
+<li>We will use the RStudio icon to load RStudio and use R.</li>
+</ul></li>
+<li>Open RStudio and verify it loads.
+<ul>
+<li>In the bottom-left panel of RStudio, you should see something vaguely like the image at the end of this document.</li>
+<li>If there are any problems, email me at <a href="mailto:cl948@cam.ac.uk">cl948@cam.ac.uk</a></li>
+</ul></li>
+</ol>
+</section>
+<section id="macos-1" class="level3">
+<h3 class="anchored" data-anchor-id="macos-1">MacOS</h3>
+<ol type="1">
+<li>Go to the <a href="https://www.rstudio.com/products/rstudio/download/#download">Installers page</a>.
+<ul>
+<li>Click <code>Download RStudio for MacOS</code> or, under All Installers, the link next to <code>macOS 10.15+</code> to download: Whatever version is listed will be the most current.</li>
+</ul></li>
+<li>Run the installer.
+<ul>
+<li>Follow the on-screen instructions.</li>
+<li>You do not need to change any default values unless you have a good reason.</li>
+</ul></li>
+<li>Once it completes, RStudio is installed!
+<ul>
+<li>We will use the RStudio icon to load RStudio and use R.</li>
+</ul></li>
+<li>Open RStudio and verify it loads.
+<ul>
+<li>In the bottom-left panel of RStudio, you should see something vaguely like the image below.</li>
+<li>If there are any problems, email me at <a href="mailto:cl948@cam.ac.uk">cl948@cam.ac.uk</a></li>
+</ul></li>
+</ol>
+<p>When you open RStudio, you should see something similar to this in the bottom-left:</p>
+<p><img src="img/r_first_load.PNG" class="img-fluid"></p>
+<p>If so, your installation was successful! If not, post on Slack or the mailing list.</p>
 
 
+</section>
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-listing-date-sort="1665010800000" data-listing-file-modified-sort="1664965331880" data-listing-reading-time-sort="0.06">
-<div class="body">
-<a href="./posts/week-0/week-0.html">
-<h3 class="no-anchor listing-title">
-Week 0: Introduction to R
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>Overview of R and RStudio plus some basic R syntax.</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/week-0/week-0.html">
-<div class="listing-date">
-Oct 6, 2022
-</div>
-<div class="listing-author">
-Charles Lanfear
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-listing-date-sort="1665529200000" data-listing-file-modified-sort="1664965093358" data-listing-reading-time-sort="0.06">
-<div class="body">
-<a href="./posts/week-1/week-1.html">
-<h3 class="no-anchor listing-title">
-Week 1: Fundamentals
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>Review of maths and introduction to <code>dplyr</code></p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/week-1/week-1.html">
-<div class="listing-date">
-Oct 12, 2022
-</div>
-<div class="listing-author">
-Charles Lanfear
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-listing-date-sort="1666134000000" data-listing-file-modified-sort="1664903597000" data-listing-reading-time-sort="0.06">
-<div class="body">
-<a href="./posts/week-2/week-2.html">
-<h3 class="no-anchor listing-title">
-Week 2: Distributions and Relationships
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>Basic univariate and bivariate statistics and a pinch of plotting with <code>ggplot2</code></p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/week-2/week-2.html">
-<div class="listing-date">
-Oct 19, 2022
-</div>
-<div class="listing-author">
-Charles Lanfear
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-listing-date-sort="1666738800000" data-listing-file-modified-sort="1664965463302" data-listing-reading-time-sort="0.02">
-<div class="body">
-<a href="./posts/week-3/week-3.html">
-<h3 class="no-anchor listing-title">
-Week 3: Statistical Inference
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>Basic statistical inference and more data manipulation</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/week-3/week-3.html">
-<div class="listing-date">
-Oct 26, 2022
-</div>
-<div class="listing-author">
-Charles Lanfear
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-listing-date-sort="1667347200000" data-listing-file-modified-sort="1664966566027" data-listing-reading-time-sort="0.02">
-<div class="body">
-<a href="./posts/week-4/week-4.html">
-<h3 class="no-anchor listing-title">
-Week 4: Linear Models I
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>Most common quantitative questions are nails and the linear model is an excellent hammer</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/week-4/week-4.html">
-<div class="listing-date">
-Nov 2, 2022
-</div>
-<div class="listing-author">
-Charles Lanfear
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="5" data-listing-date-sort="1667952000000" data-listing-file-modified-sort="1664965860714" data-listing-reading-time-sort="0.02">
-<div class="body">
-<a href="./posts/week-5/week-5.html">
-<h3 class="no-anchor listing-title">
-Week 5: Linear Models II
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>Mixing up models with continuous covariates.</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/week-5/week-5.html">
-<div class="listing-date">
-Nov 9, 2022
-</div>
-<div class="listing-author">
-Charles Lanfear
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="6" data-listing-date-sort="1668556800000" data-listing-file-modified-sort="1664965865751" data-listing-reading-time-sort="0.02">
-<div class="body">
-<a href="./posts/week-6/week-6.html">
-<h3 class="no-anchor listing-title">
-Week 6: Linear Models III
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>Polynomials and interactions: You thought you’d escaped calculus, but you were wrong</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/week-6/week-6.html">
-<div class="listing-date">
-Nov 16, 2022
-</div>
-<div class="listing-author">
-Charles Lanfear
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="7" data-listing-date-sort="1669161600000" data-listing-file-modified-sort="1664966266432" data-listing-reading-time-sort="0.02">
-<div class="body">
-<a href="./posts/week-7/week-7.html">
-<h3 class="no-anchor listing-title">
-Week 7: Generalized Linear Models
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>Adapting the linear model to new problems.</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/week-7/week-7.html">
-<div class="listing-date">
-Nov 23, 2022
-</div>
-<div class="listing-author">
-Charles Lanfear
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="8" data-listing-date-sort="1669766400000" data-listing-file-modified-sort="1664966523034" data-listing-reading-time-sort="0.02">
-<div class="body">
-<a href="./posts/week-8/week-8.html">
-<h3 class="no-anchor listing-title">
-Week 8: Further Complications
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>Time, space, death, and other sources of <del>existential</del> statistical dread.</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/week-8/week-8.html">
-<div class="listing-date">
-Nov 30, 2022
-</div>
-<div class="listing-author">
-Charles Lanfear
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

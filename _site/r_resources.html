@@ -118,8 +118,86 @@ ul.task-list{list-style: none;}
 
 
 
+<section id="installation" class="level2">
+<h2 class="anchored" data-anchor-id="installation">Installation</h2>
+<ul>
+<li><a href="installation.html">R and RStudio installation instructions</a></li>
+<li><a href="compiling.html">Enabling compilation of packages</a></li>
+</ul>
+</section>
+<section id="general-r-resources" class="level2">
+<h2 class="anchored" data-anchor-id="general-r-resources">General R Resources:</h2>
+<ul>
+<li><a href="https://clanfear.github.io/CSSS508/">UW CSSS508</a>: My University of Washington Introduction to R course which forms the basis for the R component of this course. There’s more depth here but some of it may be out of date. All content is freely available including lecture recordings.</li>
+<li><a href="http://r4ds.had.co.nz/"><em>R for Data Science</em></a> online textbook by Garrett Grolemund and Hadley Wickham. One of many good R texts available, but importantly it is free and focuses on the <a href="http://tidyverse.org/"><code>tidyverse</code></a> collection of R packages which are the modern standard for data manipulation and visualization in R.</li>
+<li><a href="http://adv-r.had.co.nz/"><em>Advanced R</em></a> online textbook by Hadley Wickham. A great source for more in-depth and advanced R programming.</li>
+<li><a href="https://rstats.wtf/"><em>What They Forgot to Teach You About R</em></a> by Jenny Bryan and Jim Hester. Important overview of project management, maintaining your R installation, and debugging code. A must read!</li>
+<li><a href="https://rstudio.cloud/learn/primers">R Studio Primers</a>: Online tutorials in R.</li>
+<li><a href="http://swirlstats.com/students.html"><code>swirl</code></a>: Interactive tutorials inside R.</li>
+<li><a href="https://www.rstudio.com/resources/cheatsheets/">Useful RStudio cheatsheets</a> on R Markdown, RStudio shortcuts, etc.</li>
+<li><a href="http://adv-r.had.co.nz/Style.html">Code style guide</a> for writing functions, etc.</li>
+<li><a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005510"><em>Good Enough Practices in Scientific Computing</em></a>: From abstract, “This paper presents a set of good computing practices that every researcher can adopt, regardless of their current level of computational skill.”</li>
+</ul>
+</section>
+<section id="plotting" class="level2">
+<h2 class="anchored" data-anchor-id="plotting">Plotting</h2>
+<ul>
+<li>Base R graphics
+<ul>
+<li><a href="http://www.cookbook-r.com/Graphs/Shapes_and_line_types/">Shapes and line types</a> in base R</li>
+<li><a href="http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf">Color names (PDF)</a> in base R</li>
+</ul></li>
+<li><code>ggplot2</code>
+<ul>
+<li><a href="http://docs.ggplot2.org/current/"><code>ggplot2</code> documentation</a></li>
+<li><a href="https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf"><code>ggplot2</code> Cheat Sheet</a></li>
+</ul></li>
+<li><a href="https://socviz.co/">Data Visualization: A practical introduction</a> by Kieran Healy. The best modern book on R Data Visualization</li>
+<li><a href="http://r4ds.had.co.nz/data-visualisation.html">Visualization chapter in R for Data Science</a></li>
+<li><a href="http://www.cookbook-r.com/Graphs/">Cookbook for R graph reference</a></li>
+<li><a href="http://shiny.stat.ubc.ca/r-graph-catalog/">R graph catalog at UBC</a></li>
+</ul>
+</section>
+<section id="data-manipulation" class="level2">
+<h2 class="anchored" data-anchor-id="data-manipulation">Data Manipulation</h2>
+<ul>
+<li><a href="http://r4ds.had.co.nz/transform.html">Data Transformation chapter in R for Data Science</a></li>
+<li><code>dplyr</code>:
+<ul>
+<li><a href="http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf"><code>dplyr</code> cheatsheets</a> with diagrams to help you remember functions</li>
+<li><a href="https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html">Introduction to <code>dplyr</code></a></li>
+<li><a href="https://cran.r-project.org/web/packages/dplyr/vignettes/window-functions.html">Window functions in <code>dplyr</code></a></li>
+<li><a href="https://cran.rstudio.com/web/packages/dplyr/vignettes/two-table.html">Joining data in <code>dplyr</code></a></li>
+<li>More advanced joins: <a href="https://cran.r-project.org/web/packages/sqldf/index.html"><code>sqldf</code> for easy SQL in R</a></li>
+</ul></li>
+<li><a href="http://adv-r.had.co.nz/Data-structures.html">Data Structures chapter in Advanced R</a></li>
+<li>Tidying:
+<ul>
+<li><a href="https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html"><code>tidyr</code> vignette</a></li>
+<li><a href="https://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html"><code>lubridate</code> vignette</a></li>
+</ul></li>
+<li>Character Data:
+<ul>
+<li><a href="https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html"><code>stringr</code> vignette</a></li>
+<li><a href="https://trinkerrstuff.wordpress.com/2013/09/15/paste-paste0-and-sprintf-2">Blog post explaining <code>paste()</code></a> for combining strings</li>
+<li><a href="http://regexr.com/">Site for regular expression testing</a> with a good cheatsheet and hover explanations</li>
+</ul></li>
+</ul>
+</section>
+<section id="importing-and-exporting-data" class="level2">
+<h2 class="anchored" data-anchor-id="importing-and-exporting-data">Importing and Exporting Data</h2>
+<ul>
+<li>Data import and export:
+<ul>
+<li><a href="https://cran.r-project.org/web/packages/readr/readr.pdf"><code>readr</code> documentation</a></li>
+<li><a href="https://cran.r-project.org/web/packages/readr/vignettes/column-types.html">Column types in readr</a></li>
+<li><a href="http://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example">Using <code>dput()</code> when asking for help</a></li>
+<li><a href="https://github.com/hadley/readxl"><code>readxl</code></a> and <a href="https://cran.r-project.org/web/packages/openxlsx/vignettes/Introduction.pdf"><code>openxlsx</code></a> packages for Excel</li>
+</ul></li>
+</ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

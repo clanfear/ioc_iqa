@@ -1,9 +1,11 @@
 ---
-title: "Week 7"
-description: "Post description"
+title: "Week 7: Generalized Linear Models"
+description: "Adapting the linear model to new problems."
 author: "Charles Lanfear"
 date: "2022-11-23"
 draft: false
 ---
 
-This is a test for the first lecture
+Lecture Slides forthcoming
+
+Reading forthcoming
