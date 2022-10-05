@@ -6,11 +6,12 @@ title-block-banner: true
 theme: flatly
 ---
 
-* [Library of Statistical Techniques](https://lost-stats.github.io/) curated by Nick Huntington-Klein.
-* [Common statistical tests are linear models]( https://lindeloev.github.io/tests-as-linear/) by Jonas Lindeløv
+Statistics is a difficult topic. I recommend learning from multiple sources. My recommendations here lean a bit toward econometrics as I believe their approaches are the most applicable to common problems in our discipline. For studying unobservable properties of individuals (e.g., self-control, differential association, moral anomie), however, you'll want to look to social psychology (i.e., psychometrics) and latent variable models (e.g., structural equation modeling).
 
 
-* Statistics textbooks by level of difficulty and complexity of maths:
+# Recommended Textbooks
+
+By level of difficulty and complexity of maths:
    * Low:
       * The two textbooks for this course!
       * [OpenIntro Statistics](https://www.openintro.org/book/os/) by Diez et al. A free and open source introduction general statistics suitable for pretty much anyone.
@@ -25,3 +26,8 @@ theme: flatly
       * *Econometric Analysis of Cross Section and Panel Data* by Wooldridge. The canonical reference for econometrics. Covers nearly everything and in depth.
    * High:
       * *Statistical Inference* by Casella & Berger. Often seen as the best first year textbook for statistics graduate students. Deep coverage of fundamentals.
+
+# Assorted Resources
+
+* [Library of Statistical Techniques](https://lost-stats.github.io/) curated by Nick Huntington-Klein.
+* [Common statistical tests are linear models]( https://lindeloev.github.io/tests-as-linear/) by Jonas Lindeløv

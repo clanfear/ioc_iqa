@@ -5,7 +5,7 @@ author: "Charles Lanfear"
 date: "6 Oct 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%e %b %Y'))`"
 output:
   xaringan::moon_reader:
-    css: cam-css.css
+    css: "../assets/cam-css.css"
     lib_dir: libs
     nature:
       highlightStyle: tomorrow-night-bright
@@ -17,6 +17,7 @@ output:
 
 ```{r setup, purl=FALSE}
 #| include: false
+options(width = 68)
 knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "svg")
 ```
 
@@ -132,13 +133,22 @@ class: inverse
 
 * It opens *many* doors
 
+  * New avenues of research
+  * Non-academic jobs
+  * Side hustles
+  * Improved work flows *even without data*
+
 --
 
-* Frustration is *always* present
+.pull-left[
+The frustration is *always* present...
+]
 
 --
 
-* But what frustrates you *changes*
+.pull-right[
+but you get used to it
+]
 
 ---
 
@@ -481,6 +491,68 @@ sqrt(new.object)
 
 ---
 
+# Character Vectors
+
+We often work with data that are categorical. To create a vector of text elements—**strings** in programming terms—we must place the text in quotes:
+
+```{r}
+string.vector <- c("Atlantic", "Pacific", "Arctic")
+string.vector
+```
+
+--
+
+Categorical data can also be stored as a **factor**, which has an underlying numeric representation.<sup>1</sup>
+
+```{r}
+factor.vector <- factor(string.vector)
+factor.vector
+```
+
+.footnote[[1] Factors have **levels** which you can use to set a reference category in models using `relevel()`. We'll use this in a few weeks.]
+
+---
+# Saving and Loading Objects
+
+You can save an R object on your computer as a file to open later:
+```{r}
+save(new.object, file="new_object.RData")
+```
+
+--
+
+You can open saved files in R as well:
+```{r}
+load("new_object.RData")
+```
+
+--
+
+But where are these files being saved and loaded from?
+
+---
+
+# Working Directories
+
+R saves files and looks for files to open in your current **working directory**<sup>1</sup>. You
+can ask R what this is:
+
+.footnote[[1] For a simple R function to open an Explorer / Finder window at your working directory, [see this StackOverflow response](https://stackoverflow.com/a/12135823/10277284).]
+
+```{r}
+getwd()
+```
+
+--
+
+Similarly, we can set a working directory like so:
+
+```{r, eval=FALSE}
+setwd("C:/Users/")
+```
+
+---
+
 # More Complex Objects
 
 The same principles can be used to create more complex objects:
@@ -505,9 +577,14 @@ class: inverse
 
 # What's Up with `USArrests`?
 
-In our Quarto doc, let's load the built-in dataframe `USArrests`. 
+In our R script, let's load the built-in dataframe `USArrests`. 
 
 --
+
+```{r}
+data(USArrests)
+```
+
 
 `data(USArrests)` loads this dataframe into the **Global Environment** (as a *promise*<sup>1</sup>).
 
@@ -523,15 +600,13 @@ In our Quarto doc, let's load the built-in dataframe `USArrests`.
 head(USArrests, 5) # prints first 5 rows, see tail() too
 ```
 
-
-
 ---
 
 # More About `USArrests`
 
 `str()` displays the structure of an object:
 
-.text-72[
+.text-85[
 ```{r}
 str(USArrests) # str[ucture]
 ```
@@ -541,7 +616,7 @@ str(USArrests) # str[ucture]
 
 `summary()` displays summary information<sup>1</sup>:
 
-.text-72[
+.text-85[
 ```{r}
 summary(USArrests)
 ```
@@ -550,69 +625,177 @@ summary(USArrests)
 .footnote[[1] Note R `summary()` provides different information for different types of objects!]
 
 ---
+class: inverse
+# Indexing and Subsetting
+## Base R
 
-# Ugly Pictures of `USArrests`
+---
 
-`hist()` generates a histogram of a vector. Note you can access a vector that is a column of a dataframe using `$`, the **extract operator**.
+# Indices and Dimensions
 
-.pull-left[
-```{r, out.height="330px"}
-hist(USArrests$Murder)
+In base R, there are two main ways to access object elements: square brackets (`[]` or `[[]]`) and `$`. How you access an object depends on its *dimensions*.
+
+--
+
+Dataframes have *2* dimensions: **rows** and **columns**. Square brackets allow us to numerically **subset** in the format of `object[row, column]`. Leaving the row or column place empty selects *all* elements of that dimension.
+
+.small[
+```{r}
+USArrests[1,] # First row
+```
+]
+--
+.small[
+```{r}
+USArrests[1:3, 3:4] # First three rows, third and fourth column #<<
 ```
 ]
 
 .pull-right[
-```{r, out.height="330px"}
-hist(USArrests$UrbanPop)
-```
+.footnote[
+The **colon operator** (`:`) generates a vector using the sequence of integers from its first argument to its second. `1:3` is equivalent to `c(1,2,3)`.
 ]
-
+]
 ---
 
-## Drawing Slightly Less Ugly Pictures
+# Dataframes and Names
 
+Columns in dataframes can also be accessed using their names with the `$` extract operator. This will return the column as a vector:
 
-```{r, out.height="400px"}
-hist(USArrests$Murder,
-     xlab = "Homicide Rate", # X axis label
-     main = "Homicide Rates of US States") # Title
+```{r}
+USArrests$UrbanPop[1:10]
 ```
 
+--
+
+Note here I *also* used brackets to select just the first 10 elements of that column.
+
+You can mix subsetting formats! In this case I provided only a single value (no column index) because **vectors** have *only one dimension* (length).
+
+If you try to subset something and get a warning about "incorrect number of dimensions", check your subsetting!
+
 
 ---
 
-# Math with `USArrests`
+# Indexing by Expression
 
-If you put an assignment such as `x <- y` in parentheses `()`, R will print the output of the assignment out for you in your document. Otherwise, it won't show the value.
+We can also index using expressions—logical *tests*.
+
+```{r}
+USArrests[USArrests$Murder > 15, ]
+```
+
+---
+
+# How Expressions Work
+
+What does `USArrests$Murder > 15` actually do? 
+
 --
 
 ```{r}
-( murder_mean  <- mean(USArrests$Murder) )
-( pop_mean <- mean(USArrests$UrbanPop) )
+USArrests$Murder > 15
 ```
+
+--
+
+It returns a vector of `TRUE` or `FALSE` values.
+
+When used with the subset operator (`[]`), elements for which a `TRUE` is given are returned while those corresponding to `FALSE` are dropped.
 
 ---
 
-# Drawing Still Ugly Pictures
+# Logical Operators
 
-.text-85[
-```{r, out.height="330px"}
-plot(Murder ~ UrbanPop, data = USArrests, #<<
-     xlab = "Urban Population (100k)",
-     ylab = "Homicides (per 100k)",
-     main = "Homicide and urban populations in the US",
-     pch = 16) # Point size
-abline(h = murder_mean, col = "firebrick")
-abline(v = pop_mean, col = "cornflowerblue")
-```
-]
+We used `>` for testing "greater than": `USArrests$Murder > 15`.
 
-.pull-right[
-.footnote[Note that `Murder ~ UrbanPop` is a **formula** of the type `y ~ x`. The first element (`Murder`) gets plotted on the y-axis and the second (`UrbanPop`) goes on the x-axis. Regression formulae follow this convention as well!]
-]
+--
+
+There are many other [logical operators](http://www.statmethods.net/management/operators.html):
+
+--
+* `==`: equal to
+
+--
+* `!=`: not equal to
+
+--
+* `>`, `>=`, `<`, `<=`: less than, less than or equal to, etc.
+
+--
+* `%in%`: used with checking equal to one of several values
+
+--
+
+Or we can combine multiple logical conditions:
+
+* `&`: both conditions need to hold (AND)
+--
+
+* `|`: at least one condition needs to hold (OR)
+--
+
+* `!`: inverts a logical condition (`TRUE` becomes `FALSE`, `FALSE` becomes `TRUE`)
+
+--
+
+Logical operators are one of the foundations of programming. You should experiment with these to become familiar with how they work!
 
 ---
 
+# Sidenote: Missing Values
+
+Missing values are coded as `NA` entries without quotes:
+
+```{r}
+vector_w_missing <- c(1, 2, NA, 4, 5, 6, NA)
+```
+
+Even one `NA` "poisons the well": You'll get `NA` out of your calculations unless you remove them manually or use the extra argument `na.rm = TRUE` in some functions:
+
+```{r}
+mean(vector_w_missing)
+```
+
+--
+
+We can take missings (`NA`) and remove (`rm`) them:
+
+```{r}
+mean(vector_w_missing, na.rm=TRUE)
+```
+
+---
+# Finding Missing Values
+
+**WARNING:** You can't test for missing values by seeing if they "equal" (`==`) `NA`:
+
+```{r}
+vector_w_missing == NA
+```
+
+--
+
+But you can use the `is.na()` function:
+
+```{r}
+is.na(vector_w_missing)
+```
+
+--
+
+We can use subsetting to get the equivalent of `na.rm=TRUE`:
+
+```{r}
+mean(vector_w_missing[!is.na(vector_w_missing)]) #<<
+```
+
+
+.footnote[
+`!` *reverses* a logical condition. Read the above as "subset to *not* `NA`"
+]
+
+---
 class: inverse
 
 &nbsp;
@@ -623,49 +806,45 @@ class: inverse
 ![](img/swirl_new_large_final.png)
 
 ---
+
 # Installing Packages
 
-Let's make a table that looks a little less code-y in the output. To do this, we'll 
-want to install a **package** called `pander`. Packages contain premade functions 
-and/or data we can use. R's strength is its wide variety of packages!
+Let's give you a way to practice basics on your own. To do this, we'll want to install a **package** called `swirl`
 
-In the console: `install.packages("pander")`.
+Packages contain premade functions and/or data we can use. R's strength comes from packages!
 
---
-
-* Note that unlike the `library()` command, *the name of a package to be installed must be in quotes*. This is because the name here is a search term (text, not an object!) while for `library()` it is an actual R object.
+In the console, type `install.packages("swirl")`.
 
 --
 
-* Once you install a package, you don't need to re-install it until you update R. *Consequently, you should not include* `install.packages()` *in any markdown document or R script!*
+* Note that *the name of a package to be installed must be in quotes*. This is because the name here is a search term (text), not an object!.
 
----
+--
 
-# Making Tables
+* Once you install a package, you don't need to re-install it until you update R. *Consequently, you should not include* `install.packages()` *in a R script!*
+
+--
+
+We can load packages like `swirl` using the `library()` function.
 
 ```{r, eval=FALSE}
-library(pander) # loads pander, do once in your session
-pander(summary(cars), style = "rmarkdown") #<<
+library(swirl)
 ```
-
-.text-72[
-```{r, echo=FALSE}
-library(pander) # loads pander, do once in your session
-pander(summary(cars), style = "rmarkdown")
-```
-]
-
-.footnote[Note that we put the `summary(cars)` function call inside the `pander()` call. This is called *nesting functions*. I'll introduce a method next week to simplify this!]
-
 
 ---
 class: inverse
 
 # For Next Time
 
-* Read first two chapters of Kaplan (2022)
-   * Try to run the code in Chapter 2 as you read<sup>1</sup>
+* [Check out the IQA website](https://clanfear.github.io/ioc_iqa/_site/)
 
 * Try out some `swirl` tutorials
-   
-.footnote[[1] If you run into problems you can't get past quickly, set it aside until next week!]
+   * Use `library(swirl)` to load the package
+   * Once loaded, use `swirl()` to start the tutorial interface
+      * *READ THE INSTRUCTIONS*
+   * Try out `R Programming` lessons---we're up to the equivalent of about 5
+
+* Read first two chapters of Kaplan (2022)
+   * Try to run the code in Chapter 2 as you read
+
+If you run into R problems you can't get past quickly, send an email or just set it aside until next week!

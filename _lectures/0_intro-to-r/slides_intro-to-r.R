@@ -23,33 +23,48 @@ new.object
 
 sqrt(new.object)
 
+string.vector <- c("Atlantic", "Pacific", "Arctic")
+string.vector
+
+factor.vector <- factor(string.vector)
+factor.vector
+
+save(new.object, file="new_object.RData")
+
+load("new_object.RData")
+
+getwd()
+
+## setwd("C:/Users/")
+
+data(USArrests)
+
 head(USArrests, 5) # prints first 5 rows, see tail() too
 
 str(USArrests) # str[ucture]
 
 summary(USArrests)
 
-hist(USArrests$Murder)
+USArrests[1,] # First row
 
-hist(USArrests$UrbanPop)
+USArrests[1:3, 3:4] # First three rows, third and fourth column #<<
 
-hist(USArrests$Murder,
-     xlab = "Homicide Rate", # X axis label
-     main = "Homicide Rates of US States") # Title
+USArrests$UrbanPop[1:10]
 
-( murder_mean  <- mean(USArrests$Murder) )
-( pop_mean <- mean(USArrests$UrbanPop) )
+USArrests[USArrests$Murder > 15, ]
 
-plot(Murder ~ UrbanPop, data = USArrests, #<<
-     xlab = "Urban Population (100k)",
-     ylab = "Homicides (per 100k)",
-     main = "Homicide and urban populations in the US",
-     pch = 16) # Point size
-abline(h = murder_mean, col = "firebrick")
-abline(v = pop_mean, col = "cornflowerblue")
+USArrests$Murder > 15
 
-## library(pander) # loads pander, do once in your session
-## pander(summary(cars), style = "rmarkdown") #<<
+vector_w_missing <- c(1, 2, NA, 4, 5, 6, NA)
 
-library(pander) # loads pander, do once in your session
-pander(summary(cars), style = "rmarkdown")
+mean(vector_w_missing)
+
+mean(vector_w_missing, na.rm=TRUE)
+
+vector_w_missing == NA
+
+is.na(vector_w_missing)
+
+mean(vector_w_missing[!is.na(vector_w_missing)]) #<<
+
+## library(swirl)

@@ -116,7 +116,7 @@ a, a > code {
 
 .title-slide {
   background-color: var(--primary);
-  background-image: url(img/ioc_white.svg), url(img/ioc_entrance_crop.jpg);
+  background-image: url(ioc_white.svg), url(ioc_entrance_crop.jpg);
   background-position: center center, center bottom;
   background-size: contain, contain;
 }
@@ -309,7 +309,7 @@ a {
 }
 
 /* Ripped blink from stack overflow result */
-.blink_me {
+.blink {
   animation: blinker 1s linear infinite;
 }
 @keyframes blinker {
