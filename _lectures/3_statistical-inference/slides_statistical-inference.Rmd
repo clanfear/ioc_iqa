@@ -1,6 +1,6 @@
 ---
-title: "Fundamentals"
-subtitle: "IQA Lecture 2"
+title: "Statistical Inference"
+subtitle: "IQA Lecture 3"
 author: "Charles Lanfear"
 date: "19 Oct 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
@@ -24,14 +24,12 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
 
 # Things to include
 
-* Distributions
-   * Histograms
-   * Densities
+* Stats
+   * Central limit theorem illustrated
+   * Simulation examples
+   * TTest? Chi-Square?
 
-* Relationships
-  * Mean differences between groups
-  * Crosstabs
-  * Correlations
-
+* Code
+   * Lot of ggplot stuff
 
 # Today

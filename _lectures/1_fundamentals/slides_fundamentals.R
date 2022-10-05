@@ -54,3 +54,43 @@ plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 2)
 
 curve(2 + 0.5*x + 0.25*x^2, from = -2, to = 2, ylab = "y")
+
+library(dplyr)
+library(readr)
+
+new.object <- 1:10 # Making vector of 1 to 10 
+save(new.object, file="new_object.RData")
+
+load("new_object.RData")
+
+getwd()
+
+shootings <- 
+  read_csv( 
+    "https://clanfear.github.io/ioc_iqa/_data/fatal-police-shootings-data.csv"
+    )
+
+
+glimpse(shootings)
+
+library(dplyr)
+
+log(mean(gapminder$pop))
+
+gapminder$pop |> mean() |> log()
+
+gapminder %>% filter(country == "Algeria")
+
+gapminder %>%
+    filter(country == "Oman" & year > 1980)
+
+## gapminder %>%
+##   filter(country == "Oman" &
+##          year > 1980)
+
+## gapminder %>%
+##   filter(country == "Oman" |
+##          year > 1980)
+
+China <- gapminder %>% filter(country == "China")
+head(China, 4)

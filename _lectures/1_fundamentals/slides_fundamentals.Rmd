@@ -817,7 +817,7 @@ Sometimes you may get a **warning message** when loading packages---usually beca
 
 ```
 Warning message:
-package `gapminder' was built under R version 3.5.3 
+package `dplyr' was built under R version 4.2.2 
 ```
 Chunk options `message=FALSE` or `include=FALSE` will hide this. *Update R* to deal with it completely!
 
@@ -828,7 +828,7 @@ Chunk options `message=FALSE` or `include=FALSE` will hide this. *Update R* to d
 We can use pipe operators (`|>`) to send data between functions. So instead of nesting functions like this:
 
 ```{r}
-log(mean(gapminder$pop))
+sort(table(shootings$race))
 ```
 
 --
@@ -836,12 +836,12 @@ log(mean(gapminder$pop))
 We can pipe them like this:
 
 ```{r}
-gapminder$pop |> mean() |> log()
+shootings$race |> table() |> sort()
 ```
 
 --
 
-Read this as, "send `gapminder$pop` to `mean()`, then send the output of that to `log()`."
+Read this as, "send `shootings$race` to `table()`, then send the output of that to `sort()`."
 In essence, pipes read "left to right" while nested functions read "inside to out."
 This may be confusing... we'll cover it more later!
 
@@ -850,64 +850,12 @@ This may be confusing... we'll cover it more later!
 # `filter` Data Frames
 
 ```{r}
-gapminder %>% filter(country == "Algeria")
+shootings %>% filter(armed == "unarmed")
 ```
 
 What is this doing?
 
----
 
-# How Expressions Work
-
-What does `country == "Algeria"` actually do? 
-
---
-
-```{r}
-head(gapminder$country == "Algeria", 50) # display first 50 elements
-```
-
---
-
-It returns a vector of `TRUE` or `FALSE` values.
-
-When used with the subset operator (`[]`), elements for which a `TRUE` is given are returned while those corresponding to `FALSE` are dropped.
-
----
-
-# Logical Operators
-
-We used `==` for testing "equals": `country == "Algeria"`.
-
---
-
-There are many other [logical operators](http://www.statmethods.net/management/operators.html):
-
---
-
-* `!=`: not equal to
---
-
-* `>`, `>=`, `<`, `<=`: less than, less than or equal to, etc.
---
-
-* `%in%`: used with checking equal to one of several values
-
---
-
-Or we can combine multiple logical conditions:
-
-* `&`: both conditions need to hold (AND)
---
-
-* `|`: at least one condition needs to hold (OR)
---
-
-* `!`: inverts a logical condition (`TRUE` becomes `FALSE`, `FALSE` becomes `TRUE`)
-
---
-
-We'll use these a lot so don't worry too much right now!
 
 ---
 
@@ -915,8 +863,8 @@ We'll use these a lot so don't worry too much right now!
 
 
 ```{r}
-gapminder %>%
-    filter(country == "Oman" & year > 1980)
+shootings %>%
+    filter(armed == "unarmed" & age < 18)
 ```
 
 ---
@@ -927,9 +875,8 @@ gapminder %>%
 ### And: `&`
 
 ```{r, eval=FALSE}
-gapminder %>% 
-  filter(country == "Oman" &
-         year > 1980)
+shootings %>%
+    filter(armed == "unarmed" & age < 18)
 ```
 
 .image-100[

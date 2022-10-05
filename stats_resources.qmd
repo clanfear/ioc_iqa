@@ -12,6 +12,7 @@ Statistics is a difficult topic. I recommend learning from multiple sources. My 
 # Recommended Textbooks
 
 By level of difficulty and complexity of maths:
+
    * Low:
       * The two textbooks for this course!
       * [OpenIntro Statistics](https://www.openintro.org/book/os/) by Diez et al. A free and open source introduction general statistics suitable for pretty much anyone.
