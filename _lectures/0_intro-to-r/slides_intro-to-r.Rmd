@@ -592,7 +592,7 @@ data(USArrests)
 
 --
 
-`View(cars)` pops up a **Viewer** pane ("interactive" use only, don't put in R Markdown document!) or...
+`View(USArrests)` pops up a **Viewer** pane ("interactive" use only, don't put in R Markdown document!) or...
 
 --
 

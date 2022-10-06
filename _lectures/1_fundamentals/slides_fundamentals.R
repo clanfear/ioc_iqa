@@ -16,7 +16,7 @@ sum(x)
 
 mean(x)
 
-x[(length(x) + 1) / 2]
+x[(length(x) + 1) / 2] # length(x) is the number of elements
 
 median(x)
 
@@ -55,42 +55,41 @@ abline(a = 2, b = 2)
 
 curve(2 + 0.5*x + 0.25*x^2, from = -2, to = 2, ylab = "y")
 
-library(dplyr)
-library(readr)
+x <- 2
+3 + x + 0.75*x^2
 
-new.object <- 1:10 # Making vector of 1 to 10 
-save(new.object, file="new_object.RData")
+USArrests[1,] # First row
 
-load("new_object.RData")
+USArrests[1:3, 3:4] # First three rows, third and fourth column #<<
 
-getwd()
+USArrests["California",]
 
-shootings <- 
-  read_csv( 
-    "https://clanfear.github.io/ioc_iqa/_data/fatal-police-shootings-data.csv"
-    )
+head(USArrests[, c("Murder", "UrbanPop")])
 
+USArrests[, "Murder"]
 
-glimpse(shootings)
+USArrests$Murder
 
-library(dplyr)
+str(USArrests)
 
-log(mean(gapminder$pop))
+USArrests$Murder[1:10]
 
-gapminder$pop |> mean() |> log()
+USArrests[USArrests$Murder > 15, ]
 
-gapminder %>% filter(country == "Algeria")
+USArrests$Murder > 15
 
-gapminder %>%
-    filter(country == "Oman" & year > 1980)
+USArrests[USArrests$Murder > 15 & USArrests$Assault > 300, ]
 
-## gapminder %>%
-##   filter(country == "Oman" &
-##          year > 1980)
+USArrests[USArrests$Murder > 15 | USArrests$Assault > 300, ]
 
-## gapminder %>%
-##   filter(country == "Oman" |
-##          year > 1980)
+vector_w_missing <- c(1, 2, NA, 4, 5, 6, NA)
 
-China <- gapminder %>% filter(country == "China")
-head(China, 4)
+mean(vector_w_missing)
+
+mean(vector_w_missing, na.rm=TRUE)
+
+vector_w_missing == NA
+
+is.na(vector_w_missing)
+
+mean(vector_w_missing[!is.na(vector_w_missing)]) #<<

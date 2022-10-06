@@ -33,3 +33,6 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
    * Lot of ggplot stuff
 
 # Today
+
+
+

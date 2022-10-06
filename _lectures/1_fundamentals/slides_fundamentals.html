@@ -4,9 +4,8 @@
     <title>Fundamentals</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.15/header-attrs.js"></script>
-    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
-    <link rel="stylesheet" href="../assets/cam_style.css" type="text/css" />
+    <script src="libs/header-attrs-2.16/header-attrs.js"></script>
+    <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -22,12 +21,10 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 12 Oct 2022<br>Updated: 04 Oct 2022
+### 12 Oct 2022<br>Updated: 06 Oct 2022
 ]
 
 ---
-
-
 
 
 
@@ -55,7 +52,7 @@ class: inverse
 
 --
 
-* Capital letters ($X$) or letters with an index ($x_i$) refer to variables with multiple values---that is, with *dimensions*.
+* Capital letters ( `\(X\)` ) or letters with an index ( `\(x_i\)` ) refer to variables with multiple values---that is, with *dimensions*.
   * e.g.: `\(X = x_i = (3,4,5)\)`
 
 
@@ -117,28 +114,19 @@ x[c(2,3)] # Get the second and third elements of x
 
 **Matrices** are rectangular tables of numbers. They're typically indicated by a capital letter, e.g., `\(X\)`
 
-&amp;nbsp;
 
-`\(X_{i,j} = \begin{bmatrix}x_{1,1} &amp; x_{1,2}\\x_{2,1} &amp; x_{2,2}\end{bmatrix}\)`
-
-&amp;nbsp;
+`$$X_{i,j} = \begin{bmatrix}x_{1,1} &amp; x_{1,2}\\x_{2,1} &amp; x_{2,2}\end{bmatrix}$$`
 
 Matrices are indexed with subscripts for *rows*, *columns* (e.g., `\(x_{ij}\)`)
 
 --
 
-&amp;nbsp;
-
-.pull-left[
-`\(X = \begin{bmatrix}3 &amp; 5\\4 &amp; 6\end{bmatrix}\)`
-]
-.pull-right[
-`\(x_{2,1} = 4\)`
-]
-
+`$$X = \begin{bmatrix}3 &amp; 5\\4 &amp; 6\end{bmatrix}$$`
+`$$x_{2,1} = 4$$`
 
 
 ---
+
 ## Matrices in R
 
 
@@ -164,17 +152,18 @@ X[2,1]
 ```
 
 ---
+
 ## Summation
 
-`\(\sum_{i=1}^{n}x_i\)`
+`$$\sum_{i=1}^{n}x_i$$`
 
-"Sum all values of `\(x\)` from the first ($i=1$) until the last ($n$)"
+"Sum all values of `\(x\)` from the first ( `\(i=1\)` ) until the last ( `\(n\)` )"
 
 --
 
-Given `\(x = [7, 11, 11, 13, 26]\)`
+Given `\(x = [7, 11, 11, 13, 26]\)`:
 
-`\(x_1 + x_2 + x_3 + x_4 = 7 + 11 + + 11 + 13 + 26\)`
+`$$x_1 + x_2 + x_3 + x_4 = 7 + 11 + 11 + 13 + 26$$`
 
 --
 
@@ -187,6 +176,7 @@ sum(x)
 ```
 ## [1] 68
 ```
+
 Often when summing all elements of a vector, the sub/super scripts are hidden
 
 * e.g. `\(\sum x_i = \sum_{i=1}^{n}x_i\)`
@@ -202,15 +192,15 @@ class: inverse
 
 ## Mean
 
-The mean is the *expected value* of a set of variable.
+The (arithmetic) mean is the *expected value* of a variable.
 
-`\(\bar{x} = \frac{1}{n}\sum_{i=1}^{n}x_{i}\)`
+`$$\bar{x} = \frac{1}{n}\sum_{i=1}^{n}x_{i}$$`
 
 --
 
-That is, if you draw randomly from that variable, the mean would be the best guess.&lt;sup&gt;1&lt;/sup&gt;
+If you draw randomly from that variable, the mean would be the least wrong single guess you could make about that value.&lt;sup&gt;1&lt;/sup&gt;
 
-.footnote[[1] Technically the mean minimizes the *squared error* of guesses.]
+.footnote[[1] Technically the mean minimizes the *squared error*.]
 
 --
 
@@ -237,18 +227,24 @@ mean(x)
 
 ## Median
 
+The value for which no more than half of the values are either higher *or* lower.&lt;sup&gt;1&lt;/sup&gt;
+
+.footnote[[1] Technically the median minimizes the *absolute error*.]
+
+--
+
 The **median** has this heinous formula:
 
-`\(m(x_i) = \begin{cases} x_{\frac{n+1}{2}},&amp; \text{if } n \text{ odd}\\ \frac{1}{2}(x_{\frac{n}{2}} + x_{\frac{n}{2} + 1}), &amp;\text{if } n \text{ even}\end{cases}\)`
+`$$m(x_i) = \begin{cases} x_{\frac{n+1}{2}},&amp; \text{if } n \text{ odd}\\ \frac{1}{2}(x_{\frac{n}{2}} + x_{\frac{n}{2} + 1}), &amp;\text{if } n \text{ even}\end{cases}$$`
 
 
-"If `\(x\)` has an odd number of elements, the median is the middle one. If it has an even number of elements, average the middle two."
+"If `\(x\)` has an odd number of elements, the median is the middle one. If `\(x\)` has an even number of elements, the median is the mean of the middle two."
 
 --
 
 
 ```r
-x[(length(x) + 1) / 2]
+x[(length(x) + 1) / 2] # length(x) is the number of elements
 ```
 
 ```
@@ -264,6 +260,9 @@ median(x)
 ```
 ## [1] 11
 ```
+
+
+
 
 ---
 
@@ -304,6 +303,8 @@ table(x)[table(x)==max(table(x))]
 ##  2
 ```
 
+.pull-right[.footnote["Subset the table to when the count is equal to the highest value."]]
+
 ---
 # Extreme Values
 
@@ -334,17 +335,18 @@ median(z)
 
 --
 
-This means the median may be a more useful "average" when your data have a small number of extreme values.
+This means the median may be a more useful "average" when your data have extreme values.
 
 This is common with things like income or self-reported number of crimes committed.
 
 ---
+class: inverse
 
 # Measures of Dispersion
 
 ---
 
-## Variance&lt;sup&gt;1&lt;/sup&gt;
+## Variance
 
 The variance measures how dispersed data are around the mean. Typically we use the *sample* variance:
 
@@ -381,13 +383,13 @@ If every value is the same, the variance is *zero*.
 
 ## Standard Deviation
 
-The standard deviation ($s$ or `\(sd\)`) is just the root of the variance:
+The standard deviation ( `\(s\)` or `\(sd\)` ) is just the root of the variance:
 
-`\(s = sd = \sqrt{s^2}\)`
+`$$s = sd = \sqrt{s^2}$$`
 
 --
 
-You can interpret it as the "typical" distance from values in the data from their mean.
+You can interpret it as the "typical" distance of values in the data from the mean.
 
 --
 
@@ -410,6 +412,7 @@ sd(x)
 
 ---
 class: inverse
+
 # Lines
 
 ---
@@ -422,13 +425,13 @@ Mathematically, lines can be defined by a slope and an intercept.
 
 You've seen this before, perhaps many moons ago:
 
-`\(y = mx + b\)`
+`$$y = mx + b$$`
 
 --
 
 We'll restate it this way:
 
-`\(y = a + bx\)`
+`$$y = a + bx$$`
 
 --
 
@@ -440,7 +443,7 @@ We'll restate it this way:
 
 `\(b\)` is the **slope**
 
-* The units of `\(y\)` the line changes for every unit of `\(x\)`
+* The units of `\(y\)` the line rises for every unit increase in `\(x\)`
 * You can restate this as the *ratio* that `\(y\)` increases relative to `\(x\)`
 
 ---
@@ -555,7 +558,7 @@ class: inverse
 
 --
 
-* `\(\frac{dy}{dx}\)` is the little increase in `\(y\)` given a little increase in `\(x\)` *at any given point of the function*
+* `\(\frac{dy}{dx}\)` is the little increase in `\(y\)` given a little increase in `\(x\)` *at any given point* of the function that generates `\(y\)` (e.g., `\(y = 2x\)`)
 
 
 --
@@ -580,7 +583,7 @@ You can define a curve by augmenting the slope-intercept formula:
 
 --
 
-A *squared* or **quadratic** term ($x^2$) creates a *parabola*.
+A *squared* or **quadratic** term (e.g. `\(x^2\)`) creates a *parabola*.
 
 
 ```r
@@ -606,12 +609,12 @@ While a curve has many different slopes, all those slopes can be defined by a si
 
 --
 
-Given `\(f(x) = a + x^n\)`, `\(\frac{d}{dx}f(x) = nx^{n-1}\)`
+Given `\(y = a + x^n\)`, `\(\frac{dy}{dx} = nx^{n-1}\)`
 
 Basic rules:
 
-* Delete any terms without `\(x\)` (e.g., `\(a=2\)`)
-* Premultiply by exponents and decrement it
+* Delete any terms without `\(x\)` (e.g., `\(a\)` gets dropped)
+* Premultiply by exponents, then divide by `\(x\)` (e.g.,  `\(x^3\)` becomes `\(3x^2\)` )
 
 --
 
@@ -622,11 +625,47 @@ So...
 * When `\(x = 3\)` the slope is `\(0.5 + 0.5*3 = 2\)`.
 
 ---
+
+# Cubic Derivative
+
+These rules work for polynomials with more terms.
+
+--
+
+`$$y = 35 + 3x + 0.5x^2 + 0.25x^3$$`
+
+--
+
+1. Drop the constant (35)
+2. Multiple the coefficients by the exponents
+3. Divide by `\(x\)` (i.e., reduce the exponents by 1)
+
+--
+
+`$$\frac{dy}{dx} = 3 + x + 0.75x^2$$`
+
+--
+
+When `\(x = 2\)` the slope is...
+
+
+```r
+x &lt;- 2
+3 + x + 0.75*x^2
+```
+
+```
+## [1] 8
+```
+
+---
 class: inverse
 # Why am I learning this?
 
 ---
 # Reasons
+
+--
 
 It will be clear soon, but for now:
 
@@ -669,18 +708,389 @@ class: inverse
 ---
 class: inverse
 
-.text-align-center[
-# BOO
+&amp;nbsp;
+
+.text-big-center[
+BOO
+]
+
+---
+class: inverse
+# Indexing and Subsetting
+## Base R
+
+---
+
+# Indices and Dimensions
+
+In base R, there are two main ways to access object elements: square brackets (`[]` or `[[]]`) and `$`. How you access an object depends on its *dimensions*.
+
+--
+
+Dataframes have *2* dimensions: **rows** and **columns**. Square brackets allow us to numerically **subset** in the format of `object[row, column]`. Leaving the row or column place empty selects *all* elements of that dimension.
+
+.small[
+
+```r
+USArrests[1,] # First row
+```
+
+```
+##         Murder Assault UrbanPop Rape
+## Alabama   13.2     236       58 21.2
+```
+]
+--
+.small[
+
+```r
+*USArrests[1:3, 3:4] # First three rows, third and fourth column
+```
+
+```
+##         UrbanPop Rape
+## Alabama       58 21.2
+## Alaska        48 44.5
+## Arizona       80 31.0
+```
+]
+
+.pull-right[
+.footnote[
+The **colon operator** (`:`) generates a vector using the sequence of integers from its first argument to its second. `1:3` is equivalent to `c(1,2,3)`.
+]
+]
+
+---
+
+# Using names
+
+We can also subset using the names of rows or columns:
+
+
+```r
+USArrests["California",]
+```
+
+```
+##            Murder Assault UrbanPop Rape
+## California      9     276       91 40.6
+```
+
+
+```r
+head(USArrests[, c("Murder", "UrbanPop")])
+```
+
+```
+##            Murder UrbanPop
+## Alabama      13.2       58
+## Alaska       10.0       48
+## Arizona       8.1       80
+## Arkansas      8.8       50
+## California    9.0       91
+## Colorado      7.9       78
+```
+
+---
+
+# Single columns
+
+If you subset to a single column, it returns it as a vector instead of a dataframe:
+
+
+```r
+USArrests[, "Murder"]
+```
+
+```
+##  [1] 13.2 10.0  8.1  8.8  9.0  7.9  3.3  5.9 15.4 17.4  5.3  2.6
+## [13] 10.4  7.2  2.2  6.0  9.7 15.4  2.1 11.3  4.4 12.1  2.7 16.1
+## [25]  9.0  6.0  4.3 12.2  2.1  7.4 11.4 11.1 13.0  0.8  7.3  6.6
+## [37]  4.9  6.3  3.4 14.4  3.8 13.2 12.7  3.2  2.2  8.5  4.0  5.7
+## [49]  2.6  6.8
+```
+
+--
+
+*Columns* in dataframes can also be accessed using their names with the `$` extract operator:
+
+
+```r
+USArrests$Murder
+```
+
+```
+##  [1] 13.2 10.0  8.1  8.8  9.0  7.9  3.3  5.9 15.4 17.4  5.3  2.6
+## [13] 10.4  7.2  2.2  6.0  9.7 15.4  2.1 11.3  4.4 12.1  2.7 16.1
+## [25]  9.0  6.0  4.3 12.2  2.1  7.4 11.4 11.1 13.0  0.8  7.3  6.6
+## [37]  4.9  6.3  3.4 14.4  3.8 13.2 12.7  3.2  2.2  8.5  4.0  5.7
+## [49]  2.6  6.8
+```
+
+---
+
+# Extract: `$`
+
+You may have noticed `$` before when we used `str()`:
+
+
+```r
+str(USArrests)
+```
+
+```
+## 'data.frame':	50 obs. of  4 variables:
+##  $ Murder  : num  13.2 10 8.1 8.8 9 7.9 3.3 5.9 15.4 17.4 ...
+##  $ Assault : int  236 263 294 190 276 204 110 238 335 211 ...
+##  $ UrbanPop: int  58 48 80 50 91 78 77 72 80 60 ...
+##  $ Rape    : num  21.2 44.5 31 19.5 40.6 38.7 11.1 15.8 31.9 25.8 ...
+```
+
+Like the matrix subsetting suggestions, it is a hint you can select columns that way.
+
+---
+
+# Mix and Match
+
+
+```r
+USArrests$Murder[1:10]
+```
+
+```
+##  [1] 13.2 10.0  8.1  8.8  9.0  7.9  3.3  5.9 15.4 17.4
+```
+
+Note here I *also* used brackets to select just the first 10 elements of that column.
+
+You can mix subsetting formats! In this case I provided only a single value (no column index) because **vectors** have *only one dimension* (length).
+
+If you try to subset something and get a warning about "incorrect number of dimensions", check your subsetting!
+
+---
+class: inverse
+
+# Logical Expressions
+
+---
+
+# Indexing by Expression
+
+We can also index using expressions—logical *tests*.
+
+
+```r
+USArrests[USArrests$Murder &gt; 15, ]
+```
+
+```
+##             Murder Assault UrbanPop Rape
+## Florida       15.4     335       80 31.9
+## Georgia       17.4     211       60 25.8
+## Louisiana     15.4     249       66 22.2
+## Mississippi   16.1     259       44 17.1
+```
+
+--
+
+What does this give us?
+
+
+---
+
+# How Expressions Work
+
+What does `USArrests$Murder &gt; 15` actually do? 
+
+--
+
+
+```r
+USArrests$Murder &gt; 15
+```
+
+```
+##  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE
+## [11] FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE
+## [21] FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE
+## [31] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [41] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+```
+
+--
+
+It returns a vector of `TRUE` or `FALSE` values.
+
+When used with the subset operator (`[]`), elements for which a `TRUE` is given are returned while those corresponding to `FALSE` are dropped.
+
+---
+
+# Logical Operators
+
+We used `&gt;` for testing "greater than": `USArrests$Murder &gt; 15`.
+
+--
+
+There are many other [logical operators](http://www.statmethods.net/management/operators.html):
+
+--
+* `==`: equal to
+
+--
+* `!=`: not equal to
+
+--
+* `&gt;`, `&gt;=`, `&lt;`, `&lt;=`: less than, less than or equal to, etc.
+
+--
+* `%in%`: used with checking equal to one of several values
+
+--
+
+Or we can combine multiple logical conditions:
+
+* `&amp;`: both conditions need to hold (AND)
+--
+
+* `|`: at least one condition needs to hold (OR)
+--
+
+* `!`: inverts a logical condition (`TRUE` becomes `FALSE`, `FALSE` becomes `TRUE`)
+
+--
+
+Logical operators are one of the foundations of programming. You should experiment with these to become familiar with how they work!
+
+---
+
+# And: `&amp;`
+
+![:width 50%](img/murder_and_assault.svg)
+
+
+```r
+USArrests[USArrests$Murder &gt; 15 &amp; USArrests$Assault &gt; 300, ]
+```
+
+```
+##         Murder Assault UrbanPop Rape
+## Florida   15.4     335       80 31.9
+```
+
+
+
+---
+
+# Or: `|`
+
+![:width 50%](img/murder_or_assault.svg)
+
+
+```r
+USArrests[USArrests$Murder &gt; 15 | USArrests$Assault &gt; 300, ]
+```
+
+```
+##                Murder Assault UrbanPop Rape
+## Florida          15.4     335       80 31.9
+## Georgia          17.4     211       60 25.8
+## Louisiana        15.4     249       66 22.2
+## Mississippi      16.1     259       44 17.1
+## North Carolina   13.0     337       45 16.1
+```
+
+
+---
+
+# Sidenote: Missing Values
+
+Missing values are coded as `NA` entries without quotes:
+
+
+```r
+vector_w_missing &lt;- c(1, 2, NA, 4, 5, 6, NA)
+```
+
+--
+
+Even one `NA` "poisons the well": You'll get `NA` out of your calculations unless you remove them manually or use the extra argument `na.rm = TRUE` in some functions:
+
+
+```r
+mean(vector_w_missing)
+```
+
+```
+## [1] NA
+```
+
+--
+
+We can take missings (`NA`) and remove (`rm`) them:
+
+
+```r
+mean(vector_w_missing, na.rm=TRUE)
+```
+
+```
+## [1] 3.6
+```
+
+---
+# Finding Missing Values
+
+**WARNING:** You can't test for missing values by seeing if they "equal" (`==`) `NA`:
+
+
+```r
+vector_w_missing == NA
+```
+
+```
+## [1] NA NA NA NA NA NA NA
+```
+
+--
+
+But you can use the `is.na()` function:
+
+
+```r
+is.na(vector_w_missing)
+```
+
+```
+## [1] FALSE FALSE  TRUE FALSE FALSE FALSE  TRUE
+```
+
+--
+
+We can use subsetting to get the equivalent of `na.rm=TRUE`:
+
+
+```r
+*mean(vector_w_missing[!is.na(vector_w_missing)])
+```
+
+```
+## [1] 3.6
+```
+
+
+.footnote[
+`!` *reverses* a logical condition. Read the above as "subset to *not* `NA`"
 ]
 
 ---
 class: inverse
 
-# Part II
+# For Next Time
 
-## Data manipulation with `dplyr`
+* Read Kaplan chapters 3 and 4
 
-![](img/dplyr.svg)
+* Try a bit more `swirl`
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

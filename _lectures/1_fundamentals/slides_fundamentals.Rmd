@@ -44,7 +44,7 @@ class: inverse
 
 --
 
-* Capital letters ($X$) or letters with an index ($x_i$) refer to variables with multiple values---that is, with *dimensions*.
+* Capital letters ( $X$ ) or letters with an index ( $x_i$ ) refer to variables with multiple values---that is, with *dimensions*.
   * e.g.: $X = x_i = (3,4,5)$
 
 
@@ -91,28 +91,19 @@ x[c(2,3)] # Get the second and third elements of x
 
 **Matrices** are rectangular tables of numbers. They're typically indicated by a capital letter, e.g., $X$
 
-&nbsp;
 
-$X_{i,j} = \begin{bmatrix}x_{1,1} & x_{1,2}\\x_{2,1} & x_{2,2}\end{bmatrix}$
-
-&nbsp;
+$$X_{i,j} = \begin{bmatrix}x_{1,1} & x_{1,2}\\x_{2,1} & x_{2,2}\end{bmatrix}$$
 
 Matrices are indexed with subscripts for *rows*, *columns* (e.g., $x_{ij}$)
 
 --
 
-&nbsp;
-
-.pull-left[
-$X = \begin{bmatrix}3 & 5\\4 & 6\end{bmatrix}$
-]
-.pull-right[
-$x_{2,1} = 4$
-]
-
+$$X = \begin{bmatrix}3 & 5\\4 & 6\end{bmatrix}$$
+$$x_{2,1} = 4$$
 
 
 ---
+
 ## Matrices in R
 
 ```{r}
@@ -126,17 +117,18 @@ X[2,1]
 ```
 
 ---
+
 ## Summation
 
-$\sum_{i=1}^{n}x_i$
+$$\sum_{i=1}^{n}x_i$$
 
-"Sum all values of $x$ from the first ($i=1$) until the last ($n$)"
+"Sum all values of $x$ from the first ( $i=1$ ) until the last ( $n$ )"
 
 --
 
-Given $x = [7, 11, 11, 13, 26]$
+Given $x = [7, 11, 11, 13, 26]$:
 
-$x_1 + x_2 + x_3 + x_4 = 7 + 11 + + 11 + 13 + 26$
+$$x_1 + x_2 + x_3 + x_4 = 7 + 11 + 11 + 13 + 26$$
 
 --
 
@@ -144,6 +136,7 @@ $x_1 + x_2 + x_3 + x_4 = 7 + 11 + + 11 + 13 + 26$
 x <- c(7, 11, 11, 13, 26)
 sum(x)
 ```
+
 Often when summing all elements of a vector, the sub/super scripts are hidden
 
 * e.g. $\sum x_i = \sum_{i=1}^{n}x_i$
@@ -159,15 +152,15 @@ class: inverse
 
 ## Mean
 
-The mean is the *expected value* of a set of variable.
+The (arithmetic) mean is the *expected value* of a variable.
 
-$\bar{x} = \frac{1}{n}\sum_{i=1}^{n}x_{i}$
+$$\bar{x} = \frac{1}{n}\sum_{i=1}^{n}x_{i}$$
 
 --
 
-That is, if you draw randomly from that variable, the mean would be the best guess.<sup>1</sup>
+If you draw randomly from that variable, the mean would be the least wrong single guess you could make about that value.<sup>1</sup>
 
-.footnote[[1] Technically the mean minimizes the *squared error* of guesses.]
+.footnote[[1] Technically the mean minimizes the *squared error*.]
 
 --
 
@@ -184,23 +177,32 @@ mean(x)
 
 ## Median
 
+The value for which no more than half of the values are either higher *or* lower.<sup>1</sup>
+
+.footnote[[1] Technically the median minimizes the *absolute error*.]
+
+--
+
 The **median** has this heinous formula:
 
-$m(x_i) = \begin{cases} x_{\frac{n+1}{2}},& \text{if } n \text{ odd}\\ \frac{1}{2}(x_{\frac{n}{2}} + x_{\frac{n}{2} + 1}), &\text{if } n \text{ even}\end{cases}$
+$$m(x_i) = \begin{cases} x_{\frac{n+1}{2}},& \text{if } n \text{ odd}\\ \frac{1}{2}(x_{\frac{n}{2}} + x_{\frac{n}{2} + 1}), &\text{if } n \text{ even}\end{cases}$$
 
 
-"If $x$ has an odd number of elements, the median is the middle one. If it has an even number of elements, average the middle two."
+"If $x$ has an odd number of elements, the median is the middle one. If $x$ has an even number of elements, the median is the mean of the middle two."
 
 --
 
 ```{r}
-x[(length(x) + 1) / 2]
+x[(length(x) + 1) / 2] # length(x) is the number of elements
 ```
 
 
 ```{r}
 median(x)
 ```
+
+
+
 
 ---
 
@@ -228,6 +230,8 @@ And you can find the mode directly:
 table(x)[table(x)==max(table(x))]
 ```
 
+.pull-right[.footnote["Subset the table to when the count is equal to the highest value."]]
+
 ---
 # Extreme Values
 
@@ -248,17 +252,18 @@ median(z)
 
 --
 
-This means the median may be a more useful "average" when your data have a small number of extreme values.
+This means the median may be a more useful "average" when your data have extreme values.
 
 This is common with things like income or self-reported number of crimes committed.
 
 ---
+class: inverse
 
 # Measures of Dispersion
 
 ---
 
-## Variance<sup>1</sup>
+## Variance
 
 The variance measures how dispersed data are around the mean. Typically we use the *sample* variance:
 
@@ -283,13 +288,13 @@ If every value is the same, the variance is *zero*.
 
 ## Standard Deviation
 
-The standard deviation ($s$ or $sd$) is just the root of the variance:
+The standard deviation ( $s$ or $sd$ ) is just the root of the variance:
 
-$s = sd = \sqrt{s^2}$
+$$s = sd = \sqrt{s^2}$$
 
 --
 
-You can interpret it as the "typical" distance from values in the data from their mean.
+You can interpret it as the "typical" distance of values in the data from the mean.
 
 --
 
@@ -300,6 +305,7 @@ sd(x)
 
 ---
 class: inverse
+
 # Lines
 
 ---
@@ -312,13 +318,13 @@ Mathematically, lines can be defined by a slope and an intercept.
 
 You've seen this before, perhaps many moons ago:
 
-$y = mx + b$
+$$y = mx + b$$
 
 --
 
 We'll restate it this way:
 
-$y = a + bx$
+$$y = a + bx$$
 
 --
 
@@ -330,7 +336,7 @@ $a$ is the **intercept**
 
 $b$ is the **slope**
 
-* The units of $y$ the line changes for every unit of $x$
+* The units of $y$ the line rises for every unit increase in $x$
 * You can restate this as the *ratio* that $y$ increases relative to $x$
 
 ---
@@ -433,7 +439,7 @@ class: inverse
 
 --
 
-* $\frac{dy}{dx}$ is the little increase in $y$ given a little increase in $x$ *at any given point of the function*
+* $\frac{dy}{dx}$ is the little increase in $y$ given a little increase in $x$ *at any given point* of the function that generates $y$ (e.g., $y = 2x$)
 
 
 --
@@ -458,7 +464,7 @@ $y = 2 + 0.5x + 0.25x^2$
 
 --
 
-A *squared* or **quadratic** term ($x^2$) creates a *parabola*.
+A *squared* or **quadratic** term (e.g. $x^2$) creates a *parabola*.
 
 ```{r}
 #| fig.height: 3.5
@@ -483,12 +489,12 @@ While a curve has many different slopes, all those slopes can be defined by a si
 
 --
 
-Given $f(x) = a + x^n$, $\frac{d}{dx}f(x) = nx^{n-1}$
+Given $y = a + x^n$, $\frac{dy}{dx} = nx^{n-1}$
 
 Basic rules:
 
-* Delete any terms without $x$ (e.g., $a=2$)
-* Premultiply by exponents and decrement it
+* Delete any terms without $x$ (e.g., $a$ gets dropped)
+* Premultiply by exponents, then divide by $x$ (e.g.,  $x^3$ becomes $3x^2$ )
 
 --
 
@@ -499,11 +505,42 @@ So...
 * When $x = 3$ the slope is $0.5 + 0.5*3 = 2$.
 
 ---
+
+# Cubic Derivative
+
+These rules work for polynomials with more terms.
+
+--
+
+$$y = 35 + 3x + 0.5x^2 + 0.25x^3$$
+
+--
+
+1. Drop the constant (35)
+2. Multiple the coefficients by the exponents
+3. Divide by $x$ (i.e., reduce the exponents by 1)
+
+--
+
+$$\frac{dy}{dx} = 3 + x + 0.75x^2$$
+
+--
+
+When $x = 2$ the slope is...
+
+```{r}
+x <- 2
+3 + x + 0.75*x^2
+```
+
+---
 class: inverse
 # Why am I learning this?
 
 ---
 # Reasons
+
+--
 
 It will be clear soon, but for now:
 
@@ -546,374 +583,263 @@ class: inverse
 ---
 class: inverse
 
-.text-align-center[
-# BOO
+&nbsp;
+
+.text-big-center[
+BOO
 ]
 
 ---
 class: inverse
-
-# Part II
-
-## Files and basic `dplyr`
-
-![](img/dplyr.svg)
+# Indexing and Subsetting
+## Base R
 
 ---
 
-# Installing Tidyverse
+# Indices and Dimensions
 
-We're going to practice loading files and manipulating data.
-
---
-
-We will use a packages called `readr` and `dplyr` to do this neatly.
-
-These packages are part of the [tidyverse](http://tidyverse.org/) family of R packages that are the focus of this course.
+In base R, there are two main ways to access object elements: square brackets (`[]` or `[[]]`) and `$`. How you access an object depends on its *dimensions*.
 
 --
 
-If you have not already installed the tidyverse, type, in the console: `install.packages("tidyverse")`
-
---
-
-This will install a *large* number of R packages we will use throughout the term, including `readr` and `dplyr`.
-
-`dplyr` is a particularly useful package that we will talk more about next week, but today we're just going to use it for "filtering" data.
-
----
-
-# Loading dplyr
-
-```{r, message=TRUE}
-library(dplyr)
-library(readr)
-```
-
----
-
-# Wait, was that an error?
-
-When you load packages in R that have functions sharing the same name as functions you already have, the more recently loaded functions overwrite the previous ones ("masks them").
-
---
-
-This **message** is just letting you know that. To avoid showing this in your R Markdown file, add `message=FALSE` or `include=FALSE` to your chunk options when loading packages.
-
---
-
-Sometimes you may get a **warning message** when loading packages---usually because you aren't running the latest version of R:
-
-```
-Warning message:
-package `dplyr' was built under R version 4.2.0
-```
-Chunk options `message=FALSE` or `include=FALSE` will hide this. *Update R* to deal with it completely!
-
----
-class: inverse
-# Importing and Exporting Data
-
----
-# Saving Files
-
-You can save an R object on your computer as a file to open later:
-```{r}
-new.object <- 1:10 # Making vector of 1 to 10 
-save(new.object, file="new_object.RData")
-```
-
---
-
-You can open saved files in R as well:
-```{r}
-load("new_object.RData")
-```
-
---
-
-But where are these files being saved and loaded from?
-
----
-
-# Working Directories
-
-R saves files and looks for files to open in your current **working directory**. 
-
-You can find out what it is using the function `getwd()`.
-
-On my computer when I knitted these slides, it happened to be:
-
-```{r}
-getwd()
-```
-
----
-# Changing Your Working Directory
-
-You can use `setwd(dir = "C:/path/to/new/working/directory")` to change the working directory.
-
-Working Directory Suggestions:
-
-* `.Rmd` files use their current directory as a working directory: Just put everything you need in there!
-
---
-
-* For larger projects, instead of setting a working directory, it is usually better to use [RStudio projects](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects) to manage working directories.
-
---
-
-* Windows users: If you copy a path from Explorer, make sure to change back slashes (`\`) to forward slashes (`/`) for the filepaths
-
---
-
-* If you need to set a working, put `setwd()` at the start of your file so that someone using another computer knows they need to modify it
-
----
-# Projects in RStudio
-
-A better way to deal with working directories: RStudio's **project** feature in the top-right dropdown. This has lots of advantages:
-
---
-
-* Sets your working directory to be the project directory.
-
---
-
-* Remembers objects in your workspace, command history, etc. next time you re-open that project.
-
---
-
-* Reduces risk of intermingling different work using the same variable names (e.g. `n`) by using separate RStudio instances for each project.
-
---
-
-* Easy to integrate with version control systems (e.g. `git`)
-
---
-
-   * I usually make each RStudio project its own GitHub repository.
-
----
-# Delimited Text Files
-
-One of the most common ways for data to be stored is in a *delimited* text file, e.g. comma-separated values (**.csv**) or tab-separated values (**.tsv**). Here is **.csv** data:
-
-```
-"Id","Offense","Sex","Month"
-101,"Battery","Male",1,
-101,"Battery","Male",1,
-101,"Robbery","Male",1,
-101,"Battery","Male",2,
-101,"Robbery","Male",2,
-101,"Homicide","Male",3,
-103,"Robbery","Female",1,
-103,"Robbery","Female",3,
-103,"Battery","Female",4,
-```
-
----
-# `readr`
-
-R has a variety of built-in functions for importing delimited text, like `read.table()` and `read.csv()`. I recommend using the versions in the `readr` package instead: `read_csv()`, `read_tsv()`, and `read_delim()`:
-
-`readr` function features:
-
-* Faster!
-* A *little* smarter about dates and times
-* Handy function `problems()` you can run if there are errors
-* Loading bars for large files
-
----
-# `readr` Importing Example
-
-Let's import some data about fatal police shootings from Kaplan (2022).
-
-We can use `read_csv()` from `readr` to assign the contents of a `.csv` file to a new dataframe.
+Dataframes have *2* dimensions: **rows** and **columns**. Square brackets allow us to numerically **subset** in the format of `object[row, column]`. Leaving the row or column place empty selects *all* elements of that dimension.
 
 .small[
 ```{r}
-shootings <- 
-  read_csv( 
-    "https://clanfear.github.io/ioc_iqa/_data/fatal-police-shootings-data.csv"
-    )
+USArrests[1,] # First row
 ```
 ]
-
----
-
-# Check Out Shootings
-
-`dplyr` gives us access to the handy `glimpse()` for inspecting dataframes.
-
-.text-62[
+--
+.small[
 ```{r}
-
-glimpse(shootings)
+USArrests[1:3, 3:4] # First three rows, third and fourth column #<<
 ```
+]
+
+.pull-right[
+.footnote[
+The **colon operator** (`:`) generates a vector using the sequence of integers from its first argument to its second. `1:3` is equivalent to `c(1,2,3)`.
+]
 ]
 
 ---
 
-# What's Interesting Here?
+# Using names
 
-* **Character** variables, e.g. `state`, `manner_of_death`, `armed`
+We can also subset using the names of rows or columns:
+
+```{r}
+USArrests["California",]
+```
+
+```{r}
+head(USArrests[, c("Murder", "UrbanPop")])
+```
+
+---
+
+# Single columns
+
+If you subset to a single column, it returns it as a vector instead of a dataframe:
+
+```{r}
+USArrests[, "Murder"]
+```
 
 --
 
-* Many observations: $n=`r nrow(shootings)`$ rows
+*Columns* in dataframes can also be accessed using their names with the `$` extract operator:
 
---
+```{r}
+USArrests$Murder
+```
 
-* A nested/hierarchical structure: `people` in `states` in `continent`
+---
+
+# Extract: `$`
+
+You may have noticed `$` before when we used `str()`:
+
+```{r}
+str(USArrests)
+```
+
+Like the matrix subsetting suggestions, it is a hint you can select columns that way.
+
+---
+
+# Mix and Match
+
+```{r}
+USArrests$Murder[1:10]
+```
+
+Note here I *also* used brackets to select just the first 10 elements of that column.
+
+You can mix subsetting formats! In this case I provided only a single value (no column index) because **vectors** have *only one dimension* (length).
+
+If you try to subset something and get a warning about "incorrect number of dimensions", check your subsetting!
 
 ---
 class: inverse
 
-# Subsetting Data
-
-
----
-
-# Installing Tidyverse
-
-We'll want to be able to slice up this data frame into subsets (e.g. just the rows for Afghanistan, just the rows for 1997).
-
-We will use a package called `dplyr` to do this neatly.
-
-`dplyr` is part of the [tidyverse](http://tidyverse.org/) family of R packages that are the focus of this course.
-
---
-
-If you have not already installed the tidyverse, type, in the console: `install.packages("tidyverse")`
-
---
-
-This will install a *large* number of R packages we will use throughout the term, including `dplyr`.
-
-`dplyr` is a very useful and powerful package that we will talk more about soon, but today we're just going to use it for "filtering" data.
+# Logical Expressions
 
 ---
 
-# Loading dplyr
+# Indexing by Expression
 
-```{r, message=TRUE}
-library(dplyr)
-```
-
----
-
-# Wait, was that an error?
-
-When you load packages in R that have functions sharing the same name as functions you already have, the more recently loaded functions overwrite the previous ones ("masks them").
-
---
-
-This **message** is just letting you know that. To avoid showing this in your R Markdown file, add `message=FALSE` or `include=FALSE` to your chunk options when loading packages.
-
---
-
-Sometimes you may get a **warning message** when loading packages---usually because you aren't running the latest version of R:
-
-```
-Warning message:
-package `dplyr' was built under R version 4.2.2 
-```
-Chunk options `message=FALSE` or `include=FALSE` will hide this. *Update R* to deal with it completely!
-
----
-
-# Pipes
-
-We can use pipe operators (`|>`) to send data between functions. So instead of nesting functions like this:
+We can also index using expressions—logical *tests*.
 
 ```{r}
-sort(table(shootings$race))
+USArrests[USArrests$Murder > 15, ]
 ```
 
 --
 
-We can pipe them like this:
+What does this give us?
+
+
+---
+
+# How Expressions Work
+
+What does `USArrests$Murder > 15` actually do? 
+
+--
 
 ```{r}
-shootings$race |> table() |> sort()
+USArrests$Murder > 15
 ```
 
 --
 
-Read this as, "send `shootings$race` to `table()`, then send the output of that to `sort()`."
-In essence, pipes read "left to right" while nested functions read "inside to out."
-This may be confusing... we'll cover it more later!
+It returns a vector of `TRUE` or `FALSE` values.
+
+When used with the subset operator (`[]`), elements for which a `TRUE` is given are returned while those corresponding to `FALSE` are dropped.
 
 ---
 
-# `filter` Data Frames
+# Logical Operators
+
+We used `>` for testing "greater than": `USArrests$Murder > 15`.
+
+--
+
+There are many other [logical operators](http://www.statmethods.net/management/operators.html):
+
+--
+* `==`: equal to
+
+--
+* `!=`: not equal to
+
+--
+* `>`, `>=`, `<`, `<=`: less than, less than or equal to, etc.
+
+--
+* `%in%`: used with checking equal to one of several values
+
+--
+
+Or we can combine multiple logical conditions:
+
+* `&`: both conditions need to hold (AND)
+--
+
+* `|`: at least one condition needs to hold (OR)
+--
+
+* `!`: inverts a logical condition (`TRUE` becomes `FALSE`, `FALSE` becomes `TRUE`)
+
+--
+
+Logical operators are one of the foundations of programming. You should experiment with these to become familiar with how they work!
+
+---
+
+# And: `&`
+
+![:width 50%](img/murder_and_assault.svg)
 
 ```{r}
-shootings %>% filter(armed == "unarmed")
+USArrests[USArrests$Murder > 15 & USArrests$Assault > 300, ]
 ```
-
-What is this doing?
 
 
 
 ---
 
-# Multiple Conditions Example
+# Or: `|`
 
+![:width 50%](img/murder_or_assault.svg)
 
 ```{r}
-shootings %>%
-    filter(armed == "unarmed" & age < 18)
+USArrests[USArrests$Murder > 15 | USArrests$Assault > 300, ]
+```
+
+
+---
+
+# Sidenote: Missing Values
+
+Missing values are coded as `NA` entries without quotes:
+
+```{r}
+vector_w_missing <- c(1, 2, NA, 4, 5, 6, NA)
+```
+
+--
+
+Even one `NA` "poisons the well": You'll get `NA` out of your calculations unless you remove them manually or use the extra argument `na.rm = TRUE` in some functions:
+
+```{r}
+mean(vector_w_missing)
+```
+
+--
+
+We can take missings (`NA`) and remove (`rm`) them:
+
+```{r}
+mean(vector_w_missing, na.rm=TRUE)
 ```
 
 ---
-# Multiple Conditions
+# Finding Missing Values
 
-.pull-left[
+**WARNING:** You can't test for missing values by seeing if they "equal" (`==`) `NA`:
 
-### And: `&`
-
-```{r, eval=FALSE}
-shootings %>%
-    filter(armed == "unarmed" & age < 18)
+```{r}
+vector_w_missing == NA
 ```
 
-.image-100[
-![](img/country_and_year.svg)
+--
+
+But you can use the `is.na()` function:
+
+```{r}
+is.na(vector_w_missing)
+```
+
+--
+
+We can use subsetting to get the equivalent of `na.rm=TRUE`:
+
+```{r}
+mean(vector_w_missing[!is.na(vector_w_missing)]) #<<
+```
+
+
+.footnote[
+`!` *reverses* a logical condition. Read the above as "subset to *not* `NA`"
 ]
 
-*Give me rows where the country is Oman **and** the year is after 1980.*
-
-]
-
---
-
-.pull-right[
-
-### Or: `|`
-
-```{r, eval=FALSE}
-gapminder %>%
-  filter(country == "Oman" |
-         year > 1980)
-```
-
-.image-100[
-![](img/country_or_year.svg)
-]
-
-*Give me rows where the country is Oman **or** the year is after 1980... or **both**.*
-
-]
-
 ---
+class: inverse
 
-# Saving a Subset
+# For Next Time
 
-If we think a particular subset will be used repeatedly, we can save it and give it a name like any other object:
+* Read Kaplan chapters 3 and 4
 
-```{r}
-China <- gapminder %>% filter(country == "China")
-head(China, 4)
-```
+* Try a bit more `swirl`
