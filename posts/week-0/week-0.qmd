@@ -8,6 +8,8 @@ draft: false
 
 [Lecture Slides](https://clanfear.github.io/ioc_iqa/_lectures/0_intro-to-r/slides_intro-to-r.html)
 
+[.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/0_intro-to-r/slides_intro-to-r.R)
+
 Reading (for *after* the seminar):
 
 Kaplan (2022), [Chapter 1](https://crimebythenumbers.com/a-soup-to-nuts-project-example.html) and [Chapter 2](https://crimebythenumbers.com/intro-to-r.html)
