@@ -10,4 +10,4 @@ Lecture Slides
 
 Reading (for *before* the seminar):
 
-Kaplan (2022), [Chapter 3](https://crimebythenumbers.com/data-types.html) and [Chapter 4](https://crimebythenumbers.com/reading-and-writing-data.html)
+* Kaplan (2022), [Chapter 3](https://crimebythenumbers.com/data-types.html) and [Chapter 4](https://crimebythenumbers.com/reading-and-writing-data.html)

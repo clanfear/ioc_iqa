@@ -12,4 +12,4 @@ draft: false
 
 Reading (for *after* the seminar):
 
-Kaplan (2022), [Chapter 1](https://crimebythenumbers.com/a-soup-to-nuts-project-example.html) and [Chapter 2](https://crimebythenumbers.com/intro-to-r.html)
+* Kaplan (2022), [Chapter 1](https://crimebythenumbers.com/a-soup-to-nuts-project-example.html) and [Chapter 2](https://crimebythenumbers.com/intro-to-r.html)
