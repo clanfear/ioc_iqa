@@ -1,5 +1,7 @@
 project:
   type: website
+  post-render:
+    - create_redirect.R
 
 website:
   title: "Introduction to Quantitative Analysis"
