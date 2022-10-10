@@ -6,6 +6,8 @@ date: "2022-11-09"
 draft: false
 ---
 
-Lecture Slides forthcoming
+Lecture Slides (forthcoming)
 
-Reading forthcoming
+.R script to follow along (forthcoming)
+
+Lecture Recording (forthcoming)

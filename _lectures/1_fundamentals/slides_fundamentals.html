@@ -4,7 +4,7 @@
     <title>Fundamentals</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.16/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 12 Oct 2022<br>Updated: 06 Oct 2022
+### 12 Oct 2022<br>Updated: 10 Oct 2022
 ]
 
 ---
@@ -32,14 +32,24 @@ class: center, top, title-slide
 # Today
 
 * Math Review
+
    * Variables, vectors, and matrices
+   
    * Lines and curves
+   
    * Derivatives
-* Data manipulation with `dplyr`
+
+* Programming
+
+   * Indexing and Subsetting
+   
+   * Logical Expressions
 
 ---
 class: inverse
 # Math Review
+
+![](img/math.png)
 
 ---
 ## Variables
@@ -52,7 +62,7 @@ class: inverse
 
 --
 
-* Capital letters ( `\(X\)` ) or letters with an index ( `\(x_i\)` ) refer to variables with multiple values---that is, with *dimensions*.
+* Capital letters ( `\(X\)` ) or letters with an index ( `\(x_i\)` ) refer to variables with multiple values—that is, with *dimensions*.
   * e.g.: `\(X = x_i = (3,4,5)\)`
 
 
@@ -60,7 +70,7 @@ class: inverse
 
 * Subscripts like `\(x_i\)` are used to **index** elements of vectors.
 
-   * `\(i\)` here is itself a variable that indicates the position
+   * `\(i\)` here is itself a variable that indicates the position indexed
 
 --
 
@@ -73,7 +83,7 @@ class: inverse
 
 
 ```r
-x &lt;- c(3, 4, 5) # Create x
+x &lt;- c(3, 4, 5) # Create x, a vector of length 3
 x
 ```
 
@@ -83,7 +93,7 @@ x
 
 --
 
-Getting `\(x_3\)`:
+Indexing `\(x_3\)`:
 
 
 ```r
@@ -98,7 +108,7 @@ x[3] # Get the third element of x
 
 We can index multiple elements.
 
-Get `\(x_2\)` and `\(x_3\)`:
+Index `\(x_2\)` and `\(x_3\)`:
 
 
 ```r
@@ -121,9 +131,14 @@ Matrices are indexed with subscripts for *rows*, *columns* (e.g., `\(x_{ij}\)`)
 
 --
 
-`$$X = \begin{bmatrix}3 &amp; 5\\4 &amp; 6\end{bmatrix}$$`
-`$$x_{2,1} = 4$$`
+`$$X = \begin{bmatrix}3 &amp; 5\\4 &amp; 6\end{bmatrix} \;\;\; x_{2,1} = 4$$`
 
+
+--
+
+&amp;nbsp;
+
+`$$X = \begin{bmatrix}6 &amp; 2 &amp; 3\\1 &amp; 9 &amp; 5\\4 &amp; 8 &amp; 0\end{bmatrix} \;\;\; \text{What is } x_{3,2}?$$`
 
 ---
 
@@ -131,24 +146,41 @@ Matrices are indexed with subscripts for *rows*, *columns* (e.g., `\(x_{ij}\)`)
 
 
 ```r
-(X &lt;- matrix(c(3,4,5,6), nrow = 2))
+(X &lt;- matrix(c(6,1,4,2,9,8,3,5,0), nrow = 3))
 ```
 
 ```
-##      [,1] [,2]
-## [1,]    3    5
-## [2,]    4    6
+##      [,1] [,2] [,3]
+## [1,]    6    2    3
+## [2,]    1    9    5
+## [3,]    4    8    0
 ```
+
 
 Note R shows indices on the margins to tell you how to subset.
 
+--
+
 
 ```r
-X[2,1]
+X[3,2] # Third row, second column
 ```
 
 ```
-## [1] 4
+## [1] 8
+```
+
+--
+
+We can take multiple elements of a matrix too (and shake up the order):
+
+
+```r
+X[3,c(2,1)] # Third row, second and first column
+```
+
+```
+## [1] 8 4
 ```
 
 ---
@@ -163,7 +195,7 @@ X[2,1]
 
 Given `\(x = [7, 11, 11, 13, 26]\)`:
 
-`$$x_1 + x_2 + x_3 + x_4 = 7 + 11 + 11 + 13 + 26$$`
+`$$\sum_{i=1}^{n}x_i = x_1 + x_2 + x_3 + x_4 + x_5 = 7 + 11 + 11 + 13 + 26 = 68$$`
 
 --
 
@@ -188,6 +220,10 @@ class: inverse
 
 ### Otherwise known as averages
 
+&amp;nbsp;
+
+![](img/mediocre-mad-max.gif)
+
 ---
 
 ## Mean
@@ -200,13 +236,15 @@ The (arithmetic) mean is the *expected value* of a variable.
 
 If you draw randomly from that variable, the mean would be the least wrong single guess you could make about that value.&lt;sup&gt;1&lt;/sup&gt;
 
+Put another way, if you draw from the variable many times, the positive and negative differences from the mean balance out.
+
 .footnote[[1] Technically the mean minimizes the *squared error*.]
 
 --
 
 
 ```r
-(1/length(x)) * sum(x)
+(1/length(x)) * sum(x) # Mean formula
 ```
 
 ```
@@ -215,7 +253,7 @@ If you draw randomly from that variable, the mean would be the least wrong singl
 
 
 ```r
-mean(x)
+mean(x) # Mean function is just a shortcut
 ```
 
 ```
@@ -268,7 +306,7 @@ median(x)
 
 ## Mode
 
-The **mode** is the most common value in the variable.
+The **mode** is the most **frequent** value in the variable.
 
 --
 
@@ -291,11 +329,11 @@ table(x)
 
 --
 
-And you can find the mode directly:
+And you can find the mode directly (we'll learn this later today!):
 
 
 ```r
-table(x)[table(x)==max(table(x))]
+table(x)[table(x) == max(table(x))] # Subsetting!
 ```
 
 ```
@@ -322,7 +360,7 @@ mean(z)
 
 --
 
-The median (and mode) are not:
+The median is not:
 
 
 ```r
@@ -337,12 +375,18 @@ median(z)
 
 This means the median may be a more useful "average" when your data have extreme values.
 
-This is common with things like income or self-reported number of crimes committed.
+This is common with things like income or self-reported number of crimes committed—these always have **clumping** that makes the mode misleading (e.g., many zeroes)!
 
 ---
 class: inverse
 
 # Measures of Dispersion
+
+## How spread out something is
+
+&amp;nbsp;
+
+![:width 60%](img/dsotm.png)
 
 ---
 
@@ -415,6 +459,19 @@ class: inverse
 
 # Lines
 
+&amp;nbsp;
+
+&amp;nbsp;
+
+
+![](img/stock-image-line.png)
+---
+
+# Cartesian Plane
+
+![](slides_fundamentals_files/figure-html/unnamed-chunk-18-1.svg)&lt;!-- --&gt;
+
+
 ---
 
 # Slope-Intercept
@@ -460,7 +517,7 @@ plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 1, b = 0.5)
 ```
 
-![](slides_fundamentals_files/figure-html/unnamed-chunk-17-1.svg)&lt;!-- --&gt;
+![](slides_fundamentals_files/figure-html/unnamed-chunk-19-1.svg)&lt;!-- --&gt;
 
 
 The line *intercepts* the y-axis at 1.
@@ -476,7 +533,7 @@ plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 3, b = 0.5)
 ```
 
-![](slides_fundamentals_files/figure-html/unnamed-chunk-18-1.svg)&lt;!-- --&gt;
+![](slides_fundamentals_files/figure-html/unnamed-chunk-20-1.svg)&lt;!-- --&gt;
 
 The line *intercepts* the y-axis at 3.
 
@@ -491,7 +548,7 @@ plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 0.5)
 ```
 
-![](slides_fundamentals_files/figure-html/unnamed-chunk-19-1.svg)&lt;!-- --&gt;
+![](slides_fundamentals_files/figure-html/unnamed-chunk-21-1.svg)&lt;!-- --&gt;
 
 The line *intercepts* the y-axis at 2.
 
@@ -506,7 +563,7 @@ plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 0.5)
 ```
 
-![](slides_fundamentals_files/figure-html/unnamed-chunk-20-1.svg)&lt;!-- --&gt;
+![](slides_fundamentals_files/figure-html/unnamed-chunk-22-1.svg)&lt;!-- --&gt;
 
 From 2, the line increases by 0.5 for every `\(x\)`.
 
@@ -521,7 +578,7 @@ plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 0)
 ```
 
-![](slides_fundamentals_files/figure-html/unnamed-chunk-21-1.svg)&lt;!-- --&gt;
+![](slides_fundamentals_files/figure-html/unnamed-chunk-23-1.svg)&lt;!-- --&gt;
 
 From 2, the line increases by 0 for every `\(x\)`.
 
@@ -536,7 +593,7 @@ plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 2)
 ```
 
-![](slides_fundamentals_files/figure-html/unnamed-chunk-22-1.svg)&lt;!-- --&gt;
+![](slides_fundamentals_files/figure-html/unnamed-chunk-24-1.svg)&lt;!-- --&gt;
 
 From 2, the line increases by 2 for every `\(x\)`.
 
@@ -544,6 +601,10 @@ From 2, the line increases by 2 for every `\(x\)`.
 class: inverse
 
 # A little bit of calculus
+
+&amp;nbsp;
+
+![:width 80%](img/stress.jpg)
 
 ---
 
@@ -563,7 +624,7 @@ class: inverse
 
 --
 
-* For a straight line, this is the same everywhere---it has a constant slope.
+* For a straight line, this is the same everywhere—it has a constant slope.
 
 --
 
@@ -577,9 +638,9 @@ class: inverse
 ---
 # Polynomial curves
 
-You can define a curve by augmenting the slope-intercept formula:
+You can define a curve in the same line formula:
 
-`\(y = 2 + 0.5x + 0.25x^2\)`
+`$$y = 2 + 0.5x + 0.25x^2$$`
 
 --
 
@@ -590,7 +651,7 @@ A *squared* or **quadratic** term (e.g. `\(x^2\)`) creates a *parabola*.
 curve(2 + 0.5*x + 0.25*x^2, from = -2, to = 2, ylab = "y")
 ```
 
-![](slides_fundamentals_files/figure-html/unnamed-chunk-23-1.svg)&lt;!-- --&gt;
+&lt;img src="slides_fundamentals_files/figure-html/unnamed-chunk-25-1.svg" style="display: block; margin: auto auto auto 0;" /&gt;
 
 --
 
@@ -723,11 +784,11 @@ class: inverse
 
 # Indices and Dimensions
 
-In base R, there are two main ways to access object elements: square brackets (`[]` or `[[]]`) and `$`. How you access an object depends on its *dimensions*.
+There are two main ways index objects: square brackets (`[]` or `[[]]`) and `$`. How you access an object depends on its *dimensions*.
 
 --
 
-Dataframes have *2* dimensions: **rows** and **columns**. Square brackets allow us to numerically **subset** in the format of `object[row, column]`. Leaving the row or column place empty selects *all* elements of that dimension.
+Dataframes have *2* dimensions: **rows** and **columns**. Brackets **subset** using `object[row, column]`. Leaving the row or column place empty selects *all* elements of that dimension.
 
 .small[
 
@@ -763,7 +824,7 @@ The **colon operator** (`:`) generates a vector using the sequence of integers f
 
 ---
 
-# Using names
+# Using Names
 
 We can also subset using the names of rows or columns:
 
@@ -776,6 +837,8 @@ USArrests["California",]
 ##            Murder Assault UrbanPop Rape
 ## California      9     276       91 40.6
 ```
+
+--
 
 
 ```r
@@ -813,7 +876,7 @@ USArrests[, "Murder"]
 
 --
 
-*Columns* in dataframes can also be accessed using their names with the `$` extract operator:
+*Columns* in dataframes can also be accessed using names with the `$` extract operator:
 
 
 ```r
@@ -864,7 +927,14 @@ USArrests$Murder[1:10]
 
 Note here I *also* used brackets to select just the first 10 elements of that column.
 
+--
+
 You can mix subsetting formats! In this case I provided only a single value (no column index) because **vectors** have *only one dimension* (length).
+
+* R first processes the `$Murder`
+* Then it processes the `[1:10]`
+
+--
 
 If you try to subset something and get a warning about "incorrect number of dimensions", check your subsetting!
 
@@ -872,6 +942,12 @@ If you try to subset something and get a warning about "incorrect number of dime
 class: inverse
 
 # Logical Expressions
+
+&amp;nbsp;
+
+&amp;nbsp;
+
+![:width 50%](img/spock.gif)
 
 ---
 

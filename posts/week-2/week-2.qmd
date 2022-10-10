@@ -6,7 +6,11 @@ date: "2022-10-19"
 draft: false
 ---
 
-Lecture Slides
+Lecture Slides (forthcoming)
+
+.R script to follow along (forthcoming)
+
+Lecture Recording (forthcoming)
 
 Reading (for *before* the seminar):
 

@@ -1,8 +1,8 @@
 ---
-title: "Statistical Inference"
-subtitle: "IQA Lecture 3"
+title: "Linear Models I"
+subtitle: "IQA Lecture 4"
 author: "Charles Lanfear"
-date: "19 Oct 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "26 Oct 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -25,17 +25,10 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
 # Things to include
 
 * Stats
-   * Central limit theorem illustrated
-   * Simulation examples
-   * TTest? Chi-Square?
-      * Prob cover ttest on its own just as comparison between two distributions
+   * TTest is an lm() with 2 category (binary) predictor
+   * ANOVA is an lm() with 3+ category predictor
 
 * Code
-   * Lot of ggplot stuff
-   * Plot a 
-   * Might be good time to sneak in pivots?
+   * lm() in ggplot
 
 # Today
-
-
-

@@ -1,20 +1,22 @@
-x <- c(3, 4, 5) # Create x
+x <- c(3, 4, 5) # Create x, a vector of length 3
 x
 
 x[3] # Get the third element of x
 
 x[c(2,3)] # Get the second and third elements of x
 
-(X <- matrix(c(3,4,5,6), nrow = 2))
+(X <- matrix(c(6,1,4,2,9,8,3,5,0), nrow = 3))
 
-X[2,1]
+X[3,2] # Third row, second column
+
+X[3,c(2,1)] # Third row, second and first column
 
 x <- c(7, 11, 11, 13, 26)
 sum(x)
 
-(1/length(x)) * sum(x)
+(1/length(x)) * sum(x) # Mean formula
 
-mean(x)
+mean(x) # Mean function is just a shortcut
 
 x[(length(x) + 1) / 2] # length(x) is the number of elements
 
@@ -22,7 +24,7 @@ median(x)
 
 table(x)
 
-table(x)[table(x)==max(table(x))]
+table(x)[table(x) == max(table(x))] # Subsetting!
 
 z <- c(2, 5, 3, 5, 95)
 mean(z)
@@ -34,6 +36,11 @@ var(x)
 
 sqrt(var(x))
 sd(x)
+
+plot(x=c(-10, 10), y=c(-10, 10), type="n")
+abline(h=0, lty = "dashed")
+abline(v=0, lty = "dashed")
+text(x = c(0, 6, 0), y = c(0, 0, 6), labels = c("Origin", "X-Axis", "Y-Axis"), cex = 1.5, col = "red")
 
 plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 1, b = 0.5)

@@ -8,6 +8,8 @@ draft: false
 
 [Lecture Slides](https://clanfear.github.io/ioc_iqa/_lectures/0_intro-to-r/slides_intro-to-r.html)
 
+[Lecture Recording](https://youtu.be/J-DMfU9YIuI)
+
 [.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/0_intro-to-r/slides_intro-to-r.R)
 
 Reading (for *after* the seminar):

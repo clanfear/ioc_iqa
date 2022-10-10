@@ -28,7 +28,10 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
    * Mean vs. median and skew
       * Logs and log-normals
    * Histograms
+   * Barplots?
    * Densities
+   * Tables for categoricals
+   * skimr?
 
 * Relationships
   * Mean differences between groups

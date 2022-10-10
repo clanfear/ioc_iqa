@@ -52,10 +52,10 @@
 </symbol>
 </g>
 <clipPath id="clip1">
-  <path d="M 59.039063 59.039063 L 473.757813 59.039063 L 473.757813 140 L 59.039063 140 Z M 59.039063 59.039063 "/>
+  <path d="M 59.039063 71 L 473.757813 71 L 473.757813 133 L 59.039063 133 Z M 59.039063 71 "/>
 </clipPath>
 </defs>
-<g id="surface10479">
+<g id="surface10074">
 <rect x="0" y="0" width="504" height="252" style="fill:rgb(100%,100%,100%);fill-opacity:1;stroke:none;"/>
 <path style="fill:none;stroke-width:0.75;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 74.398438 178.558594 L 458.398438 178.558594 "/>
 <path style="fill:none;stroke-width:0.75;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 74.398438 178.558594 L 74.398438 185.761719 "/>
@@ -115,7 +115,7 @@
   <use xlink:href="#glyph1-7" x="12.960938" y="121.800781"/>
 </g>
 <g clip-path="url(#clip1)" clip-rule="nonzero">
-<path style="fill:none;stroke-width:0.75;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 59.039063 138.71875 L 473.761719 -100.320313 "/>
+<path style="fill:none;stroke-width:0.75;stroke-linecap:round;stroke-linejoin:round;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 59.039063 132.078125 L 473.761719 72.320313 "/>
 </g>
 </g>
 </svg>

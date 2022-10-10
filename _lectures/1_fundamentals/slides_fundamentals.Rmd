@@ -24,14 +24,24 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
 # Today
 
 * Math Review
+
    * Variables, vectors, and matrices
+   
    * Lines and curves
+   
    * Derivatives
-* Data manipulation with `dplyr`
+
+* Programming
+
+   * Indexing and Subsetting
+   
+   * Logical Expressions
 
 ---
 class: inverse
 # Math Review
+
+![](img/math.png)
 
 ---
 ## Variables
@@ -44,7 +54,7 @@ class: inverse
 
 --
 
-* Capital letters ( $X$ ) or letters with an index ( $x_i$ ) refer to variables with multiple values---that is, with *dimensions*.
+* Capital letters ( $X$ ) or letters with an index ( $x_i$ ) refer to variables with multiple values—that is, with *dimensions*.
   * e.g.: $X = x_i = (3,4,5)$
 
 
@@ -52,7 +62,7 @@ class: inverse
 
 * Subscripts like $x_i$ are used to **index** elements of vectors.
 
-   * $i$ here is itself a variable that indicates the position
+   * $i$ here is itself a variable that indicates the position indexed
 
 --
 
@@ -64,13 +74,13 @@ class: inverse
 ## Vectors in R
 
 ```{r}
-x <- c(3, 4, 5) # Create x
+x <- c(3, 4, 5) # Create x, a vector of length 3
 x
 ```
 
 --
 
-Getting $x_3$:
+Indexing $x_3$:
 
 ```{r}
 x[3] # Get the third element of x
@@ -80,7 +90,7 @@ x[3] # Get the third element of x
 
 We can index multiple elements.
 
-Get $x_2$ and $x_3$:
+Index $x_2$ and $x_3$:
 
 ```{r}
 x[c(2,3)] # Get the second and third elements of x
@@ -98,22 +108,38 @@ Matrices are indexed with subscripts for *rows*, *columns* (e.g., $x_{ij}$)
 
 --
 
-$$X = \begin{bmatrix}3 & 5\\4 & 6\end{bmatrix}$$
-$$x_{2,1} = 4$$
+$$X = \begin{bmatrix}3 & 5\\4 & 6\end{bmatrix} \;\;\; x_{2,1} = 4$$
 
+
+--
+
+&nbsp;
+
+$$X = \begin{bmatrix}6 & 2 & 3\\1 & 9 & 5\\4 & 8 & 0\end{bmatrix} \;\;\; \text{What is } x_{3,2}?$$
 
 ---
 
 ## Matrices in R
 
 ```{r}
-(X <- matrix(c(3,4,5,6), nrow = 2))
+(X <- matrix(c(6,1,4,2,9,8,3,5,0), nrow = 3))
 ```
+
 
 Note R shows indices on the margins to tell you how to subset.
 
+--
+
 ```{r}
-X[2,1]
+X[3,2] # Third row, second column
+```
+
+--
+
+We can take multiple elements of a matrix too (and shake up the order):
+
+```{r}
+X[3,c(2,1)] # Third row, second and first column
 ```
 
 ---
@@ -128,7 +154,7 @@ $$\sum_{i=1}^{n}x_i$$
 
 Given $x = [7, 11, 11, 13, 26]$:
 
-$$x_1 + x_2 + x_3 + x_4 = 7 + 11 + 11 + 13 + 26$$
+$$\sum_{i=1}^{n}x_i = x_1 + x_2 + x_3 + x_4 + x_5 = 7 + 11 + 11 + 13 + 26 = 68$$
 
 --
 
@@ -148,6 +174,10 @@ class: inverse
 
 ### Otherwise known as averages
 
+&nbsp;
+
+![](img/mediocre-mad-max.gif)
+
 ---
 
 ## Mean
@@ -160,16 +190,18 @@ $$\bar{x} = \frac{1}{n}\sum_{i=1}^{n}x_{i}$$
 
 If you draw randomly from that variable, the mean would be the least wrong single guess you could make about that value.<sup>1</sup>
 
+Put another way, if you draw from the variable many times, the positive and negative differences from the mean balance out.
+
 .footnote[[1] Technically the mean minimizes the *squared error*.]
 
 --
 
 ```{r}
-(1/length(x)) * sum(x)
+(1/length(x)) * sum(x) # Mean formula
 ```
 
 ```{r}
-mean(x)
+mean(x) # Mean function is just a shortcut
 ```
 
 
@@ -208,7 +240,7 @@ median(x)
 
 ## Mode
 
-The **mode** is the most common value in the variable.
+The **mode** is the most **frequent** value in the variable.
 
 --
 
@@ -224,10 +256,10 @@ table(x)
 
 --
 
-And you can find the mode directly:
+And you can find the mode directly (we'll learn this later today!):
 
 ```{r}
-table(x)[table(x)==max(table(x))]
+table(x)[table(x) == max(table(x))] # Subsetting!
 ```
 
 .pull-right[.footnote["Subset the table to when the count is equal to the highest value."]]
@@ -244,7 +276,7 @@ mean(z)
 
 --
 
-The median (and mode) are not:
+The median is not:
 
 ```{r}
 median(z)
@@ -254,12 +286,18 @@ median(z)
 
 This means the median may be a more useful "average" when your data have extreme values.
 
-This is common with things like income or self-reported number of crimes committed.
+This is common with things like income or self-reported number of crimes committed—these always have **clumping** that makes the mode misleading (e.g., many zeroes)!
 
 ---
 class: inverse
 
 # Measures of Dispersion
+
+## How spread out something is
+
+&nbsp;
+
+![:width 60%](img/dsotm.png)
 
 ---
 
@@ -307,6 +345,25 @@ sd(x)
 class: inverse
 
 # Lines
+
+&nbsp;
+
+&nbsp;
+
+
+![](img/stock-image-line.png)
+---
+
+# Cartesian Plane
+
+```{r, echo=FALSE}
+#| fig.height = 5
+plot(x=c(-10, 10), y=c(-10, 10), type="n")
+abline(h=0, lty = "dashed")
+abline(v=0, lty = "dashed")
+text(x = c(0, 6, 0), y = c(0, 0, 6), labels = c("Origin", "X-Axis", "Y-Axis"), cex = 1.5, col = "red")
+```
+
 
 ---
 
@@ -426,6 +483,10 @@ class: inverse
 
 # A little bit of calculus
 
+&nbsp;
+
+![:width 80%](img/stress.jpg)
+
 ---
 
 ## Derivatives
@@ -444,7 +505,7 @@ class: inverse
 
 --
 
-* For a straight line, this is the same everywhere---it has a constant slope.
+* For a straight line, this is the same everywhere—it has a constant slope.
 
 --
 
@@ -458,9 +519,9 @@ class: inverse
 ---
 # Polynomial curves
 
-You can define a curve by augmenting the slope-intercept formula:
+You can define a curve in the same line formula:
 
-$y = 2 + 0.5x + 0.25x^2$
+$$y = 2 + 0.5x + 0.25x^2$$
 
 --
 
@@ -469,6 +530,7 @@ A *squared* or **quadratic** term (e.g. $x^2$) creates a *parabola*.
 ```{r}
 #| fig.height: 3.5
 #| fig.width: 6
+#| fig.align: "left"
 curve(2 + 0.5*x + 0.25*x^2, from = -2, to = 2, ylab = "y")
 ```
 
@@ -598,11 +660,11 @@ class: inverse
 
 # Indices and Dimensions
 
-In base R, there are two main ways to access object elements: square brackets (`[]` or `[[]]`) and `$`. How you access an object depends on its *dimensions*.
+There are two main ways index objects: square brackets (`[]` or `[[]]`) and `$`. How you access an object depends on its *dimensions*.
 
 --
 
-Dataframes have *2* dimensions: **rows** and **columns**. Square brackets allow us to numerically **subset** in the format of `object[row, column]`. Leaving the row or column place empty selects *all* elements of that dimension.
+Dataframes have *2* dimensions: **rows** and **columns**. Brackets **subset** using `object[row, column]`. Leaving the row or column place empty selects *all* elements of that dimension.
 
 .small[
 ```{r}
@@ -624,13 +686,15 @@ The **colon operator** (`:`) generates a vector using the sequence of integers f
 
 ---
 
-# Using names
+# Using Names
 
 We can also subset using the names of rows or columns:
 
 ```{r}
 USArrests["California",]
 ```
+
+--
 
 ```{r}
 head(USArrests[, c("Murder", "UrbanPop")])
@@ -648,7 +712,7 @@ USArrests[, "Murder"]
 
 --
 
-*Columns* in dataframes can also be accessed using their names with the `$` extract operator:
+*Columns* in dataframes can also be accessed using names with the `$` extract operator:
 
 ```{r}
 USArrests$Murder
@@ -676,7 +740,14 @@ USArrests$Murder[1:10]
 
 Note here I *also* used brackets to select just the first 10 elements of that column.
 
+--
+
 You can mix subsetting formats! In this case I provided only a single value (no column index) because **vectors** have *only one dimension* (length).
+
+* R first processes the `$Murder`
+* Then it processes the `[1:10]`
+
+--
 
 If you try to subset something and get a warning about "incorrect number of dimensions", check your subsetting!
 
@@ -684,6 +755,12 @@ If you try to subset something and get a warning about "incorrect number of dime
 class: inverse
 
 # Logical Expressions
+
+&nbsp;
+
+&nbsp;
+
+![:width 50%](img/spock.gif)
 
 ---
 
