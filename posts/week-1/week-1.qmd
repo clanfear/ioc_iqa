@@ -1,6 +1,6 @@
 ---
 title: "Week 1: Fundamentals"
-description: "Review of maths and introduction to `dplyr`"
+description: "Review of maths and introduction to subsetting"
 author: "Charles Lanfear"
 date: "2022-10-12"
 draft: false
