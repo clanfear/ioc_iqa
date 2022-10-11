@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 12 Oct 2022<br>Updated: 10 Oct 2022
+### 12 Oct 2022<br>Updated: 11 Oct 2022
 ]
 
 ---
@@ -63,8 +63,9 @@ class: inverse
 --
 
 * Capital letters ( `\(X\)` ) or letters with an index ( `\(x_i\)` ) refer to variables with multiple values—that is, with *dimensions*.
-  * e.g.: `\(X = x_i = (3,4,5)\)`
 
+  * e.g.: `\(X = x_i = (3,4,5)\)`
+  * Variables with one dimension (length) are sometimes called a **vector**
 
 --
 
@@ -236,7 +237,7 @@ The (arithmetic) mean is the *expected value* of a variable.
 
 If you draw randomly from that variable, the mean would be the least wrong single guess you could make about that value.&lt;sup&gt;1&lt;/sup&gt;
 
-Put another way, if you draw from the variable many times, the positive and negative differences from the mean balance out.
+Put another way, the positive and negative differences between all values and the mean balance out.
 
 .footnote[[1] Technically the mean minimizes the *squared error*.]
 
@@ -276,13 +277,13 @@ The **median** has this heinous formula:
 `$$m(x_i) = \begin{cases} x_{\frac{n+1}{2}},&amp; \text{if } n \text{ odd}\\ \frac{1}{2}(x_{\frac{n}{2}} + x_{\frac{n}{2} + 1}), &amp;\text{if } n \text{ even}\end{cases}$$`
 
 
-"If `\(x\)` has an odd number of elements, the median is the middle one. If `\(x\)` has an even number of elements, the median is the mean of the middle two."
+"If `\(x\)` has an odd number of elements, when put them in order, the median is the middle value. If `\(x\)` has an even number of elements, the median is the mean of the middle two."
 
 --
 
 
 ```r
-x[(length(x) + 1) / 2] # length(x) is the number of elements
+sort(x)[(length(x) + 1) / 2]
 ```
 
 ```
@@ -427,7 +428,7 @@ If every value is the same, the variance is *zero*.
 
 ## Standard Deviation
 
-The standard deviation ( `\(s\)` or `\(sd\)` ) is just the root of the variance:
+The standard deviation ( `\(s\)` or `\(sd\)` ) is just the square root of the variance:
 
 `$$s = sd = \sqrt{s^2}$$`
 
@@ -744,7 +745,7 @@ It will be clear soon, but for now:
 
 * Models are estimated using matrices and calculus
 
-   * *Which I won't make you do by manually*
+   * *Which I won't make you do manually*
 
 --
 
@@ -999,6 +1000,18 @@ USArrests$Murder &gt; 15
 It returns a vector of `TRUE` or `FALSE` values.
 
 When used with the subset operator (`[]`), elements for which a `TRUE` is given are returned while those corresponding to `FALSE` are dropped.
+
+--
+
+
+```r
+c(1,2,3,4)[c(TRUE, FALSE, TRUE, FALSE)]
+```
+
+```
+## [1] 1 3
+```
+
 
 ---
 

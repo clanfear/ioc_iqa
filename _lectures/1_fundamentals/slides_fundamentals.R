@@ -18,7 +18,7 @@ sum(x)
 
 mean(x) # Mean function is just a shortcut
 
-x[(length(x) + 1) / 2] # length(x) is the number of elements
+sort(x)[(length(x) + 1) / 2]
 
 median(x)
 
@@ -84,6 +84,8 @@ USArrests$Murder[1:10]
 USArrests[USArrests$Murder > 15, ]
 
 USArrests$Murder > 15
+
+c(1,2,3,4)[c(TRUE, FALSE, TRUE, FALSE)]
 
 USArrests[USArrests$Murder > 15 & USArrests$Assault > 300, ]
 
