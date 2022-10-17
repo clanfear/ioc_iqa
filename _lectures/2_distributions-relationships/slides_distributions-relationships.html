@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 19 Oct 2022<br>Updated: 16 Oct 2022
+### 19 Oct 2022<br>Updated: 17 Oct 2022
 ]
 
 ---
@@ -57,7 +57,7 @@ class: center, top, title-slide
       * One week to complete
    * [Jing's Office Hours](https://us05web.zoom.us/j/84826817691?pwd=cjFnQjBJY1BkOUxvRnBrQy9KbExNQT09): Friday, 12:30-13:30
       * Also by appointment
-   * Reschedule Nov 16th to Monday the 14th
+   * Reschedule Nov 16th to Monday Nov 14th
      * Tentative: 4 PM
 
 --
@@ -427,7 +427,7 @@ getwd()
 ```
 
 ```
-## [1] "C:/Users/cclan/OneDrive/GitHub/ioc_iqa/_lectures/2_distributions-relationships"
+## [1] "C:/Users/cl948/OneDrive/GitHub/ioc_iqa/_lectures/2_distributions-relationships"
 ```
 
 ---
@@ -715,6 +715,61 @@ shootings |&gt;
 
 ]
 
+
+
+
+---
+class: inverse
+
+# Plotting
+
+![:width 60%](img/ggplot2.svg)
+
+---
+
+# London Crime
+
+Let's load another example dataset: 
+
+Metropolitan Police recorded crime in London boroughs in 2021
+
+
+```r
+metro_2021 &lt;- read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021.csv")
+```
+
+```
+## Rows: 384 Columns: 6
+## ── Column specification ────────────────────────────────────────────
+## Delimiter: ","
+## chr (1): borough
+## dbl (5): month, antisocial_behaviour, burglary, robbery, violenc...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+
+---
+
+# London Crime
+
+
+
+```r
+glimpse(metro_2021)
+```
+
+```
+## Rows: 384
+## Columns: 6
+## $ borough                      &lt;chr&gt; "Barking and Dagenham", "Bark…
+## $ month                        &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10…
+## $ antisocial_behaviour         &lt;dbl&gt; 688, 585, 600, 531, 469, 507,…
+## $ burglary                     &lt;dbl&gt; 87, 105, 81, 85, 106, 90, 75,…
+## $ robbery                      &lt;dbl&gt; 30, 50, 49, 40, 47, 46, 42, 3…
+## $ violence_and_sexual_offences &lt;dbl&gt; 469, 449, 561, 564, 589, 617,…
+```
+
 ---
 
 # Saving a Subset
@@ -723,31 +778,45 @@ If we think a particular subset will be used repeatedly, we can save it and give
 
 
 ```r
-unarmed &lt;- shootings |&gt; filter(armed == "unarmed")
-head(unarmed, 4)
+westminster &lt;- metro_2021 |&gt; filter(borough == "Westminster")
+head(westminster, 4)
 ```
 
 ```
-## # A tibble: 4 × 14
-##      id name       date       manne…¹ armed   age gender race  city 
-##   &lt;dbl&gt; &lt;chr&gt;      &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;
-## 1     5 John Paul… 2015-01-03 shot a… unar…    23 M      H     Wich…
-## 2    16 Autumn St… 2015-01-06 shot    unar…    34 F      W     Burl…
-## 3    36 Artago Da… 2015-01-08 shot    unar…    36 M      B     Stro…
-## 4   352 Joshua Om… 2015-01-26 shot    unar…    24 M      H     Taho…
-## # … with 5 more variables: state &lt;chr&gt;,
-## #   signs_of_mental_illness &lt;lgl&gt;, threat_level &lt;chr&gt;, flee &lt;chr&gt;,
-## #   body_camera &lt;lgl&gt;, and abbreviated variable name
-## #   ¹​manner_of_death
+## # A tibble: 4 × 6
+##   borough     month antisocial_behaviour burglary robbery violence…¹
+##   &lt;chr&gt;       &lt;dbl&gt;                &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;
+## 1 Westminster     1                 1501      150      64        487
+## 2 Westminster     2                 1326      150      51        491
+## 3 Westminster     3                 1474      189      76        658
+## 4 Westminster     4                 1396      155     126        670
+## # … with abbreviated variable name ¹​violence_and_sexual_offences
 ```
 
 ---
 
-# Wrap-Up
+## Base R Plots from Last Week
 
-* Reading for next week
+.pull-left[
+ .small[
 
-* `swirl` units
+```r
+plot(robbery ~ month, 
+     data = westminster, 
+     xlab = "Month", 
+     ylab = "Robbery",
+     main = "Robbery in Westminster in 2021", 
+     col = "red", 
+     cex.lab = 1.5,
+     cex.main= 1.5,
+     pch = 16)
+```
+ ]
+]
+
+.pull-right[
+![](slides_distributions-relationships_files/figure-html/base-plot-out-1.svg)&lt;!-- --&gt;
+]
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
