@@ -7,6 +7,10 @@ render_lecture <- function(x, purl = TRUE){
   unlink(r_out_paths, recursive = FALSE)
   purrr::walk2(.x = input_paths, .y = r_out_paths, 
                ~ knitr::purl(.x, output = .y, documentation = 0))
-  purrr::walk(.x = input_paths, ~rmarkdown::render(.x, encoding = "UTF-8"))
+  
+  purrr::walk(.x = input_paths, ~xfun::Rscript_call(
+    rmarkdown::render,
+    list(input = .x, encoding = "UTF-8")
+  ))
 }
-render_lecture(1)
+render_lecture(2)

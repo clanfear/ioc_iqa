@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Distributions and Relationships</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Charles Lanfear" />
+    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
+    <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, top, title-slide
+
+.title[
+# Distributions and Relationships
+]
+.subtitle[
+## IQA Lecture 2
+]
+.author[
+### Charles Lanfear
+]
+.date[
+### 19 Oct 2022<br>Updated: 16 Oct 2022
+]
+
+---
+
+
+
+
+
+# Things to include
+
+* Distributions
+   * Mean vs. median and skew
+      * Logs and log-normals
+   * Histograms
+   * Barplots?
+   * Densities
+   * Tables for categoricals
+   * skimr?
+
+* Relationships
+  * Mean differences between groups
+     * Demonstrate conditional distributions
+  * Crosstabs
+  * Correlations
+
+---
+
+# Today
+
+* News items:
+   * Two assessments
+      * *Light* data analysis and interpretation
+      * One week to complete
+   * [Jing's Office Hours](https://us05web.zoom.us/j/84826817691?pwd=cjFnQjBJY1BkOUxvRnBrQy9KbExNQT09): Friday, 12:30-13:30
+      * Also by appointment
+   * Reschedule Nov 16th to Monday the 14th
+     * Tentative: 4 PM
+
+--
+
+* Programming
+
+   * Logical expressions
+   * `dplyr`
+
+* Statistics
+
+   * Distributions
+   * Associations
+
+---
+class: inverse
+
+# Logical Expressions
+
+&amp;nbsp;
+
+&amp;nbsp;
+
+![:width 50%](img/spock.gif)
+
+---
+
+# Indexing
+
+Last week we subset or indexed data like so:
+
+
+```r
+USArrests[c("California", "Arkansas"), 2:3]
+```
+
+```
+##            Assault UrbanPop
+## California     276       91
+## Arkansas       190       50
+```
+
+This is indexing by **name** or **position**
+
+---
+
+# Indexing by Expression
+
+We can also index using expressions—logical *tests*.
+
+
+```r
+USArrests[USArrests$Murder &gt; 15, ]
+```
+
+```
+##             Murder Assault UrbanPop Rape
+## Florida       15.4     335       80 31.9
+## Georgia       17.4     211       60 25.8
+## Louisiana     15.4     249       66 22.2
+## Mississippi   16.1     259       44 17.1
+```
+
+--
+
+What does this give us?
+
+
+---
+
+# How Expressions Work
+
+What does `USArrests$Murder &gt; 15` actually do? 
+
+--
+
+
+```r
+USArrests$Murder &gt; 15
+```
+
+```
+##  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE
+## [11] FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE
+## [21] FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE
+## [31] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [41] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+```
+
+--
+
+It returns a vector of `TRUE` or `FALSE` values.
+
+When used with the subset operator (`[]`), elements for which a `TRUE` is given are returned while those corresponding to `FALSE` are dropped.
+
+--
+
+
+```r
+c(1,2,3,4)[c(TRUE, FALSE, TRUE, FALSE)]
+```
+
+```
+## [1] 1 3
+```
+
+
+---
+
+# Logical Operators
+
+We used `&gt;` for testing "greater than": `USArrests$Murder &gt; 15`.
+
+--
+
+There are many other [logical operators](http://www.statmethods.net/management/operators.html):
+
+--
+* `==`: equal to
+
+--
+* `!=`: not equal to
+
+--
+* `&gt;`, `&gt;=`, `&lt;`, `&lt;=`: less than, less than or equal to, etc.
+
+--
+* `%in%`: used with checking equal to one of several values
+
+--
+
+Or we can combine multiple logical conditions:
+
+* `&amp;`: both conditions need to hold (AND)
+--
+
+* `|`: at least one condition needs to hold (OR)
+--
+
+* `!`: inverts a logical condition (`TRUE` becomes `FALSE`, `FALSE` becomes `TRUE`)
+
+--
+
+Logical operators are one of the foundations of programming. You should experiment with these to become familiar with how they work!
+
+---
+
+# And: `&amp;`
+
+![:width 50%](img/murder_and_assault.svg)
+
+
+```r
+USArrests[USArrests$Murder &gt; 15 &amp; USArrests$Assault &gt; 300, ]
+```
+
+```
+##         Murder Assault UrbanPop Rape
+## Florida   15.4     335       80 31.9
+```
+
+
+
+---
+
+# Or: `|`
+
+![:width 50%](img/murder_or_assault.svg)
+
+
+```r
+USArrests[USArrests$Murder &gt; 15 | USArrests$Assault &gt; 300, ]
+```
+
+```
+##                Murder Assault UrbanPop Rape
+## Florida          15.4     335       80 31.9
+## Georgia          17.4     211       60 25.8
+## Louisiana        15.4     249       66 22.2
+## Mississippi      16.1     259       44 17.1
+## North Carolina   13.0     337       45 16.1
+```
+
+
+---
+
+# Sidenote: Missing Values
+
+Missing values are coded as `NA` entries without quotes:
+
+
+```r
+vector_w_missing &lt;- c(1, 2, NA, 4, 5, 6, NA)
+```
+
+--
+
+Even one `NA` "poisons the well": You'll get `NA` out of your calculations unless you remove them manually or use the extra argument `na.rm = TRUE` in some functions:
+
+
+```r
+mean(vector_w_missing)
+```
+
+```
+## [1] NA
+```
+
+--
+
+We can take missings (`NA`) and remove (`rm`) them:
+
+
+```r
+mean(vector_w_missing, na.rm=TRUE)
+```
+
+```
+## [1] 3.6
+```
+
+---
+# Finding Missing Values
+
+**WARNING:** You can't test for missing values by seeing if they "equal" (`==`) `NA`:
+
+
+```r
+vector_w_missing == NA
+```
+
+```
+## [1] NA NA NA NA NA NA NA
+```
+
+--
+
+But you can use the `is.na()` function:
+
+
+```r
+is.na(vector_w_missing)
+```
+
+```
+## [1] FALSE FALSE  TRUE FALSE FALSE FALSE  TRUE
+```
+
+--
+
+We can use subsetting to get the equivalent of `na.rm=TRUE`:
+
+
+```r
+*mean(vector_w_missing[!is.na(vector_w_missing)])
+```
+
+```
+## [1] 3.6
+```
+
+
+.footnote[
+`!` *reverses* a logical condition. Read the above as "subset to *not* `NA`"
+]
+
+---
+class: inverse
+
+# `tidyverse`
+
+&amp;nbsp;
+
+![:width 40%](img/tidyverse.svg)
+
+---
+
+# Installing `tidyverse`
+
+We're going to practice loading files and manipulating data.
+
+--
+
+We will use a packages called `readr` and `dplyr` to do this neatly.
+
+These packages are part of the [`tidyverse`](http://tidyverse.org/) family of R packages
+
+* These packages make using R *much easier*
+
+--
+
+If you have not already installed the tidyverse, type, in the console: `install.packages("tidyverse")`
+
+--
+
+This will install a *large* number of R packages we will use throughout the term, including `readr` and `dplyr`.
+
+---
+
+# Loading Packages
+
+
+```r
+library(readr)
+library(dplyr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+---
+
+# Wait, was that an error?
+
+When you load packages in R that have functions sharing the same name as functions you already have, the more recently loaded functions overwrite the previous ones ("masks them").
+
+--
+
+This **message** is just letting you know that.
+
+--
+
+Sometimes you may get a **warning message** when loading packages---usually because you aren't running the latest version of R:
+
+```
+Warning message:
+package `dplyr' was built under R version 4.2.2
+```
+
+*Update R* to get rid of these!
+
+---
+class: inverse
+# Importing and Exporting Data
+
+&amp;nbsp;
+
+![:width 40%](img/readr.svg)
+
+---
+
+# Working Directories
+
+Recall that R saves files and looks for files to open in your current **working directory**. 
+
+You can find out what it is using the function `getwd()`.
+
+On my computer when I knitted these slides, it happened to be:
+
+
+```r
+getwd()
+```
+
+```
+## [1] "C:/Users/cclan/OneDrive/GitHub/ioc_iqa/_lectures/2_distributions-relationships"
+```
+
+---
+# `setwd()`
+
+You can use `setwd(dir = "C:/path/to/new/working/directory")` to change the working directory.
+
+Working directory suggestions:
+
+* Instead of setting a working directory, it is usually better to use [RStudio projects](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects) to manage working directories.
+
+--
+
+* Windows users: If you copy a path from Explorer, make sure to change back slashes (`\`) to forward slashes (`/`) for the filepaths
+
+--
+
+* If you *need* to set a working, put `setwd()` at the start of your file
+
+---
+
+# Projects in RStudio
+
+A better way to deal with working directories: RStudio's **project** feature in the top-right dropdown. This has lots of advantages:
+
+--
+
+* Sets your working directory to be the project directory.
+
+--
+
+* Remembers objects in your workspace, command history, etc. next time you re-open that project.
+
+--
+
+* Reduces risk of intermingling different work using the same variable names (e.g. `n`) by using separate RStudio instances for each project.
+
+
+---
+
+# Delimited Text Files
+
+One of the most common ways for data to be stored is in a *delimited* text file, e.g. comma-separated values (**.csv**) or tab-separated values (**.tsv**). Here is **.csv** data:
+
+```
+"Id","Offense","Sex","Month"
+101,"Battery","Male",1,
+101,"Battery","Male",1,
+101,"Robbery","Male",1,
+101,"Battery","Male",2,
+101,"Robbery","Male",2,
+101,"Homicide","Male",3,
+103,"Robbery","Female",1,
+103,"Robbery","Female",3,
+103,"Battery","Female",4,
+```
+
+---
+# `readr`
+
+R has a variety of built-in functions for importing delimited text, like `read.table()` and `read.csv()`.
+
+I recommend using the versions in the `readr` package instead: `read_csv()`, `read_tsv()`, and `read_delim()`:
+
+`readr` function features:
+
+* Faster!
+* A *little* smarter about dates and times
+* Handy function `problems()` you can run if there are errors
+* Loading bars for large files
+
+---
+
+# `readr` Importing Example
+
+Let's use `read_csv()` from `readr` to import some data about fatal police shootings from Kaplan (2022).
+
+.small[
+
+```r
+shootings &lt;- 
+  read_csv( 
+    "https://clanfear.github.io/ioc_iqa/_data/fatal-police-shootings-data.csv"
+    )
+```
+
+```
+## Rows: 4371 Columns: 14
+## ── Column specification ────────────────────────────────────────────
+## Delimiter: ","
+## chr  (9): name, manner_of_death, armed, gender, race, city, stat...
+## dbl  (2): id, age
+## lgl  (2): signs_of_mental_illness, body_camera
+## date (1): date
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+]
+
+---
+class: inverse
+
+# `dplyr`
+
+&amp;nbsp;
+
+![:width 60%](img/dplyr.svg)
+
+---
+
+# Check Out Shootings
+
+`dplyr` gives us access to the handy `glimpse()` for inspecting dataframes.
+
+.text-62[
+
+```r
+glimpse(shootings)
+```
+
+```
+## Rows: 4,371
+## Columns: 14
+## $ id                      &lt;dbl&gt; 3, 4, 5, 8, 9, 11, 13, 15, 16, 17,…
+## $ name                    &lt;chr&gt; "Tim Elliot", "Lewis Lee Lembke", …
+## $ date                    &lt;date&gt; 2015-01-02, 2015-01-02, 2015-01-0…
+## $ manner_of_death         &lt;chr&gt; "shot", "shot", "shot and Tasered"…
+## $ armed                   &lt;chr&gt; "gun", "gun", "unarmed", "toy weap…
+## $ age                     &lt;dbl&gt; 53, 47, 23, 32, 39, 18, 22, 35, 34…
+## $ gender                  &lt;chr&gt; "M", "M", "M", "M", "M", "M", "M",…
+## $ race                    &lt;chr&gt; "A", "W", "H", "W", "H", "W", "H",…
+## $ city                    &lt;chr&gt; "Shelton", "Aloha", "Wichita", "Sa…
+## $ state                   &lt;chr&gt; "WA", "OR", "KS", "CA", "CO", "OK"…
+## $ signs_of_mental_illness &lt;lgl&gt; TRUE, FALSE, FALSE, TRUE, FALSE, F…
+## $ threat_level            &lt;chr&gt; "attack", "attack", "other", "atta…
+## $ flee                    &lt;chr&gt; "Not fleeing", "Not fleeing", "Not…
+## $ body_camera             &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE,…
+```
+]
+
+---
+
+# But first, pipes!
+
+We can use pipe operators (`|&gt;`) to send data between functions. So instead of nesting functions like this:
+
+
+```r
+sort(table(shootings$race))
+```
+
+```
+## 
+##    O    N    A    H    B    W 
+##   38   64   71  719 1001 1962
+```
+
+--
+
+We can pipe them like this:
+
+
+```r
+shootings$race |&gt; table() |&gt; sort()
+```
+
+```
+## 
+##    O    N    A    H    B    W 
+##   38   64   71  719 1001 1962
+```
+
+--
+
+Read this as, "get `shootings$race`, and then make a `table()`, and then `sort()` it."
+In essence, pipes read "left to right" while nested functions read "inside to out."
+
+---
+
+# `filter` Data Frames
+
+
+```r
+shootings |&gt; filter(armed == "unarmed") |&gt; head()
+```
+
+```
+## # A tibble: 6 × 14
+##      id name       date       manne…¹ armed   age gender race  city 
+##   &lt;dbl&gt; &lt;chr&gt;      &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;
+## 1     5 John Paul… 2015-01-03 shot a… unar…    23 M      H     Wich…
+## 2    16 Autumn St… 2015-01-06 shot    unar…    34 F      W     Burl…
+## 3    36 Artago Da… 2015-01-08 shot    unar…    36 M      B     Stro…
+## 4   352 Joshua Om… 2015-01-26 shot    unar…    24 M      H     Taho…
+## 5   342 Ralph Wil… 2015-01-29 shot    unar…    42 M      W     Stil…
+## 6   114 David Kas… 2015-02-02 shot    unar…    59 M      W     Humm…
+## # … with 5 more variables: state &lt;chr&gt;,
+## #   signs_of_mental_illness &lt;lgl&gt;, threat_level &lt;chr&gt;, flee &lt;chr&gt;,
+## #   body_camera &lt;lgl&gt;, and abbreviated variable name
+## #   ¹​manner_of_death
+```
+
+.text-center[
+*What is this doing?*
+]
+
+.footnote[
+Note that `dplyr` hides excess columns from output so it fits the console!
+]
+
+---
+
+# `filter`
+
+`filter()` is `dplyr`'s function for indexing **rows** of a dataframe
+
+--
+
+It takes *only* logical vectors (the result of **expressions**) as an argument
+
+--
+
+If you want to `filter()` by *position*, use `slice()`:
+
+
+```r
+shootings |&gt; slice(c(1, 5, 9))
+```
+
+```
+## # A tibble: 3 × 14
+##      id name       date       manne…¹ armed   age gender race  city 
+##   &lt;dbl&gt; &lt;chr&gt;      &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;
+## 1     3 Tim Elliot 2015-01-02 shot    gun      53 M      A     Shel…
+## 2     9 Michael R… 2015-01-04 shot    nail…    39 M      H     Evans
+## 3    16 Autumn St… 2015-01-06 shot    unar…    34 F      W     Burl…
+## # … with 5 more variables: state &lt;chr&gt;,
+## #   signs_of_mental_illness &lt;lgl&gt;, threat_level &lt;chr&gt;, flee &lt;chr&gt;,
+## #   body_camera &lt;lgl&gt;, and abbreviated variable name
+## #   ¹​manner_of_death
+```
+
+
+---
+# Multiple Conditions
+
+.pull-left[
+
+### And: `&amp;`
+
+
+```r
+shootings |&gt;
+    filter(armed == "unarmed" &amp; 
+             age &lt; 18)
+```
+
+.image-100[
+![](img/armed_and_age.svg)
+]
+
+*Give me rows where the subject was unarmed **and** their age is under 18.*
+
+]
+
+--
+
+.pull-right[
+
+### Or: `|`
+
+
+```r
+shootings |&gt;
+    filter(armed == "unarmed" |
+          age &lt; 18)
+```
+
+.image-100[
+![](img/armed_or_age.svg)
+]
+
+*Give me rows where the subject was unarmed **or** their age is under 18... or **both**.*
+
+]
+
+---
+
+# Saving a Subset
+
+If we think a particular subset will be used repeatedly, we can save it and give it a name like any other object:
+
+
+```r
+unarmed &lt;- shootings |&gt; filter(armed == "unarmed")
+head(unarmed, 4)
+```
+
+```
+## # A tibble: 4 × 14
+##      id name       date       manne…¹ armed   age gender race  city 
+##   &lt;dbl&gt; &lt;chr&gt;      &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;
+## 1     5 John Paul… 2015-01-03 shot a… unar…    23 M      H     Wich…
+## 2    16 Autumn St… 2015-01-06 shot    unar…    34 F      W     Burl…
+## 3    36 Artago Da… 2015-01-08 shot    unar…    36 M      B     Stro…
+## 4   352 Joshua Om… 2015-01-26 shot    unar…    24 M      H     Taho…
+## # … with 5 more variables: state &lt;chr&gt;,
+## #   signs_of_mental_illness &lt;lgl&gt;, threat_level &lt;chr&gt;, flee &lt;chr&gt;,
+## #   body_camera &lt;lgl&gt;, and abbreviated variable name
+## #   ¹​manner_of_death
+```
+
+---
+
+# Wrap-Up
+
+* Reading for next week
+
+* `swirl` units
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/cam_macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "tomorrow-night-bright",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

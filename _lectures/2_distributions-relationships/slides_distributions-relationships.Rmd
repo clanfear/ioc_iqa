@@ -1,5 +1,5 @@
 ---
-title: "Fundamentals"
+title: "Distributions and Relationships"
 subtitle: "IQA Lecture 2"
 author: "Charles Lanfear"
 date: "19 Oct 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
@@ -39,19 +39,223 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
   * Crosstabs
   * Correlations
 
+---
 
 # Today
+
+* News items:
+   * Two assessments
+      * *Light* data analysis and interpretation
+      * One week to complete
+   * [Jing's Office Hours](https://us05web.zoom.us/j/84826817691?pwd=cjFnQjBJY1BkOUxvRnBrQy9KbExNQT09): Friday, 12:30-13:30
+      * Also by appointment
+   * Reschedule Nov 16th to Monday Nov 14th
+     * Tentative: 4 PM
+
+--
+
+* Programming
+
+   * Logical expressions
+   * `dplyr`
+
+* Statistics
+
+   * Distributions
+   * Associations
 
 ---
 class: inverse
 
-# Part II
+# Logical Expressions
 
-## `dplyr`
+&nbsp;
+
+&nbsp;
+
+![:width 50%](img/spock.gif)
 
 ---
 
-# Installing Tidyverse
+# Indexing
+
+Last week we subset or indexed data like so:
+
+```{r}
+USArrests[c("California", "Arkansas"), 2:3]
+```
+
+This is indexing by **name** or **position**
+
+---
+
+# Indexing by Expression
+
+We can also index using expressions—logical *tests*.
+
+```{r}
+USArrests[USArrests$Murder > 15, ]
+```
+
+--
+
+What does this give us?
+
+
+---
+
+# How Expressions Work
+
+What does `USArrests$Murder > 15` actually do? 
+
+--
+
+```{r}
+USArrests$Murder > 15
+```
+
+--
+
+It returns a vector of `TRUE` or `FALSE` values.
+
+When used with the subset operator (`[]`), elements for which a `TRUE` is given are returned while those corresponding to `FALSE` are dropped.
+
+--
+
+```{r}
+c(1,2,3,4)[c(TRUE, FALSE, TRUE, FALSE)]
+```
+
+
+---
+
+# Logical Operators
+
+We used `>` for testing "greater than": `USArrests$Murder > 15`.
+
+--
+
+There are many other [logical operators](http://www.statmethods.net/management/operators.html):
+
+--
+* `==`: equal to
+
+--
+* `!=`: not equal to
+
+--
+* `>`, `>=`, `<`, `<=`: less than, less than or equal to, etc.
+
+--
+* `%in%`: used with checking equal to one of several values
+
+--
+
+Or we can combine multiple logical conditions:
+
+* `&`: both conditions need to hold (AND)
+--
+
+* `|`: at least one condition needs to hold (OR)
+--
+
+* `!`: inverts a logical condition (`TRUE` becomes `FALSE`, `FALSE` becomes `TRUE`)
+
+--
+
+Logical operators are one of the foundations of programming. You should experiment with these to become familiar with how they work!
+
+---
+
+# And: `&`
+
+![:width 50%](img/murder_and_assault.svg)
+
+```{r}
+USArrests[USArrests$Murder > 15 & USArrests$Assault > 300, ]
+```
+
+
+
+---
+
+# Or: `|`
+
+![:width 50%](img/murder_or_assault.svg)
+
+```{r}
+USArrests[USArrests$Murder > 15 | USArrests$Assault > 300, ]
+```
+
+
+---
+
+# Sidenote: Missing Values
+
+Missing values are coded as `NA` entries without quotes:
+
+```{r}
+vector_w_missing <- c(1, 2, NA, 4, 5, 6, NA)
+```
+
+--
+
+Even one `NA` "poisons the well": You'll get `NA` out of your calculations unless you remove them manually or use the extra argument `na.rm = TRUE` in some functions:
+
+```{r}
+mean(vector_w_missing)
+```
+
+--
+
+We can take missings (`NA`) and remove (`rm`) them:
+
+```{r}
+mean(vector_w_missing, na.rm=TRUE)
+```
+
+---
+# Finding Missing Values
+
+**WARNING:** You can't test for missing values by seeing if they "equal" (`==`) `NA`:
+
+```{r}
+vector_w_missing == NA
+```
+
+--
+
+But you can use the `is.na()` function:
+
+```{r}
+is.na(vector_w_missing)
+```
+
+--
+
+We can use subsetting to get the equivalent of `na.rm=TRUE`:
+
+```{r}
+mean(vector_w_missing[!is.na(vector_w_missing)]) #<<
+```
+
+
+.footnote[
+`!` *reverses* a logical condition. Read the above as "subset to *not* `NA`"
+]
+
+---
+class: inverse
+
+# `tidyverse`
+
+&nbsp;
+
+![:width 40%](img/tidyverse.svg)
+
+---
+
+# Installing `tidyverse`
 
 We're going to practice loading files and manipulating data.
 
@@ -59,7 +263,9 @@ We're going to practice loading files and manipulating data.
 
 We will use a packages called `readr` and `dplyr` to do this neatly.
 
-These packages are part of the [tidyverse](http://tidyverse.org/) family of R packages that are the focus of this course.
+These packages are part of the [`tidyverse`](http://tidyverse.org/) family of R packages
+
+* These packages make using R *much easier*
 
 --
 
@@ -69,15 +275,13 @@ If you have not already installed the tidyverse, type, in the console: `install.
 
 This will install a *large* number of R packages we will use throughout the term, including `readr` and `dplyr`.
 
-`dplyr` is a particularly useful package that we will talk more about next week, but today we're just going to use it for "filtering" data.
-
 ---
 
-# Loading dplyr
+# Loading Packages
 
-```{r, message=TRUE}
-library(dplyr)
+```{r}
 library(readr)
+library(dplyr)
 ```
 
 ---
@@ -88,7 +292,7 @@ When you load packages in R that have functions sharing the same name as functio
 
 --
 
-This **message** is just letting you know that. To avoid showing this in your R Markdown file, add `message=FALSE` or `include=FALSE` to your chunk options when loading packages.
+This **message** is just letting you know that.
 
 --
 
@@ -96,13 +300,18 @@ Sometimes you may get a **warning message** when loading packages---usually beca
 
 ```
 Warning message:
-package `dplyr' was built under R version 4.2.0
+package `dplyr' was built under R version 4.2.2
 ```
-Chunk options `message=FALSE` or `include=FALSE` will hide this. *Update R* to deal with it completely!
+
+*Update R* to get rid of these!
 
 ---
 class: inverse
 # Importing and Exporting Data
+
+&nbsp;
+
+![:width 40%](img/readr.svg)
 
 ---
 
@@ -119,11 +328,11 @@ getwd()
 ```
 
 ---
-# Changing Your Working Directory
+# `setwd()`
 
 You can use `setwd(dir = "C:/path/to/new/working/directory")` to change the working directory.
 
-Working Directory Suggestions:
+Working directory suggestions:
 
 * Instead of setting a working directory, it is usually better to use [RStudio projects](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects) to manage working directories.
 
@@ -133,9 +342,10 @@ Working Directory Suggestions:
 
 --
 
-* If you *need* to set a working, put `setwd()` at the start of your file so that someone using another computer knows they need to modify it
+* If you *need* to set a working, put `setwd()` at the start of your file
 
 ---
+
 # Projects in RStudio
 
 A better way to deal with working directories: RStudio's **project** feature in the top-right dropdown. This has lots of advantages:
@@ -152,15 +362,9 @@ A better way to deal with working directories: RStudio's **project** feature in 
 
 * Reduces risk of intermingling different work using the same variable names (e.g. `n`) by using separate RStudio instances for each project.
 
---
-
-* Easy to integrate with version control systems (e.g. `git`)
-
---
-
-   * I usually make each RStudio project its own GitHub repository.
 
 ---
+
 # Delimited Text Files
 
 One of the most common ways for data to be stored is in a *delimited* text file, e.g. comma-separated values (**.csv**) or tab-separated values (**.tsv**). Here is **.csv** data:
@@ -181,7 +385,9 @@ One of the most common ways for data to be stored is in a *delimited* text file,
 ---
 # `readr`
 
-R has a variety of built-in functions for importing delimited text, like `read.table()` and `read.csv()`. I recommend using the versions in the `readr` package instead: `read_csv()`, `read_tsv()`, and `read_delim()`:
+R has a variety of built-in functions for importing delimited text, like `read.table()` and `read.csv()`.
+
+I recommend using the versions in the `readr` package instead: `read_csv()`, `read_tsv()`, and `read_delim()`:
 
 `readr` function features:
 
@@ -191,11 +397,10 @@ R has a variety of built-in functions for importing delimited text, like `read.t
 * Loading bars for large files
 
 ---
+
 # `readr` Importing Example
 
-Let's import some data about fatal police shootings from Kaplan (2022).
-
-We can use `read_csv()` from `readr` to assign the contents of a `.csv` file to a new dataframe.
+Let's use `read_csv()` from `readr` to import some data about fatal police shootings from Kaplan (2022).
 
 .small[
 ```{r}
@@ -205,6 +410,15 @@ shootings <-
     )
 ```
 ]
+
+---
+class: inverse
+
+# `dplyr`
+
+&nbsp;
+
+![:width 60%](img/dplyr.svg)
 
 ---
 
@@ -218,28 +432,6 @@ shootings <-
 glimpse(shootings)
 ```
 ]
-
----
-
-# What's Interesting Here?
-
-* **Character** variables, e.g. `state`, `manner_of_death`, `armed`
-
---
-
-* Many observations: $n=`r nrow(shootings)`$ rows
-
---
-
-* A nested/hierarchical structure: `people` in `states`
-
----
-class: inverse
-
-# Tidy Data Manipulation
-
-![](img/dplyr.svg)
-
 
 ---
 
@@ -261,31 +453,43 @@ shootings$race |> table() |> sort()
 
 --
 
-Read this as, "send `shootings$race` to `table()`, then send the output of that to `sort()`."
+Read this as, "get `shootings$race`, and then make a `table()`, and then `sort()` it."
 In essence, pipes read "left to right" while nested functions read "inside to out."
-This may be confusing... we'll cover it more later!
 
 ---
 
 # `filter` Data Frames
 
 ```{r}
-shootings %>% filter(armed == "unarmed")
+shootings |> filter(armed == "unarmed") |> head()
 ```
 
-What is this doing?
+.text-center[
+*What is this doing?*
+]
 
-
+.footnote[
+Note that `dplyr` hides excess columns from output so it fits the console!
+]
 
 ---
 
-# Multiple Conditions Example
+# `filter`
 
+`filter()` is `dplyr`'s function for indexing **rows** of a dataframe
+
+--
+
+It takes *only* logical vectors (the result of **expressions**) as an argument
+
+--
+
+If you want to `filter()` by *position*, use `slice()`:
 
 ```{r}
-shootings %>%
-    filter(armed == "unarmed" & age < 18)
+shootings |> slice(c(1, 5, 9))
 ```
+
 
 ---
 # Multiple Conditions
@@ -295,8 +499,9 @@ shootings %>%
 ### And: `&`
 
 ```{r, eval=FALSE}
-shootings %>%
-    filter(armed == "unarmed" & age < 18)
+shootings |>
+    filter(armed == "unarmed" & 
+             age < 18)
 ```
 
 .image-100[
@@ -314,7 +519,7 @@ shootings %>%
 ### Or: `|`
 
 ```{r, eval=FALSE}
-shootings %>%
+shootings |>
     filter(armed == "unarmed" |
           age < 18)
 ```
@@ -334,8 +539,719 @@ shootings %>%
 If we think a particular subset will be used repeatedly, we can save it and give it a name like any other object:
 
 ```{r}
-unarmed <- shootings %>% filter(country == "unarmed")
+unarmed <- shootings |> filter(armed == "unarmed")
 head(unarmed, 4)
 ```
 
+
 ---
+class: inverse
+
+# Plotting
+
+![:width 60%](img/ggplot2.svg)
+
+---
+
+## Base R Plots from Last Week
+
+.pull-left[
+ .small[
+```{r, eval=FALSE}
+plot(lifeExp ~ year, 
+     data = China, 
+     xlab = "Year", 
+     ylab = "Life expectancy",
+     main = "Life expectancy in China", 
+     col = "red", 
+     cex.lab = 1.5,
+     cex.main= 1.5,
+     pch = 16)
+```
+ ]
+]
+
+.pull-right[
+```{r, echo=FALSE}
+plot(lifeExp ~ year, data = China, xlab = "Year", ylab = "Life expectancy",
+     main = "Life expectancy in China", col = "red", cex = 1, pch = 16)
+```
+]
+
+---
+# `ggplot2`
+
+An alternative way of plotting many prefer (myself included)<sup>1</sup> uses the `ggplot2` package in R, which is part of the `tidyverse`.
+
+.footnote[[1] [Though this is not without debate](http://simplystatistics.org/2016/02/11/why-i-dont-use-ggplot2/)]
+
+```{r}
+library(ggplot2)
+```
+
+The core idea underlying this package is the [**layered grammar of graphics**](https://doi.org/10.1198/jcgs.2009.07098): we can break up elements of a plot into pieces and combine them.
+
+---
+## Chinese Life Expectancy in `ggplot`
+
+.pull-left[
+ .small[
+```{r,  dev='svg', eval=FALSE}
+ggplot(data = China, 
+       aes(x = year, y = lifeExp)) +
+    geom_point()
+```
+]
+]
+
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = China, aes(x = year, y = lifeExp)) +
+    geom_point()
+```
+]
+
+---
+# Structure of a ggplot
+
+`ggplot2` graphics objects consist of two primary components:
+
+--
+
+1. **Layers**, the components of a graph.
+
+   * We *add* layers to a `ggplot2` object using `+`.
+   * This includes lines, shapes, and text.
+
+--
+
+2. **Aesthetics**, which determine how the layers appear.
+
+   * We *set* aesthetics using *arguments* (e.g. `color="red"`) inside layer functions.
+   * This includes locations, colors, and sizes.
+   * Aesthetics also determine how data *map* to appearances.
+
+---
+
+# Layers
+
+**Layers** are the components of the graph, such as:
+
+* `ggplot()`: initializes `ggplot2` object, specifies input data
+* `geom_point()`: layer of scatterplot points
+* `geom_line()`: layer of lines
+* `ggtitle()`, `xlab()`, `ylab()`: layers of labels
+* `facet_wrap()`: layer creating separate panels stratified by some factor wrapping around
+* `facet_grid()`: same idea, but can split by two variables along rows and columns (e.g. `facet_grid(gender ~ age_group)`)
+* `theme_bw()`: replace default gray background with black-and-white
+
+Layers are separated by a `+` sign. For clarity, I usually put each layer on a new line, unless it takes few or no arguments (e.g. `xlab()`, `ylab()`, `theme_bw()`).
+
+---
+
+# Aesthetics
+
+**Aesthetics** control the appearance of the layers:
+
+* `x`, `y`: $x$ and $y$ coordinate values to use
+* `color`: set color of elements based on some data value
+* `group`: describe which points are conceptually grouped together for the plot (often used with lines)
+* `size`: set size of points/lines based on some data value
+* `alpha`: set transparency based on some data value
+
+---
+
+## Aesthetics: Setting vs. mapping
+
+Layers take arguments to control their appearance, such as point/line colors or transparency (`alpha` between 0 and 1).
+
+--
+
+* Arguments like `color`, `size`, `linetype`, `shape`, `fill`, and `alpha` can be used directly on the layers (**setting aesthetics**), e.g. `geom_point(color = "red")`. See the [`ggplot2` documentation](https://ggplot2.tidyverse.org/reference/index.html) for options. These *don't depend on the data*.
+
+--
+
+* Arguments inside `aes()` (**mapping aesthetics**) will *depend on the data*, e.g. `geom_point(aes(color = continent))`.
+
+--
+
+* `aes()` in the `ggplot()` layer gives overall aesthetics to use in other layers, but can be changed on individual layers (including switching `x` or `y` to different variables)
+
+--
+
+This may seem pedantic, but precise language makes searching for help easier.
+
+--
+
+Now let's see all this jargon in action.
+
+---
+## Axis Labels, Points, No Background
+
+### 1: Base Plot
+
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = China,  #<<
+       aes(x = year, y = lifeExp)) #<<
+```
+]
+]
+.pull-right[
+```{r, dev='svg', echo=FALSE}
+ggplot(data = China,  
+       aes(x = year, y = lifeExp)) 
+```
+]
+
+.footnote[Initialize the plot with `ggplot()` and `x` and `y` aesthetics **mapped** to variables.]
+
+---
+
+
+## Axis Labels, Points, No Background
+
+### 2: Scatterplot
+
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = China, 
+       aes(x = year, y = lifeExp)) +
+  geom_point() #<<
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = China, 
+       aes(x = year, y = lifeExp)) +
+  geom_point() 
+```
+]
+
+.footnote[Add a scatterplot **layer**.]
+---
+
+
+## Axis Labels, Points, No Background
+
+### 3: Point Color and Size
+
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = China, 
+       aes(x = year, y = lifeExp)) +
+  geom_point(color = "red", size = 3) #<<
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = China, 
+       aes(x = year, y = lifeExp)) +
+  geom_point(color = "red", size = 3) 
+```
+]
+
+.footnote[**Set** aesthetics to make the points large and red.]
+---
+
+
+## Axis Labels, Points, No Background
+
+### 4: X-Axis Label
+
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = China, 
+       aes(x = year, y = lifeExp)) +
+  geom_point(color = "red", size = 3) +
+  xlab("Year") #<<
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = China, 
+       aes(x = year, y = lifeExp)) +
+  geom_point(color = "red", size = 3) +
+  xlab("Year") 
+```
+]
+
+.footnote[Add a layer to capitalize the x-axis label.]
+---
+
+
+## Axis Labels, Points, No Background
+
+### 5: Y-Axis Label
+
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = China, 
+       aes(x = year, y = lifeExp)) +
+  geom_point(color = "red", size = 3) +
+  xlab("Year") + 
+  ylab("Life expectancy") #<<
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = China, 
+       aes(x = year, y = lifeExp)) +
+  geom_point(color = "red", size = 3) +
+  xlab("Year") + 
+  ylab("Life expectancy")
+```
+]
+
+.footnote[Add a layer to clean up the y-axis label.]
+---
+
+
+## Axis Labels, Points, No Background
+
+### 6: Title
+
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = China, 
+       aes(x = year, y = lifeExp)) +
+  geom_point(color = "red", size = 3) +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy in China") #<<
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = China, 
+       aes(x = year, y = lifeExp)) +
+  geom_point(color = "red", size = 3) +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy in China")
+```
+]
+
+.footnote[Add a title layer.]
+---
+
+
+## Axis Labels, Points, No Background
+
+### 7: Theme
+
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = China, 
+       aes(x = year, y = lifeExp)) +
+  geom_point(color = "red", size = 3) +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy in China") +
+  theme_bw() #<<
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = China, 
+       aes(x = year, y = lifeExp)) +
+  geom_point(color = "red", size = 3) +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy in China") +
+  theme_bw() #<<
+```
+]
+
+.footnote[Pick a nicer theme with a new layer.]
+---
+
+
+## Axis Labels, Points, No Background
+
+### 8: Text Size
+
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = China, 
+       aes(x = year, y = lifeExp)) +
+  geom_point(color = "red", size = 3) +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy in China") +
+  theme_bw(base_size=18) #<<
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = China, 
+       aes(x = year, y = lifeExp)) +
+  geom_point(color = "red", size = 3) +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy in China") +
+  theme_bw(base_size=18) #<<
+```
+]
+
+.footnote[Increase the base text size.]
+---
+# Plotting All Countries
+
+We have a plot we like for China... 
+
+... but what if we want *all the countries*?
+
+---
+
+
+# Plotting All Countries
+
+### 1: A Mess!
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = gapminder,#<<
+       aes(x = year, y = lifeExp)) +
+  geom_point(color = "red", size = 3) +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw(base_size=18)
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = gapminder, #<<
+       aes(x = year, y = lifeExp)) +
+  geom_point(color = "red", size = 3) +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw(base_size=18)
+```
+]
+
+.footnote[We can't tell countries apart! Maybe we could follow *lines*?]
+
+---
+
+
+# Plotting All Countries
+
+### 2: Lines
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp)) +
+  geom_line(color = "red", size = 3) + #<<
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw(base_size=18)
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp)) +
+  geom_line(color = "red", size = 3) + #<<
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw(base_size=18)
+```
+]
+
+.footnote[`ggplot2` doesn't know how to connect the lines!]
+
+---
+
+
+# Plotting All Countries
+
+### 3: Grouping
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp, 
+           group = country)) + #<<
+  geom_line(color = "red", size = 3) +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw(base_size=18)
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp, 
+           group = country)) + #<<
+  geom_line(color = "red", size = 3) +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw(base_size=18)
+```
+]
+
+.footnote[That looks more reasonable... but the lines are too thick!]
+---
+
+
+# Plotting All Countries
+
+### 4: Size
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp, 
+           group = country)) +
+  geom_line(color = "red") + #<<
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw(base_size=18)
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp, 
+           group = country)) +
+  geom_line(color = "red") + #<<
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw(base_size=18)
+```
+]
+
+.footnote[Much better... but maybe we can do highlight regional differences?]
+
+---
+
+
+# Plotting All Countries
+
+### 5: Color
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp, 
+           group = country, 
+           color = continent)) + #<<
+  geom_line() + #<<
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw(base_size=18)
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp, 
+           group = country, 
+           color = continent)) + #<<
+  geom_line() + #<<
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw(base_size=18) #<<
+```
+]
+
+.footnote[Patterns are obvious... but why not separate continents completely?]
+
+---
+
+
+# Plotting All Countries
+
+### 6: Facets
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp, 
+           group = country, 
+           color = continent)) +
+  geom_line() +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw(base_size=18) + 
+  facet_wrap(~ continent) #<<
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp, 
+           group = country, 
+           color = continent)) +
+  geom_line() +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw(base_size=18) +
+  facet_wrap(~ continent) #<<
+```
+]
+
+.footnote[Now the text is too big!]
+---
+
+
+# Plotting All Countries
+
+### 7: Text Size
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp, 
+           group = country, 
+           color = continent)) +
+  geom_line() +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw() +  #<<
+  facet_wrap(~ continent)
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp, 
+           group = country, 
+           color = continent)) +
+  geom_line() +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw() + #<<
+  facet_wrap(~ continent)
+```
+]
+
+.footnote[Better, but could bring that legend in.]
+
+---
+
+
+# Plotting All Countries
+
+### 8: Legend Position
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp, 
+           group = country, 
+           color = continent)) +
+  geom_line() +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw() +  
+  facet_wrap(~ continent) +
+  theme(legend.position = c(0.8, 0.25)) #<<
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp, 
+           group = country, 
+           color = continent)) +
+  geom_line() +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw() + 
+  facet_wrap(~ continent) +
+  theme(legend.position = c(0.8, 0.25)) #<<
+```
+]
+
+.footnote[Better... but do we even need it?]
+---
+
+
+# Plotting All Countries
+
+### 9: No Legend
+.pull-left[
+ .small[
+```{r, fig.height=4, dev='svg', eval=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp, 
+           group = country, 
+           color = continent)) +
+  geom_line() +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw() +  
+  facet_wrap(~ continent) +
+  theme(legend.position = "none") #<<
+```
+]
+]
+.pull-right[
+```{r,  dev='svg', echo=FALSE}
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp, 
+           group = country, 
+           color = continent)) +
+  geom_line() +
+  xlab("Year") + 
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy over time") +
+  theme_bw() + 
+  facet_wrap(~ continent) +
+  theme(legend.position = "none") #<<
+```
+]
+
+.footnote[Looking good!]
+
+---
+
+# Wrap-Up
+
+* Reading for next week
+
+* `swirl` units
+
