@@ -388,7 +388,9 @@ glimpse(shootings)
 
 # But first, pipes!
 
-We can use pipe operators (`|>`) to send data between functions. So instead of nesting functions like this:
+`dplyr` and rest of the Tidyverse are built around using pipe operators (`|>`)
+
+Instead of nesting functions like this:
 
 ```{r}
 sort(table(shootings$race))
@@ -490,6 +492,7 @@ class: inverse
 
 ---
 
+
 # London Crime
 
 We'll revisit the shootings data again soon.
@@ -504,31 +507,6 @@ metro_2021 <- read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021.csv"
 
 ---
 
-# Counting
-
-We used `table()` earlier to tabulate a categorical variable
-
-In `dplyr`, we can use `count()`
-
-```{r}
-shootings |> count(armed) |> arrange(desc(n))
-```
-
-
-
-
-
----
-class: inverse
-
-# Plotting
-
-![:width 60%](img/ggplot2.svg)
-
-
-
----
-
 # London Crime
 
 
@@ -538,7 +516,117 @@ glimpse(metro_2021)
 
 ---
 
+# Counting
 
+We used `table()` earlier to tabulate a categorical variable
+
+In `dplyr`, we can use `count()`
+
+```{r}
+metro_2021 |> count(subregion)
+```
+
+---
+
+# Proportions
+
+We can add a column of proportions
+
+```{r}
+metro_2021 |> count(subregion) |> mutate(Proportion = n/sum(n))
+```
+
+---
+
+## General Aggregation: `summarize()`
+
+**`summarize()`** takes your column(s) of data and computes something using every row: 
+
+* Calculate the mean
+* Calculate the standard deviation
+* Obtain a minimum or maximum value
+
+You can use any function in `summarize()` that aggregates *multiple values* into a *single value* (like `sd()`, `mean()`, or `max()`).
+
+---
+
+# `summarize()` Example
+
+Let's get the number of observations and mean and SD of robbery for June 2021
+
+```{r}
+metro_2021 |> 
+  filter(month == 6) |>
+  summarise(n_obs = n(),
+            mean_robbery = mean(robbery),
+            sd_robbery = sd(robbery))
+```
+
+These new variables are calculated using *all 32 boroughs (rows)* observed in June
+
+---
+
+# Another Example
+
+Let's get the number of observations and mean and SD of burglary for Westminster
+
+```{r}
+metro_2021 |> 
+  filter(borough == "Westminster") |>
+  summarise(n_obs = n(),
+            mean_burglary = mean(burglary),
+            sd_burglary = sd(burglary))
+```
+
+---
+  
+# `group_by()`
+
+
+The special function `group_by()` changes how functions operate on the data, most importantly `summarize()`.
+
+Functions after `group_by()` are computed *within each group* as defined by variables given, rather than over all rows at once. Typically the variables you group by will be integers, factors, or characters, and not continuous real values.
+
+Excel analogue: pivot tables
+
+.image-50[![Pivot table](http://www.excel-easy.com/data-analysis/images/pivot-tables/two-dimensional-pivot-table.png)]
+
+---
+# `group_by()` example
+
+
+```{r}
+metro_2021 |>
+  group_by(month) |> #<<
+    summarise(n_obs = n(),
+            mean_robbery = mean(robbery),
+            sd_robbery = sd(robbery)) |>
+    head(5)
+```
+
+Because we did `group_by()` with `month` then used `summarize()`, we get *one row per value of `month`*!
+
+Each value of month is its own **group**!
+
+---
+
+# Another Example
+
+```{r}
+metro_2021 |> 
+  group_by(borough) |>
+  summarise(n_obs = n(),
+            mean_burglary = mean(burglary),
+            sd_burglary = sd(burglary)) |>
+  head()
+```
+
+---
+class: inverse
+
+# Plotting
+
+![:width 60%](img/ggplot2.svg)
 
 ---
 
@@ -592,7 +680,7 @@ The core idea underlying this package is the [**layered grammar of graphics**](h
 
 ---
 
-## Chinese Life Expectancy in `ggplot`
+## Robberies in `ggplot`
   
 .pull-left[
 ```{r westminster-gg,  fig.show='hide'}
@@ -856,7 +944,7 @@ We have a plot we like for Westminster...
   
 ---
 
-# Plotting All Countries
+# Plotting All Borough
 
 ### 1: A Mess!
 
@@ -872,7 +960,7 @@ We have a plot we like for Westminster...
 ```
 ]
 .pull-right[
-![](`r knitr::fig_chunk("westminster-8", "svg")`)
+![](`r knitr::fig_chunk("london-1", "svg")`)
 ]
 
 .footnote[We can't tell countries apart! Maybe we could follow *lines*?]
@@ -880,144 +968,147 @@ We have a plot we like for Westminster...
 ---
 
 
-# Plotting All Countries
+# Plotting All Boroughs
 
 ### 2: Lines
+
 .pull-left[
- .small[
-```{r, fig.height=4, dev='svg', eval=FALSE}
-ggplot(data = gapminder, 
-       aes(x = year, y = lifeExp)) +
+```{r london-2, fig.height=4,  fig.show='hide'}
+ ggplot(data = metro_2021, 
+      aes(x = month, y = robbery)) +
   geom_line(color = "red", size = 3) + #<<
-  xlab("Year") + 
-  ylab("Life expectancy") +
-  ggtitle("Life expectancy over time") +
+ xlab("Month") + 
+  ylab("Robbery") +
+  ggtitle("Robbery in London") +
   theme_bw(base_size=18)
 ```
-]
 ]
 .pull-right[
-```{r,  dev='svg', echo=FALSE}
-ggplot(data = gapminder, 
-       aes(x = year, y = lifeExp)) +
-  geom_line(color = "red", size = 3) + #<<
-  xlab("Year") + 
-  ylab("Life expectancy") +
-  ggtitle("Life expectancy over time") +
-  theme_bw(base_size=18)
-```
+![](`r knitr::fig_chunk("london-2", "svg")`)
 ]
 
 .footnote[`ggplot2` doesn't know how to connect the lines!]
 
 ---
-  
-  
-  # Plotting All Countries
-  
-  ### 3: Grouping
-  .pull-left[
-    .small[
-      ```{r, fig.height=4, dev='svg', eval=FALSE}
-      ggplot(data = gapminder, 
-             aes(x = year, y = lifeExp, 
-                 group = country)) + #<<
-        geom_line(color = "red", size = 3) +
-        xlab("Year") + 
-        ylab("Life expectancy") +
-        ggtitle("Life expectancy over time") +
-        theme_bw(base_size=18)
-      ```
-    ]
-  ]
+
+# Plotting All Boroughs
+
+### 3: Grouping
+
+.pull-left[
+```{r london-3, fig.height=4,  fig.show='hide'}
+ ggplot(data = metro_2021, 
+      aes(x = month, y = robbery, group = borough)) +
+  geom_line(color = "red", size = 3) + #<<
+ xlab("Month") + 
+  ylab("Robbery") +
+  ggtitle("Robbery in London") +
+  theme_bw(base_size=18)
+```
+]
 .pull-right[
-  ```{r,  dev='svg', echo=FALSE}
-  ggplot(data = gapminder, 
-         aes(x = year, y = lifeExp, 
-             group = country)) + #<<
-    geom_line(color = "red", size = 3) +
-    xlab("Year") + 
-    ylab("Life expectancy") +
-    ggtitle("Life expectancy over time") +
-    theme_bw(base_size=18)
-  ```
+![](`r knitr::fig_chunk("london-3", "svg")`)
 ]
 
 .footnote[That looks more reasonable... but the lines are too thick!]
+
 ---
-  
-  
-  # Plotting All Countries
-  
-  ### 4: Size
-  .pull-left[
-    .small[
-      ```{r, fig.height=4, dev='svg', eval=FALSE}
-      ggplot(data = gapminder, 
-             aes(x = year, y = lifeExp, 
-                 group = country)) +
-        geom_line(color = "red") + #<<
-        xlab("Year") + 
-        ylab("Life expectancy") +
-        ggtitle("Life expectancy over time") +
-        theme_bw(base_size=18)
-      ```
-    ]
-  ]
+
+# Plotting All Boroughs
+
+### 4: Size
+.pull-left[
+```{r london-4, fig.height=4,  fig.show='hide'}
+ ggplot(data = metro_2021, 
+      aes(x = month, y = robbery, group = borough)) +
+  geom_line(color = "red") + #<<
+ xlab("Month") + 
+  ylab("Robbery") +
+  ggtitle("Robbery in London") +
+  theme_bw(base_size=18)
+```
+]
 .pull-right[
-  ```{r,  dev='svg', echo=FALSE}
-  ggplot(data = gapminder, 
-         aes(x = year, y = lifeExp, 
-             group = country)) +
-    geom_line(color = "red") + #<<
-    xlab("Year") + 
-    ylab("Life expectancy") +
-    ggtitle("Life expectancy over time") +
-    theme_bw(base_size=18)
-  ```
+![](`r knitr::fig_chunk("london-4", "svg")`)
 ]
 
-.footnote[Much better... but maybe we can do highlight regional differences?]
+.footnote[Much better... but maybe we can do highlight subregions?]
 
 ---
   
   
-  # Plotting All Countries
+# Plotting All Boroughs
   
-  ### 5: Color
-  .pull-left[
-    .small[
-      ```{r, fig.height=4, dev='svg', eval=FALSE}
-      ggplot(data = gapminder, 
-             aes(x = year, y = lifeExp, 
-                 group = country, 
-                 color = continent)) + #<<
-        geom_line() + #<<
-        xlab("Year") + 
-        ylab("Life expectancy") +
-        ggtitle("Life expectancy over time") +
-        theme_bw(base_size=18)
-      ```
-    ]
-  ]
+### 5: Color
+
+.pull-left[
+```{r london-5, fig.height=4,  fig.show='hide'}
+ ggplot(data = metro_2021, 
+      aes(x = month, y = robbery, group = borough,
+          color = subregion)) + #<<
+  geom_line() + 
+ xlab("Month") + 
+  ylab("Robbery") +
+  ggtitle("Robbery in London") +
+  theme_bw(base_size=18)
+```
+]
 .pull-right[
-  ```{r,  dev='svg', echo=FALSE}
-  ggplot(data = gapminder, 
-         aes(x = year, y = lifeExp, 
-             group = country, 
-             color = continent)) + #<<
-    geom_line() + #<<
-    xlab("Year") + 
-    ylab("Life expectancy") +
-    ggtitle("Life expectancy over time") +
-    theme_bw(base_size=18) #<<
-  ```
+![](`r knitr::fig_chunk("london-5", "svg")`)
 ]
 
-.footnote[Patterns are obvious... but why not separate continents completely?]
+.footnote[Hmmm, hard to make out... why not separate subregions completely?]
 
 ---
 
+# Plotting All Boroughs
+  
+### 6: Facets
+
+.pull-left[
+```{r london-6, fig.height=4,  fig.show='hide'}
+ ggplot(data = metro_2021, 
+      aes(x = month, y = robbery, group = borough,
+          color = subregion)) + #<<
+  geom_line() + 
+  facet_wrap(~subregion) +
+  xlab("Month") + 
+  ylab("Robbery") +
+  ggtitle("Robbery in London") +
+  theme_bw(base_size=18)
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("london-6", "svg")`)
+]
+
+.footnote[Looking good, but the legend is redundant!]
+
+---
+
+# Plotting All Boroughs
+  
+### 7: Legend
+
+.pull-left[
+```{r london-7, fig.height=4,  fig.show='hide'}
+ ggplot(data = metro_2021, 
+      aes(x = month, y = robbery, group = borough,
+          color = subregion)) + #<<
+  geom_line() + 
+  facet_wrap(~subregion) +
+  xlab("Month") + 
+  ylab("Robbery") +
+  ggtitle("Robbery in London") +
+  theme_bw(base_size=18) +
+  theme(legend.position = "none")
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("london-7", "svg")`)
+]
+
+.footnote[Not bad!]
 
 ---
   

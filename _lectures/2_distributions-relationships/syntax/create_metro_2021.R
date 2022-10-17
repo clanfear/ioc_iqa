@@ -27,7 +27,7 @@ metro_2021 <- vroom::vroom(list.files("C:/Users/cl948/Downloads/metro_2021/", re
   filter(crime_type %in% c("Burglary", "Robbery", "Violence and sexual offences", "Anti-social behaviour")) %>%
   mutate(crime_type = str_to_lower(str_replace_all(str_remove(crime_type, "-"), " ", "_"))) %>%
   count(borough, crime_type, month) %>%
-  mutate(month = as.numeric(str_extract(month, "[0-9]+$"))) %>%
+  mutate(month = lubridate::ym(month)) %>%
   pivot_wider(names_from = crime_type, values_from = n) %>%
   left_join(london_subregion) 
 #  left_join(deprivation) %>%
