@@ -523,7 +523,8 @@ We used `table()` earlier to tabulate a categorical variable
 In `dplyr`, we can use `count()`
 
 ```{r}
-metro_2021 |> count(subregion)
+metro_2021 |> 
+  count(subregion)
 ```
 
 ---
@@ -533,8 +534,14 @@ metro_2021 |> count(subregion)
 We can add a column of proportions
 
 ```{r}
-metro_2021 |> count(subregion) |> mutate(Proportion = n/sum(n))
+metro_2021 |> 
+  count(subregion) |>
+  mutate(proportion = n/sum(n))
 ```
+
+--
+
+We'll make prettier and more complicated tabulations another day!
 
 ---
 
