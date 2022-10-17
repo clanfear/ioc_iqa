@@ -25,8 +25,6 @@ mean(vector_w_missing[!is.na(vector_w_missing)]) #<<
 library(readr)
 library(dplyr)
 
-getwd()
-
 shootings <- 
   read_csv( 
     "https://clanfear.github.io/ioc_iqa/_data/fatal-police-shootings-data.csv"
@@ -58,12 +56,12 @@ glimpse(metro_2021)
 westminster <- metro_2021 |> filter(borough == "Westminster")
 head(westminster, 4)
 
-## plot(robbery ~ month,
-##      data = westminster,
-##      xlab = "Month",
-##      ylab = "Robbery",
-##      main = "Robbery in Westminster in 2021",
-##      col = "red",
-##      cex.lab = 1.5,
-##      cex.main= 1.5,
-##      pch = 16)
+plot(robbery ~ month, 
+     data = westminster, 
+     xlab = "Month", 
+     ylab = "Robbery",
+     main = "Robbery in Westminster in 2021", 
+     col = "red", 
+     cex.lab = 1.5,
+     cex.main= 1.5,
+     pch = 16)

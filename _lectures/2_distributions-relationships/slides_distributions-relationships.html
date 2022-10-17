@@ -413,61 +413,6 @@ class: inverse
 
 ---
 
-# Working Directories
-
-Recall that R saves files and looks for files to open in your current **working directory**. 
-
-You can find out what it is using the function `getwd()`.
-
-On my computer when I knitted these slides, it happened to be:
-
-
-```r
-getwd()
-```
-
-```
-## [1] "C:/Users/cl948/OneDrive/GitHub/ioc_iqa/_lectures/2_distributions-relationships"
-```
-
----
-# `setwd()`
-
-You can use `setwd(dir = "C:/path/to/new/working/directory")` to change the working directory.
-
-Working directory suggestions:
-
-* Instead of setting a working directory, it is usually better to use [RStudio projects](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects) to manage working directories.
-
---
-
-* Windows users: If you copy a path from Explorer, make sure to change back slashes (`\`) to forward slashes (`/`) for the filepaths
-
---
-
-* If you *need* to set a working, put `setwd()` at the start of your file
-
----
-
-# Projects in RStudio
-
-A better way to deal with working directories: RStudio's **project** feature in the top-right dropdown. This has lots of advantages:
-
---
-
-* Sets your working directory to be the project directory.
-
---
-
-* Remembers objects in your workspace, command history, etc. next time you re-open that project.
-
---
-
-* Reduces risk of intermingling different work using the same variable names (e.g. `n`) by using separate RStudio instances for each project.
-
-
----
-
 # Delimited Text Files
 
 One of the most common ways for data to be stored is in a *delimited* text file, e.g. comma-separated values (**.csv**) or tab-separated values (**.tsv**). Here is **.csv** data:
@@ -729,7 +674,9 @@ class: inverse
 
 # London Crime
 
-Let's load another example dataset: 
+We'll revisit the shootings data another day.
+
+For plotting, let's load another example dataset: 
 
 Metropolitan Police recorded crime in London boroughs in 2021
 
@@ -815,7 +762,7 @@ plot(robbery ~ month,
 ]
 
 .pull-right[
-![](slides_distributions-relationships_files/figure-html/base-plot-out-1.svg)&lt;!-- --&gt;
+![](slides_distributions-relationships_files/figure-html/base-plot-1.svg)
 ]
 
     </textarea>
