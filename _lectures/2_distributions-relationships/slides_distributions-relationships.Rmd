@@ -353,13 +353,13 @@ I recommend using the versions in the `readr` package instead: `read_csv()`, `re
 
 # `readr` Importing Example
 
-Let's use `read_csv()` from `readr` to import some data about fatal police shootings from Kaplan (2022).
+Let's use `read_csv()` from `readr` to import some community crime data based on those in yesterday's CRM lecture
 
 .small[
 ```{r}
-shootings <- 
-  read_csv( 
-    "https://clanfear.github.io/ioc_iqa/_data/fatal-police-shootings-data.csv"
+communities <- 
+  read_csv(
+    "https://clanfear.github.io/ioc_iqa/_data/communities.csv"
     )
 ```
 ]
@@ -382,7 +382,7 @@ class: inverse
 .text-62[
 ```{r}
 
-glimpse(shootings)
+glimpse(communities)
 ```
 ]
 
@@ -395,7 +395,7 @@ glimpse(shootings)
 Instead of nesting functions like this:
 
 ```{r}
-sort(table(shootings$race))
+sort(table(communities$Incarceration))
 ```
 
 --
@@ -403,19 +403,57 @@ sort(table(shootings$race))
 We can pipe them like this:
 
 ```{r}
-shootings |> pull(race) |> table() |> sort()
+communities |> pull(Incarceration) |> table() |> sort()
 ```
 
 --
 
-Read this as, "get `shootings`, and then pull out the `race` column, and then make a `table()`, and then `sort()` it."
+Read this as, "take `communities`, and then pull out the `Incarceration` column, and then make a `table()`, and then `sort()` it."
+
+
+---
+# Fixing Columns
+
+Incarceration looks like an ordinal variable (Disadvantage too) but R doesn't know this—it just puts them in alphabetical order
+
+--
+
+To fix this, we need to know how to create or modify variables in our data
+
+--
+
+`dplyr` uses the `mutate()` function to create or modify variables:
+
+```{r}
+communities |>
+  mutate(high_crime = `Crime Rate` > mean(`Crime Rate`)) |>
+  head(4)
+```
+
+
+
+---
+We can give them a proper order by making them **factors** and specifying their **levels**
+
+--
+
+```{r}
+communities <- communities |>
+  mutate(Disadvantage = 
+           factor(Disadvantage, 
+                  levels = c("Low", "Medium", "High")),
+         Incarceration = 
+           factor(Incarceration, 
+                  levels = c("Low", "Medium", "High")))
+```
+
 
 ---
 
 # `filter` Data Frames
 
 ```{r}
-shootings |> filter(armed == "unarmed") |> head()
+communities |> filter(Incarceration == "High") |> head()
 ```
 
 .text-center[
@@ -441,7 +479,7 @@ It takes *only* logical vectors (the result of **expressions**) as an argument
 If you want to `filter()` by *position*, use `slice()`:
 
 ```{r}
-shootings |> slice(c(1, 5, 9))
+communities |> slice(c(1, 5, 9))
 ```
 
 
@@ -498,11 +536,6 @@ We'll revisit the shootings data again soon.
 
 For now, let's load another example dataset: 
 
-Community crime data based on those in yesterday's CRM lecture
-
-```{r}
-communities <- read_csv("https://clanfear.github.io/ioc_iqa/_data/communities.csv")
-```
 
 ---
 # Community Data
@@ -510,6 +543,26 @@ communities <- read_csv("https://clanfear.github.io/ioc_iqa/_data/communities.cs
 ```{r}
 glimpse(communities)
 ```
+
+---
+# Tabulations
+
+Let's look at tabulations first. They're most useful for summarizing categorical data.
+
+--
+
+`count()` is a `dplyr` function for tabulating one or more columns
+
+```{r}
+communities |> count(Incarceration)
+```
+
+
+---
+
+# Cross-Tabs
+
+Let's look at cross-tabs first. They're used for associations between categorical variables.
 
 
 ---
