@@ -23,29 +23,6 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
 
 
 
-
-# Things to include
-
-Maybe reorient this all so it matches the exact content from CRM? Maybe just export the CRM data?
-
-* Distributions
-   * Mean vs. median and skew
-      * Logs and log-normals
-   * Histograms
-   * Barplots?
-   * Densities
-   * Tables for categoricals
-   * skimr?
-
-* Relationships
-  * Mean differences between groups
-     * Demonstrate conditional distributions
-  * Crosstabs
-  * Scatterplots
-  * Correlations
-
----
-
 # Today
 
 * News items:
@@ -57,15 +34,15 @@ Maybe reorient this all so it matches the exact content from CRM? Maybe just exp
    * Reschedule Nov 16th to Monday Nov 14th
      * Tentative: 4 PM
 
---
-
-* Subsetting with logical expressions
-
-* Pipes
-
-* Counting and summarizing
-
-* Plots for continuous data
+* Topics for today:
+   
+   * Subsetting with logical expressions
+   * Pipes 
+   * Creating and modifying variables
+   * Distributions
+      * Tabulations and Cross-Tabulations
+      * Summarizing data
+      * Correlations
 
 ---
 class: inverse
@@ -250,7 +227,7 @@ mean(vector_w_missing[!is.na(vector_w_missing)]) #<<
 ---
 class: inverse
 
-# `tidyverse`
+# `{tidyverse}`
 
 &nbsp;
 
@@ -258,15 +235,15 @@ class: inverse
 
 ---
 
-# Installing `tidyverse`
+# Installing `{tidyverse}`
 
 We're going to practice loading files and manipulating data.
 
 --
 
-We will use a packages called `readr` and `dplyr` to do this neatly.
+We will use a packages called `{readr}` and `{dplyr}` to do this neatly.
 
-These packages are part of the [`tidyverse`](http://tidyverse.org/) family of R packages
+These packages are part of the [Tidyverse](http://tidyverse.org/) family of R packages
 
 * These packages make using R *much easier*
 
@@ -276,7 +253,7 @@ If you have not already installed the tidyverse, type, in the console: `install.
 
 --
 
-This will install a *large* number of R packages we will use throughout the term, including `readr`, `ggplot2`, and `dplyr`.
+This will install a *large* number of R packages we will use throughout the term, including `{readr}`, `{ggplot2}`, and `{dplyr}`.
 
 ---
 
@@ -337,13 +314,13 @@ One of the most common ways for data to be stored is in a *delimited* text file,
 ```
 
 ---
-# `readr`
+# `{readr}`
 
 R has a variety of built-in functions for importing delimited text, like `read.table()` and `read.csv()`.
 
-I recommend using the versions in the `readr` package instead: `read_csv()`, `read_tsv()`, and `read_delim()`:
+I recommend using the versions in the `{readr}` package instead: `read_csv()`, `read_tsv()`, and `read_delim()`:
 
-`readr` function features:
+`{readr}` function features:
 
 * Faster!
 * A *little* smarter about dates and times
@@ -352,9 +329,9 @@ I recommend using the versions in the `readr` package instead: `read_csv()`, `re
 
 ---
 
-# `readr` Importing Example
+# `{readr}` Importing Example
 
-Let's use `read_csv()` from `readr` to import some community crime data based on those in yesterday's CRM lecture
+Let's use `read_csv()` from `{readr}` to import some community crime data based on those in yesterday's CRM lecture
 
 .small[
 ```{r}
@@ -368,7 +345,7 @@ communities <-
 ---
 class: inverse
 
-# `dplyr`
+# `{dplyr}`
 
 &nbsp;
 
@@ -378,7 +355,7 @@ class: inverse
 
 # Check Out Shootings
 
-`dplyr` gives us access to the handy `glimpse()` for inspecting dataframes.
+`{dplyr}` gives us access to the handy `glimpse()` for inspecting dataframes.
 
 .text-62[
 ```{r}
@@ -390,7 +367,7 @@ glimpse(communities)
 
 # But first, pipes!
 
-`dplyr` and rest of the Tidyverse are built around using pipe operators (`|>`)
+`{dplyr}` and rest of the Tidyverse are built around using pipe operators (`|>`)
 
 Instead of nesting functions like this:
 
@@ -476,7 +453,7 @@ communities |> pull(incarceration) |> table()
 
 ---
 
-# `filter` Data Frames
+# `filter()` Data Frames
 
 ```{r}
 communities |> filter(incarceration == "High") |> head()
@@ -488,7 +465,7 @@ communities |> filter(incarceration == "High") |> head()
 
 --
 
-`filter()` is `dplyr`'s function for indexing **rows** of a dataframe
+`filter()` is a `{dplyr}` function for indexing dataframe **rows**
 
 --
 
@@ -548,7 +525,7 @@ Let's look at tabulations first. They're useful for summarizing categorical data
 
 --
 
-`count()` is a `dplyr` function for tabulating one or more columns
+`count()` is a `{dplyr}` function for tabulating one or more columns
 
 ```{r}
 communities |> count(incarceration)
@@ -562,9 +539,9 @@ communities |> count(incarceration) |> mutate(proportion = n/sum(n))
 
 ---
 
-# `janitor`
+# `{janitor}`
 
-`janitor` is a data cleaning package, but it makes tabulations easier too
+`{janitor}` is a data cleaning package, but it makes tabulations easier too
 
 ```{r, eval = FALSE}
 install.packages("janitor")
@@ -591,7 +568,7 @@ It comes in *really* handy for **cross-tabs**—we'll see them soon!
 ---
 # `summarize()`
 
-`dplyr`'s **`summarize()`** takes your column(s) of data and computes something using **every row**: 
+`{dplyr}`'s **`summarize()`** takes your column(s) of data and computes something using **every row**: 
 
 * Calculate the mean
 * Calculate the standard deviation
@@ -615,6 +592,10 @@ class: inverse
 
 # Associations
 
+&nbsp;
+
+### Which are really about **joint distributions**
+
 ---
 
 # Cross-Tabs
@@ -623,7 +604,7 @@ Let's look at cross-tabs first. They're used for associations between categorica
 
 --
 
-This is where `janitor`'s `tabyl()` begins to shine:
+This is where `{janitor}`'s `tabyl()` begins to shine:
 
 --
 
@@ -643,7 +624,7 @@ count: false
 
 # Fancy Cross-Tabs 1
 
-We can assemble *fancy* tables bit-by-bit with `janitor`
+We can assemble *fancy* tables bit-by-bit with `{janitor}`
 
 ```{r}
 communities |> 
@@ -820,7 +801,7 @@ communities |> summarize(R = cor(pop_density, crime_rate))
 
 # Multiple Correlations
 
-If you want to do correlations *within groups*, `dplyr` is king again
+If you want to do correlations *within groups*, `{dplyr}` is king again
 
 ```{r}
 communities |>
@@ -831,6 +812,7 @@ communities |>
 In this case, the correlation between `pop_density` and `crime_rate` is similar at all levels of disadvantage
 
 ---
+class: inverse
 
 # Wrap-Up
   
@@ -840,7 +822,7 @@ In this case, the correlation between `pop_density` and `crime_rate` is similar 
       * Chapter 14 (graphing) is what we'll get into next week
    * You're pretty busy, so make it low priority!
 
-* `swirl` units if you want practice
+* `{swirl}` units if you want practice
 
    * 5 covers missing values
    * 6 covers subsetting

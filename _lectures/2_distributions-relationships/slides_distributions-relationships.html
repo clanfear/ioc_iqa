@@ -31,29 +31,6 @@ class: center, top, title-slide
 
 
 
-
-# Things to include
-
-Maybe reorient this all so it matches the exact content from CRM? Maybe just export the CRM data?
-
-* Distributions
-   * Mean vs. median and skew
-      * Logs and log-normals
-   * Histograms
-   * Barplots?
-   * Densities
-   * Tables for categoricals
-   * skimr?
-
-* Relationships
-  * Mean differences between groups
-     * Demonstrate conditional distributions
-  * Crosstabs
-  * Scatterplots
-  * Correlations
-
----
-
 # Today
 
 * News items:
@@ -65,15 +42,15 @@ Maybe reorient this all so it matches the exact content from CRM? Maybe just exp
    * Reschedule Nov 16th to Monday Nov 14th
      * Tentative: 4 PM
 
---
-
-* Subsetting with logical expressions
-
-* Pipes
-
-* Counting and summarizing
-
-* Plots for continuous data
+* Topics for today:
+   
+   * Subsetting with logical expressions
+   * Pipes 
+   * Creating and modifying variables
+   * Distributions
+      * Tabulations and Cross-Tabulations
+      * Summarizing data
+      * Correlations
 
 ---
 class: inverse
@@ -330,7 +307,7 @@ We can use subsetting to get the equivalent of `na.rm=TRUE`:
 ---
 class: inverse
 
-# `tidyverse`
+# `{tidyverse}`
 
 &amp;nbsp;
 
@@ -338,15 +315,15 @@ class: inverse
 
 ---
 
-# Installing `tidyverse`
+# Installing `{tidyverse}`
 
 We're going to practice loading files and manipulating data.
 
 --
 
-We will use a packages called `readr` and `dplyr` to do this neatly.
+We will use a packages called `{readr}` and `{dplyr}` to do this neatly.
 
-These packages are part of the [`tidyverse`](http://tidyverse.org/) family of R packages
+These packages are part of the [Tidyverse](http://tidyverse.org/) family of R packages
 
 * These packages make using R *much easier*
 
@@ -356,7 +333,7 @@ If you have not already installed the tidyverse, type, in the console: `install.
 
 --
 
-This will install a *large* number of R packages we will use throughout the term, including `readr`, `ggplot2`, and `dplyr`.
+This will install a *large* number of R packages we will use throughout the term, including `{readr}`, `{ggplot2}`, and `{dplyr}`.
 
 ---
 
@@ -435,13 +412,13 @@ One of the most common ways for data to be stored is in a *delimited* text file,
 ```
 
 ---
-# `readr`
+# `{readr}`
 
 R has a variety of built-in functions for importing delimited text, like `read.table()` and `read.csv()`.
 
-I recommend using the versions in the `readr` package instead: `read_csv()`, `read_tsv()`, and `read_delim()`:
+I recommend using the versions in the `{readr}` package instead: `read_csv()`, `read_tsv()`, and `read_delim()`:
 
-`readr` function features:
+`{readr}` function features:
 
 * Faster!
 * A *little* smarter about dates and times
@@ -450,9 +427,9 @@ I recommend using the versions in the `readr` package instead: `read_csv()`, `re
 
 ---
 
-# `readr` Importing Example
+# `{readr}` Importing Example
 
-Let's use `read_csv()` from `readr` to import some community crime data based on those in yesterday's CRM lecture
+Let's use `read_csv()` from `{readr}` to import some community crime data based on those in yesterday's CRM lecture
 
 .small[
 
@@ -478,7 +455,7 @@ communities &lt;-
 ---
 class: inverse
 
-# `dplyr`
+# `{dplyr}`
 
 &amp;nbsp;
 
@@ -488,7 +465,7 @@ class: inverse
 
 # Check Out Shootings
 
-`dplyr` gives us access to the handy `glimpse()` for inspecting dataframes.
+`{dplyr}` gives us access to the handy `glimpse()` for inspecting dataframes.
 
 .text-62[
 
@@ -499,11 +476,11 @@ glimpse(communities)
 ```
 ## Rows: 300
 ## Columns: 5
-## $ area          &lt;chr&gt; "Urban", "Rural", "Rural", "Rural", "Urban",…
-## $ pop_density   &lt;dbl&gt; 18.761318, 7.503175, 9.351905, 8.471700, 18.…
-## $ crime_rate    &lt;dbl&gt; 24.20, 0.20, 1.25, 2.45, 11.25, 4.05, 12.80,…
-## $ disadvantage  &lt;chr&gt; "Low", "Medium", "Low", "Low", "Medium", "Hi…
-## $ incarceration &lt;chr&gt; "Medium", "Medium", "Low", "Low", "Low", "Me…
+## $ area          &lt;chr&gt; "Urban", "Urban", "Rural", "Rural", "Urban",…
+## $ pop_density   &lt;dbl&gt; 18.166008, 21.356727, 10.023975, 14.926138, …
+## $ crime_rate    &lt;dbl&gt; 28.63123, 58.60800, 14.19840, 22.29075, 79.7…
+## $ disadvantage  &lt;chr&gt; "Low", "Medium", "Low", "Medium", "High", "H…
+## $ incarceration &lt;chr&gt; "High", "Medium", "High", "Medium", "High", …
 ```
 ]
 
@@ -511,7 +488,7 @@ glimpse(communities)
 
 # But first, pipes!
 
-`dplyr` and rest of the Tidyverse are built around using pipe operators (`|&gt;`)
+`{dplyr}` and rest of the Tidyverse are built around using pipe operators (`|&gt;`)
 
 Instead of nesting functions like this:
 
@@ -523,7 +500,7 @@ proportions(table(communities$disadvantage))
 ```
 ## 
 ##      High       Low    Medium 
-## 0.2900000 0.3466667 0.3633333
+## 0.3366667 0.3400000 0.3233333
 ```
 
 --
@@ -538,7 +515,7 @@ communities |&gt; pull(disadvantage) |&gt; table() |&gt; proportions()
 ```
 ## 
 ##      High       Low    Medium 
-## 0.2900000 0.3466667 0.3633333
+## 0.3366667 0.3400000 0.3233333
 ```
 
 --
@@ -570,10 +547,10 @@ communities |&gt;
 ## # A tibble: 4 × 6
 ##   area  pop_density crime_rate disadvantage incarceration high_crime
 ##   &lt;chr&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;         &lt;lgl&gt;     
-## 1 Urban       18.8       24.2  Low          Medium        TRUE      
-## 2 Rural        7.50       0.2  Medium       Medium        FALSE     
-## 3 Rural        9.35       1.25 Low          Low           FALSE     
-## 4 Rural        8.47       2.45 Low          Low           FALSE
+## 1 Urban        18.2       28.6 Low          High          TRUE      
+## 2 Urban        21.4       58.6 Medium       Medium        TRUE      
+## 3 Rural        10.0       14.2 Low          High          FALSE     
+## 4 Rural        14.9       22.3 Medium       Medium        FALSE
 ```
 
 This created a **logical** (`TRUE`/`FALSE`) variable because we used a logical expression
@@ -614,7 +591,7 @@ communities |&gt; pull(disadvantage) |&gt; table()
 ```
 ## 
 ##    Low Medium   High 
-##    104    109     87
+##    102     97    101
 ```
 
 
@@ -626,7 +603,7 @@ communities |&gt; pull(incarceration) |&gt; table()
 ```
 ## 
 ##    Low Medium   High 
-##    104    102     94
+##     95    106     99
 ```
 
 --
@@ -637,7 +614,7 @@ communities |&gt; pull(incarceration) |&gt; table()
 
 ---
 
-# `filter` Data Frames
+# `filter()` Data Frames
 
 
 ```r
@@ -648,12 +625,12 @@ communities |&gt; filter(incarceration == "High") |&gt; head()
 ## # A tibble: 6 × 5
 ##   area  pop_density crime_rate disadvantage incarceration
 ##   &lt;chr&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;fct&gt;        &lt;fct&gt;        
-## 1 Rural        5.95       3.2  Low          High         
-## 2 Urban       15.8        5    Medium       High         
-## 3 Rural       10.7        6.05 High         High         
-## 4 Rural       10.7        6.05 Low          High         
-## 5 Urban       15.1       39.2  High         High         
-## 6 Urban       24.2       42.0  Low          High
+## 1 Urban       18.2       28.6  Low          High         
+## 2 Rural       10.0       14.2  Low          High         
+## 3 Urban       21.9       79.8  High         High         
+## 4 Urban       18.5       31.1  High         High         
+## 5 Urban       22.5       28.6  Low          High         
+## 6 Rural        8.95       6.53 Medium       High
 ```
 
 .text-center[
@@ -662,7 +639,7 @@ communities |&gt; filter(incarceration == "High") |&gt; head()
 
 --
 
-`filter()` is `dplyr`'s function for indexing **rows** of a dataframe
+`filter()` is a `{dplyr}` function for indexing dataframe **rows**
 
 --
 
@@ -724,7 +701,7 @@ Let's look at tabulations first. They're useful for summarizing categorical data
 
 --
 
-`count()` is a `dplyr` function for tabulating one or more columns
+`count()` is a `{dplyr}` function for tabulating one or more columns
 
 
 ```r
@@ -735,9 +712,9 @@ communities |&gt; count(incarceration)
 ## # A tibble: 3 × 2
 ##   incarceration     n
 ##   &lt;fct&gt;         &lt;int&gt;
-## 1 Low             104
-## 2 Medium          102
-## 3 High             94
+## 1 Low              95
+## 2 Medium          106
+## 3 High             99
 ```
 
 --
@@ -751,16 +728,16 @@ communities |&gt; count(incarceration) |&gt; mutate(proportion = n/sum(n))
 ## # A tibble: 3 × 3
 ##   incarceration     n proportion
 ##   &lt;fct&gt;         &lt;int&gt;      &lt;dbl&gt;
-## 1 Low             104      0.347
-## 2 Medium          102      0.34 
-## 3 High             94      0.313
+## 1 Low              95      0.317
+## 2 Medium          106      0.353
+## 3 High             99      0.33
 ```
 
 ---
 
-# `janitor`
+# `{janitor}`
 
-`janitor` is a data cleaning package, but it makes tabulations easier too
+`{janitor}` is a data cleaning package, but it makes tabulations easier too
 
 
 ```r
@@ -791,9 +768,9 @@ communities |&gt; tabyl(incarceration)
 
 ```
 ##  incarceration   n   percent
-##            Low 104 0.3466667
-##         Medium 102 0.3400000
-##           High  94 0.3133333
+##            Low  95 0.3166667
+##         Medium 106 0.3533333
+##           High  99 0.3300000
 ```
 
 
@@ -808,7 +785,7 @@ It comes in *really* handy for **cross-tabs**—we'll see them soon!
 ---
 # `summarize()`
 
-`dplyr`'s **`summarize()`** takes your column(s) of data and computes something using **every row**: 
+`{dplyr}`'s **`summarize()`** takes your column(s) of data and computes something using **every row**: 
 
 * Calculate the mean
 * Calculate the standard deviation
@@ -827,7 +804,7 @@ communities |&gt;
 ## # A tibble: 1 × 3
 ##   mean_crime_rate sd_crime_rate     n
 ##             &lt;dbl&gt;         &lt;dbl&gt; &lt;int&gt;
-## 1            13.5          11.9   300
+## 1            25.2          21.8   300
 ```
 
 --
@@ -840,6 +817,10 @@ class: inverse
 
 # Associations
 
+&amp;nbsp;
+
+### Which are really about **joint distributions**
+
 ---
 
 # Cross-Tabs
@@ -848,7 +829,7 @@ Let's look at cross-tabs first. They're used for associations between categorica
 
 --
 
-This is where `janitor`'s `tabyl()` begins to shine:
+This is where `{janitor}`'s `tabyl()` begins to shine:
 
 --
 
@@ -859,9 +840,9 @@ communities |&gt; tabyl(disadvantage, incarceration)
 
 ```
 ##  disadvantage Low Medium High
-##           Low  54     31   19
-##        Medium  38     44   27
-##          High  12     27   48
+##           Low  40     45   17
+##        Medium  31     30   36
+##          High  24     31   46
 ```
 
 --
@@ -874,9 +855,9 @@ communities |&gt; tabyl(disadvantage, incarceration) |&gt;
 
 ```
 ##  disadvantage       Low    Medium      High
-##           Low 0.5192308 0.2980769 0.1826923
-##        Medium 0.3486239 0.4036697 0.2477064
-##          High 0.1379310 0.3103448 0.5517241
+##           Low 0.3921569 0.4411765 0.1666667
+##        Medium 0.3195876 0.3092784 0.3711340
+##          High 0.2376238 0.3069307 0.4554455
 ```
 
 ---
@@ -884,7 +865,7 @@ count: false
 
 # Fancy Cross-Tabs 1
 
-We can assemble *fancy* tables bit-by-bit with `janitor`
+We can assemble *fancy* tables bit-by-bit with `{janitor}`
 
 
 ```r
@@ -894,9 +875,9 @@ communities |&gt;
 
 ```
 ##  disadvantage Low Medium High
-##           Low  54     31   19
-##        Medium  38     44   27
-##          High  12     27   48
+##           Low  40     45   17
+##        Medium  31     30   36
+##          High  24     31   46
 ```
 
 ---
@@ -915,10 +896,10 @@ communities |&gt;
 
 ```
 ##  disadvantage Low Medium High Total
-##           Low  54     31   19   104
-##        Medium  38     44   27   109
-##          High  12     27   48    87
-##         Total 104    102   94   300
+##           Low  40     45   17   102
+##        Medium  31     30   36    97
+##          High  24     31   46   101
+##         Total  95    106   99   300
 ```
 
 ---
@@ -938,10 +919,10 @@ communities |&gt;
 
 ```
 ##  disadvantage       Low    Medium      High Total
-##           Low 0.5192308 0.2980769 0.1826923     1
-##        Medium 0.3486239 0.4036697 0.2477064     1
-##          High 0.1379310 0.3103448 0.5517241     1
-##         Total 0.3466667 0.3400000 0.3133333     1
+##           Low 0.3921569 0.4411765 0.1666667     1
+##        Medium 0.3195876 0.3092784 0.3711340     1
+##          High 0.2376238 0.3069307 0.4554455     1
+##         Total 0.3166667 0.3533333 0.3300000     1
 ```
 
 ---
@@ -962,10 +943,10 @@ communities |&gt;
 
 ```
 ##  disadvantage    Low Medium   High   Total
-##           Low 51.92% 29.81% 18.27% 100.00%
-##        Medium 34.86% 40.37% 24.77% 100.00%
-##          High 13.79% 31.03% 55.17% 100.00%
-##         Total 34.67% 34.00% 31.33% 100.00%
+##           Low 39.22% 44.12% 16.67% 100.00%
+##        Medium 31.96% 30.93% 37.11% 100.00%
+##          High 23.76% 30.69% 45.54% 100.00%
+##         Total 31.67% 35.33% 33.00% 100.00%
 ```
 
 ---
@@ -986,11 +967,11 @@ communities |&gt;
 ```
 
 ```
-##  disadvantage          Low       Medium        High         Total
-##           Low 51.92%  (54) 29.81%  (31) 18.27% (19) 100.00% (104)
-##        Medium 34.86%  (38) 40.37%  (44) 24.77% (27) 100.00% (109)
-##          High 13.79%  (12) 31.03%  (27) 55.17% (48) 100.00%  (87)
-##         Total 34.67% (104) 34.00% (102) 31.33% (94) 100.00% (300)
+##  disadvantage         Low       Medium        High         Total
+##           Low 39.22% (40) 44.12%  (45) 16.67% (17) 100.00% (102)
+##        Medium 31.96% (31) 30.93%  (30) 37.11% (36) 100.00%  (97)
+##          High 23.76% (24) 30.69%  (31) 45.54% (46) 100.00% (101)
+##         Total 31.67% (95) 35.33% (106) 33.00% (99) 100.00% (300)
 ```
 
 
@@ -1015,10 +996,10 @@ communities |&gt;
 ```
 ##               incarceration                                       
 ##  disadvantage           Low       Medium        High         Total
-##           Low  51.92%  (54) 29.81%  (31) 18.27% (19) 100.00% (104)
-##        Medium  34.86%  (38) 40.37%  (44) 24.77% (27) 100.00% (109)
-##          High  13.79%  (12) 31.03%  (27) 55.17% (48) 100.00%  (87)
-##         Total  34.67% (104) 34.00% (102) 31.33% (94) 100.00% (300)
+##           Low   39.22% (40) 44.12%  (45) 16.67% (17) 100.00% (102)
+##        Medium   31.96% (31) 30.93%  (30) 37.11% (36) 100.00%  (97)
+##          High   23.76% (24) 30.69%  (31) 45.54% (46) 100.00% (101)
+##         Total   31.67% (95) 35.33% (106) 33.00% (99) 100.00% (300)
 ```
 
 Not bad! That's not far from paper ready!
@@ -1046,7 +1027,7 @@ communities |&gt;
 ## # A tibble: 1 × 3
 ##   mean_crime sd_crime     n
 ##        &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
-## 1       19.4     15.3    87
+## 1       31.9     24.4   101
 ```
 ]
 
@@ -1065,7 +1046,7 @@ communities |&gt;
 ## # A tibble: 1 × 3
 ##   mean_crime sd_crime     n
 ##        &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
-## 1       10.7     9.36   104
+## 1       18.7     17.4   102
 ```
 ]
 
@@ -1102,9 +1083,9 @@ communities |&gt;
 ## # A tibble: 3 × 4
 ##   disadvantage mean_crime sd_crime     n
 ##   &lt;fct&gt;             &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
-## 1 Low                10.7     9.36   104
-## 2 Medium             11.5     8.96   109
-## 3 High               19.4    15.3     87
+## 1 Low                18.7     17.4   102
+## 2 Medium             25.2     21.2    97
+## 3 High               31.9     24.4   101
 ```
 
 Because we did `group_by()` with `disadvantage` then used `summarize()`, we get *one row per value of `disadvantage`*!
@@ -1123,7 +1104,7 @@ cor(communities$pop_density, communities$crime_rate)
 ```
 
 ```
-## [1] 0.7943986
+## [1] 0.8064513
 ```
 
 --
@@ -1136,7 +1117,7 @@ with(communities, cor(pop_density, crime_rate))
 ```
 
 ```
-## [1] 0.7943986
+## [1] 0.8064513
 ```
 
 --
@@ -1152,14 +1133,14 @@ communities |&gt; summarize(R = cor(pop_density, crime_rate))
 ## # A tibble: 1 × 1
 ##       R
 ##   &lt;dbl&gt;
-## 1 0.794
+## 1 0.806
 ```
 
 ---
 
 # Multiple Correlations
 
-If you want to do correlations *within groups*, `dplyr` is king again
+If you want to do correlations *within groups*, `{dplyr}` is king again
 
 
 ```r
@@ -1172,14 +1153,15 @@ communities |&gt;
 ## # A tibble: 3 × 2
 ##   disadvantage     R
 ##   &lt;fct&gt;        &lt;dbl&gt;
-## 1 Low          0.823
-## 2 Medium       0.784
-## 3 High         0.789
+## 1 Low          0.743
+## 2 Medium       0.822
+## 3 High         0.826
 ```
 
 In this case, the correlation between `pop_density` and `crime_rate` is similar at all levels of disadvantage
 
 ---
+class: inverse
 
 # Wrap-Up
   
@@ -1189,7 +1171,7 @@ In this case, the correlation between `pop_density` and `crime_rate` is similar 
       * Chapter 14 (graphing) is what we'll get into next week
    * You're pretty busy, so make it low priority!
 
-* `swirl` units if you want practice
+* `{swirl}` units if you want practice
 
    * 5 covers missing values
    * 6 covers subsetting
