@@ -7,4 +7,4 @@ communities <- tibble(Area = rep(c("Rural", "Urban"), each = 5000),
   mutate(Disadvantage = factor(ntile(Disadvantage, 3), labels = c("Low", "Medium", "High")),
          Incarceration = factor(ntile(Incarceration, 3), labels = c("Low", "Medium", "High"))) |>
   sample_n(300)
-write_csv(communities, file = "./_data/communities.csv")
+write_csv(communities, file = "_data/communities.csv")
