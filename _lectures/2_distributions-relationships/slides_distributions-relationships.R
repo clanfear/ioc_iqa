@@ -53,12 +53,26 @@ metro_2021 <- read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021.csv"
 
 glimpse(metro_2021)
 
-metro_2021 |> count(subregion)
-
-metro_2021 |> count(subregion) |> mutate(Proportion = n/sum(n))
+metro_2021 |> 
+  distinct(borough) |>
+  head()
 
 metro_2021 |> 
-  filter(month == 6) |>
+  distinct(subregion, borough) |>
+  count(subregion)
+
+metro_2021 |> 
+  distinct(subregion, borough) |>
+  count(subregion) |>
+  mutate(proportion = n/sum(n))
+
+metro_2021 |> 
+  distinct(borough, subregion, deprivation) |>
+  count(deprivation, subregion) |>
+  head()
+
+metro_2021 |> 
+  filter(month == "2021-06-01") |>
   summarise(n_obs = n(),
             mean_robbery = mean(robbery),
             sd_robbery = sd(robbery))
@@ -66,8 +80,8 @@ metro_2021 |>
 metro_2021 |> 
   filter(borough == "Westminster") |>
   summarise(n_obs = n(),
-            mean_burglary = mean(burglary),
-            sd_burglary = sd(burglary))
+            median_burglary = median(burglary),
+            sum_burglary = sum(burglary))
 
 metro_2021 |>
   group_by(month) |> #<<
@@ -77,10 +91,10 @@ metro_2021 |>
     head(5)
 
 metro_2021 |> 
-  group_by(borough) |>
+  group_by(borough) |> #<<
   summarise(n_obs = n(),
-            mean_burglary = mean(burglary),
-            sd_burglary = sd(burglary)) |>
+            median_burglary = median(burglary),
+            sum_burglary = sum(burglary)) |>
   head()
 
 westminster <- metro_2021 |> filter(borough == "Westminster")
@@ -117,86 +131,84 @@ ggplot(data = westminster,
 ggplot(data = westminster, 
       aes(x = month, y = robbery)) +
   geom_point(color = "red", size = 3) +
-  xlab("Month") #<<
+  labs(x = "Month") #<<
 
 ggplot(data = westminster, 
       aes(x = month, y = robbery)) +
   geom_point(color = "red", size = 3) +
-  xlab("Month") + 
-  ylab("Robbery") #<<
+  labs(x = "Month",
+       y = "Robbery") #<<
 
 ggplot(data = westminster, 
       aes(x = month, y = robbery)) +
   geom_point(color = "red", size = 3) +
-  xlab("Month") + 
-  ylab("Robbery") +
-   ggtitle("Robbery in Westminster") #<<
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in Westminster") #<<
 
 ggplot(data = westminster, 
       aes(x = month, y = robbery)) +
   geom_point(color = "red", size = 3) +
-  xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in Westminster") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in Westminster") +
   theme_bw() #<<
 
  ggplot(data = westminster, 
       aes(x = month, y = robbery)) +
   geom_point(color = "red", size = 3) +
-  xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in Westminster") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in Westminster") +
    theme_bw(base_size=18) #<<
 
  ggplot(data = metro_2021, 
       aes(x = month, y = robbery)) +
   geom_point(color = "red", size = 3) +
-  xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in London") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in London") +
    theme_bw(base_size=18) #<<
 
  ggplot(data = metro_2021, 
       aes(x = month, y = robbery)) +
   geom_line(color = "red", size = 3) + #<<
- xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in London") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in London") +
   theme_bw(base_size=18)
 
  ggplot(data = metro_2021, 
       aes(x = month, y = robbery, group = borough)) +
   geom_line(color = "red", size = 3) + #<<
- xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in London") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in London") +
   theme_bw(base_size=18)
 
  ggplot(data = metro_2021, 
       aes(x = month, y = robbery, group = borough)) +
   geom_line(color = "red") + #<<
- xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in London") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in London") +
   theme_bw(base_size=18)
 
  ggplot(data = metro_2021, 
       aes(x = month, y = robbery, group = borough,
           color = subregion)) + #<<
   geom_line() + 
- xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in London") +
-  theme_bw(base_size=18)
-
- ggplot(data = metro_2021, 
-      aes(x = month, y = robbery, group = borough,
-          color = subregion)) + #<<
-  geom_line() + 
-  facet_wrap(~subregion) +
-  xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in London") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in London") +
   theme_bw(base_size=18)
 
  ggplot(data = metro_2021, 
@@ -204,8 +216,20 @@ ggplot(data = westminster,
           color = subregion)) + #<<
   geom_line() + 
   facet_wrap(~subregion) +
-  xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in London") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in London") +
+  theme_bw(base_size=18)
+
+ ggplot(data = metro_2021, 
+      aes(x = month, y = robbery, group = borough,
+          color = subregion)) + #<<
+  geom_line() + 
+  facet_wrap(~subregion) +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in London") +
   theme_bw(base_size=18) +
   theme(legend.position = "none")

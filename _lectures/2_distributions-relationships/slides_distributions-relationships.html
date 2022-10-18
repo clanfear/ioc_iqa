@@ -666,7 +666,7 @@ shootings |&gt;
 ---
 class: inverse
 
-# Distributions
+# Summarizing Data
 
 ---
 
@@ -685,11 +685,12 @@ metro_2021 &lt;- read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021.c
 ```
 
 ```
-## Rows: 384 Columns: 7
+## Rows: 384 Columns: 10
 ## ── Column specification ────────────────────────────────────────────
 ## Delimiter: ","
-## chr (2): borough, subregion
-## dbl (5): month, antisocial_behaviour, burglary, robbery, violenc...
+## chr  (3): borough, subregion, deprivation
+## dbl  (6): antisocial_behaviour, burglary, robbery, violence_and_...
+## date (1): month
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -707,15 +708,46 @@ glimpse(metro_2021)
 
 ```
 ## Rows: 384
-## Columns: 7
+## Columns: 10
 ## $ borough                      &lt;chr&gt; "Barking and Dagenham", "Bark…
-## $ month                        &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10…
+## $ month                        &lt;date&gt; 2021-01-01, 2021-02-01, 2021…
 ## $ antisocial_behaviour         &lt;dbl&gt; 688, 585, 600, 531, 469, 507,…
 ## $ burglary                     &lt;dbl&gt; 87, 105, 81, 85, 106, 90, 75,…
 ## $ robbery                      &lt;dbl&gt; 30, 50, 49, 40, 47, 46, 42, 3…
 ## $ violence_and_sexual_offences &lt;dbl&gt; 469, 449, 561, 564, 589, 617,…
 ## $ subregion                    &lt;chr&gt; "East", "East", "East", "East…
+## $ deprivation                  &lt;chr&gt; "High", "High", "High", "High…
+## $ pop                          &lt;dbl&gt; 221495, 221495, 221495, 22149…
+## $ area                         &lt;dbl&gt; 36.1, 36.1, 36.1, 36.1, 36.1,…
 ```
+
+---
+
+# `distinct()`
+
+These data have monthly observations for each borough.
+
+If we wanted to look at only unique observations of boroughs, we can use `distinct()`
+
+
+```r
+metro_2021 |&gt; 
+  distinct(borough) |&gt;
+  head()
+```
+
+```
+## # A tibble: 6 × 1
+##   borough             
+##   &lt;chr&gt;               
+## 1 Barking and Dagenham
+## 2 Barnet              
+## 3 Bexley              
+## 4 Brent               
+## 5 Bromley             
+## 6 Camden
+```
+
 
 ---
 
@@ -725,20 +757,24 @@ We used `table()` earlier to tabulate a categorical variable
 
 In `dplyr`, we can use `count()`
 
+First, I get `distinct()` values so we're not counting each borough 12 times (once for each month)
+
 
 ```r
-metro_2021 |&gt; count(subregion)
+metro_2021 |&gt; 
+  distinct(subregion, borough) |&gt;
+  count(subregion)
 ```
 
 ```
 ## # A tibble: 5 × 2
 ##   subregion     n
 ##   &lt;chr&gt;     &lt;int&gt;
-## 1 Central      72
-## 2 East        120
-## 3 North        36
-## 4 South        72
-## 5 West         84
+## 1 Central       6
+## 2 East         10
+## 3 North         3
+## 4 South         6
+## 5 West          7
 ```
 
 ---
@@ -749,23 +785,56 @@ We can add a column of proportions
 
 
 ```r
-metro_2021 |&gt; count(subregion) |&gt; mutate(Proportion = n/sum(n))
+metro_2021 |&gt; 
+  distinct(subregion, borough) |&gt;
+  count(subregion) |&gt;
+  mutate(proportion = n/sum(n))
 ```
 
 ```
 ## # A tibble: 5 × 3
-##   subregion     n Proportion
+##   subregion     n proportion
 ##   &lt;chr&gt;     &lt;int&gt;      &lt;dbl&gt;
-## 1 Central      72     0.188 
-## 2 East        120     0.312 
-## 3 North        36     0.0938
-## 4 South        72     0.188 
-## 5 West         84     0.219
+## 1 Central       6     0.188 
+## 2 East         10     0.312 
+## 3 North         3     0.0938
+## 4 South         6     0.188 
+## 5 West          7     0.219
 ```
+
+Most boroughs are in the East subregion—East is the **modal** category
 
 ---
 
-## General Aggregation: `summarize()`
+# Cross-Tabs
+
+`count()` can take multiple variables for cross-tabulation
+
+
+```r
+metro_2021 |&gt; 
+  distinct(borough, subregion, deprivation) |&gt;
+  count(deprivation, subregion) |&gt;
+  head()
+```
+
+```
+## # A tibble: 6 × 3
+##   deprivation subregion     n
+##   &lt;chr&gt;       &lt;chr&gt;     &lt;int&gt;
+## 1 High        Central       3
+## 2 High        East          6
+## 3 High        North         1
+## 4 Low         East          3
+## 5 Low         South         5
+## 6 Low         West          3
+```
+
+The output doesn't look like a normal two-way table, however—we'll learn to **pivot** the table into that format another day!
+
+---
+
+# Summarizing
 
 **`summarize()`** takes your column(s) of data and computes something using every row: 
 
@@ -784,7 +853,7 @@ Let's get the number of observations and mean and SD of robbery for June 2021
 
 ```r
 metro_2021 |&gt; 
-  filter(month == 6) |&gt;
+  filter(month == "2021-06-01") |&gt;
   summarise(n_obs = n(),
             mean_robbery = mean(robbery),
             sd_robbery = sd(robbery))
@@ -810,15 +879,15 @@ Let's get the number of observations and mean and SD of burglary for Westminster
 metro_2021 |&gt; 
   filter(borough == "Westminster") |&gt;
   summarise(n_obs = n(),
-            mean_burglary = mean(burglary),
-            sd_burglary = sd(burglary))
+            median_burglary = median(burglary),
+            sum_burglary = sum(burglary))
 ```
 
 ```
 ## # A tibble: 1 × 3
-##   n_obs mean_burglary sd_burglary
-##   &lt;int&gt;         &lt;dbl&gt;       &lt;dbl&gt;
-## 1    12          187.        24.4
+##   n_obs median_burglary sum_burglary
+##   &lt;int&gt;           &lt;dbl&gt;        &lt;dbl&gt;
+## 1    12             189         2246
 ```
 
 ---
@@ -828,7 +897,7 @@ metro_2021 |&gt;
 
 The special function `group_by()` changes how functions operate on the data, most importantly `summarize()`.
 
-Functions after `group_by()` are computed *within each group* as defined by variables given, rather than over all rows at once. Typically the variables you group by will be integers, factors, or characters, and not continuous real values.
+Functions after `group_by()` are computed *within each group* as defined by variables given, rather than over all rows at once.
 
 Excel analogue: pivot tables
 
@@ -850,13 +919,13 @@ metro_2021 |&gt;
 
 ```
 ## # A tibble: 5 × 4
-##   month n_obs mean_robbery sd_robbery
-##   &lt;dbl&gt; &lt;int&gt;        &lt;dbl&gt;      &lt;dbl&gt;
-## 1     1    32         44.9       23.8
-## 2     2    32         41.0       21.9
-## 3     3    32         50.8       25.3
-## 4     4    32         52.3       29.2
-## 5     5    32         54.0       32.0
+##   month      n_obs mean_robbery sd_robbery
+##   &lt;date&gt;     &lt;int&gt;        &lt;dbl&gt;      &lt;dbl&gt;
+## 1 2021-01-01    32         44.9       23.8
+## 2 2021-02-01    32         41.0       21.9
+## 3 2021-03-01    32         50.8       25.3
+## 4 2021-04-01    32         52.3       29.2
+## 5 2021-05-01    32         54.0       32.0
 ```
 
 Because we did `group_by()` with `month` then used `summarize()`, we get *one row per value of `month`*!
@@ -870,31 +939,34 @@ Each value of month is its own **group**!
 
 ```r
 metro_2021 |&gt; 
-  group_by(borough) |&gt;
+* group_by(borough) |&gt;
   summarise(n_obs = n(),
-            mean_burglary = mean(burglary),
-            sd_burglary = sd(burglary)) |&gt;
+            median_burglary = median(burglary),
+            sum_burglary = sum(burglary)) |&gt;
   head()
 ```
 
 ```
 ## # A tibble: 6 × 4
-##   borough              n_obs mean_burglary sd_burglary
-##   &lt;chr&gt;                &lt;int&gt;         &lt;dbl&gt;       &lt;dbl&gt;
-## 1 Barking and Dagenham    12          95.6        14.0
-## 2 Barnet                  12         193.         32.7
-## 3 Bexley                  12          62          13.4
-## 4 Brent                   12         148.         19.2
-## 5 Bromley                 12         124.         18.3
-## 6 Camden                  12         146.         12.0
+##   borough              n_obs median_burglary sum_burglary
+##   &lt;chr&gt;                &lt;int&gt;           &lt;dbl&gt;        &lt;dbl&gt;
+## 1 Barking and Dagenham    12            96           1147
+## 2 Barnet                  12           190           2319
+## 3 Bexley                  12            61.5          744
+## 4 Brent                   12           148.          1773
+## 5 Bromley                 12           122.          1485
+## 6 Camden                  12           144.          1756
 ```
+
+
+`summarise()` works with any functions that take a *vector* as an argument (input) and return a *single number* as an output (value)
 
 ---
 class: inverse
 
 # Plotting
 
-![:width 60%](img/ggplot2.svg)
+![:width 40%](img/ggplot2.svg)
 
 ---
 
@@ -909,15 +981,16 @@ head(westminster, 4)
 ```
 
 ```
-## # A tibble: 4 × 7
-##   borough     month antisocial_beh…¹ burgl…² robbery viole…³ subre…⁴
-##   &lt;chr&gt;       &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  
-## 1 Westminster     1             1501     150      64     487 Central
-## 2 Westminster     2             1326     150      51     491 Central
-## 3 Westminster     3             1474     189      76     658 Central
-## 4 Westminster     4             1396     155     126     670 Central
-## # … with abbreviated variable names ¹​antisocial_behaviour,
-## #   ²​burglary, ³​violence_and_sexual_offences, ⁴​subregion
+## # A tibble: 4 × 10
+##   borough month      antis…¹ burgl…² robbery viole…³ subre…⁴ depri…⁵
+##   &lt;chr&gt;   &lt;date&gt;       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;  
+## 1 Westmi… 2021-01-01    1501     150      64     487 Central Medium 
+## 2 Westmi… 2021-02-01    1326     150      51     491 Central Medium 
+## 3 Westmi… 2021-03-01    1474     189      76     658 Central Medium 
+## 4 Westmi… 2021-04-01    1396     155     126     670 Central Medium 
+## # … with 2 more variables: pop &lt;dbl&gt;, area &lt;dbl&gt;, and abbreviated
+## #   variable names ¹​antisocial_behaviour, ²​burglary,
+## #   ³​violence_and_sexual_offences, ⁴​subregion, ⁵​deprivation
 ```
 
 ---
@@ -1035,7 +1108,7 @@ Layers take arguments to control their appearance, such as point/line colors or 
 
 --
   
-* Arguments like `color`, `size`, `linetype`, `shape`, `fill`, and `alpha` can be used directly on the layers (**setting aesthetics**), e.g. `geom_point(color = "red")`. See the [`ggplot2` documentation](https://ggplot2.tidyverse.org/reference/index.html) for options. These *don't depend on the data*.
+* Arguments like `color`, `size`, and `fill` can be used directly on layers (**setting aesthetics**), e.g. `geom_point(color = "red")`. These *don't depend on the data*.
 
 --
 
@@ -1055,16 +1128,18 @@ Now let's see all this jargon in action.
 
 ---
 
-## Axis Labels, Points, No Background
+# Westminster Robbery
 
 ### 1: Base Plot
 
 .pull-left[
+.text-85[
 
 ```r
 *ggplot(data = westminster,
 *      aes(x = month, y = robbery))
 ```
+]
 ]
 .pull-right[
 ![](slides_distributions-relationships_files/figure-html/westminster-1-1.svg)
@@ -1074,11 +1149,12 @@ Now let's see all this jargon in action.
 
 ---
 
-## Axis Labels, Points, No Background
+# Westminster Robbery
 
 ### 2: Scatterplot
 
 .pull-left[
+.text-85[
 
 ```r
 ggplot(data = westminster, 
@@ -1086,19 +1162,21 @@ ggplot(data = westminster,
 *   geom_point()
 ```
 ]
+]
 .pull-right[
 ![](slides_distributions-relationships_files/figure-html/westminster-2-1.svg)
 ]
 
-.footnote[Add a scatterplot **layer**.]
+.footnote[Add a scatterplot **layer**]
 
 ---
 
-## Axis Labels, Points, No Background
+# Westminster Robbery
 
 ### 3: Point Color and Size
 
 .pull-left[
+.text-85[
 
 ```r
 ggplot(data = westminster, 
@@ -1106,125 +1184,139 @@ ggplot(data = westminster,
 * geom_point(color = "red", size = 3)
 ```
 ]
+]
 .pull-right[
 ![](slides_distributions-relationships_files/figure-html/westminster-3-1.svg)
 ]
 
-.footnote[**Set** aesthetics to make the points large and red.]
+.footnote[**Set** aesthetics to make the points large and red]
 
 ---
 
-## Axis Labels, Points, No Background
+# Westminster Robbery
 
 ### 4: X-Axis Label
 
 .pull-left[
+.text-85[
 
 ```r
 ggplot(data = westminster, 
       aes(x = month, y = robbery)) +
   geom_point(color = "red", size = 3) +
-* xlab("Month")
+* labs(x = "Month")
 ```
+]
 ]
 .pull-right[
 ![](slides_distributions-relationships_files/figure-html/westminster-4-1.svg)
 ]
 
-.footnote[Add a layer to capitalize the x-axis label.]
+.footnote[Add a label layer to capitalize the x-axis label]
 
 ---
 
-## Axis Labels, Points, No Background
+# Westminster Robbery
 
 ### 5: Y-Axis Label
 
 .pull-left[
+.text-85[
 
 ```r
 ggplot(data = westminster, 
       aes(x = month, y = robbery)) +
   geom_point(color = "red", size = 3) +
-  xlab("Month") + 
-* ylab("Robbery")
+  labs(x = "Month",
+*      y = "Robbery")
 ```
+]
 ]
 .pull-right[
 ![](slides_distributions-relationships_files/figure-html/westminster-5-1.svg)
 ]
 
-.footnote[Add a layer to clean up the y-axis label.]
+.footnote[Add text to clean up the y-axis label]
 
 ---
 
-## Axis Labels, Points, No Background
+# Westminster Robbery
 
 ### 6: Title
 
 .pull-left[
+.text-85[
 
 ```r
 ggplot(data = westminster, 
       aes(x = month, y = robbery)) +
   geom_point(color = "red", size = 3) +
-  xlab("Month") + 
-  ylab("Robbery") +
-*  ggtitle("Robbery in Westminster")
+  labs(
+    x = "Month",
+    y = "Robbery",
+*   title= "Robbery in Westminster")
 ```
+]
 ]
 .pull-right[
 ![](slides_distributions-relationships_files/figure-html/westminster-6-1.svg)
 ]
 
-.footnote[Add a title layer.]
+.footnote[Add a title]
 
 ---
 
-## Axis Labels, Points, No Background
+# Westminster Robbery
 
 ### 7: Theme
 
 .pull-left[
+.text-85[
 
 ```r
 ggplot(data = westminster, 
       aes(x = month, y = robbery)) +
   geom_point(color = "red", size = 3) +
-  xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in Westminster") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in Westminster") +
 * theme_bw()
 ```
+]
 ]
 .pull-right[
 ![](slides_distributions-relationships_files/figure-html/westminster-7-1.svg)
 ]
 
-.footnote[Pick a basic theme with a new layer.]
+.footnote[Pick a basic theme with a new layer]
 
 ---
 
-## Axis Labels, Points, No Background
+# Westminster Robbery
 
 ### 8: Text Size
 
 .pull-left[
+.text-85[
 
 ```r
  ggplot(data = westminster, 
       aes(x = month, y = robbery)) +
   geom_point(color = "red", size = 3) +
-  xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in Westminster") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in Westminster") +
 *  theme_bw(base_size=18)
 ```
+]
 ]
 .pull-right[
 ![](slides_distributions-relationships_files/figure-html/westminster-8-1.svg)
 ]
 
-.footnote[Increase the base text size.]
+.footnote[Increase the base text size]
 
 ---
 
@@ -1241,16 +1333,19 @@ We have a plot we like for Westminster...
 ### 1: A Mess!
 
 .pull-left[
+.text-85[
 
 ```r
  ggplot(data = metro_2021, 
       aes(x = month, y = robbery)) +
   geom_point(color = "red", size = 3) +
-  xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in London") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in London") +
 *  theme_bw(base_size=18)
 ```
+]
 ]
 .pull-right[
 ![](slides_distributions-relationships_files/figure-html/london-1-1.svg)
@@ -1266,16 +1361,19 @@ We have a plot we like for Westminster...
 ### 2: Lines
 
 .pull-left[
+.text-85[
 
 ```r
  ggplot(data = metro_2021, 
       aes(x = month, y = robbery)) +
 * geom_line(color = "red", size = 3) +
- xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in London") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in London") +
   theme_bw(base_size=18)
 ```
+]
 ]
 .pull-right[
 ![](slides_distributions-relationships_files/figure-html/london-2-1.svg)
@@ -1290,16 +1388,19 @@ We have a plot we like for Westminster...
 ### 3: Grouping
 
 .pull-left[
+.text-85[
 
 ```r
  ggplot(data = metro_2021, 
       aes(x = month, y = robbery, group = borough)) +
 * geom_line(color = "red", size = 3) +
- xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in London") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in London") +
   theme_bw(base_size=18)
 ```
+]
 ]
 .pull-right[
 ![](slides_distributions-relationships_files/figure-html/london-3-1.svg)
@@ -1318,9 +1419,10 @@ We have a plot we like for Westminster...
  ggplot(data = metro_2021, 
       aes(x = month, y = robbery, group = borough)) +
 * geom_line(color = "red") +
- xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in London") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in London") +
   theme_bw(base_size=18)
 ```
 ]
@@ -1338,17 +1440,20 @@ We have a plot we like for Westminster...
 ### 5: Color
 
 .pull-left[
+.text-85[
 
 ```r
  ggplot(data = metro_2021, 
       aes(x = month, y = robbery, group = borough,
 *         color = subregion)) +
   geom_line() + 
- xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in London") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in London") +
   theme_bw(base_size=18)
 ```
+]
 ]
 .pull-right[
 ![](slides_distributions-relationships_files/figure-html/london-5-1.svg)
@@ -1363,6 +1468,7 @@ We have a plot we like for Westminster...
 ### 6: Facets
 
 .pull-left[
+.text-85[
 
 ```r
  ggplot(data = metro_2021, 
@@ -1370,11 +1476,13 @@ We have a plot we like for Westminster...
 *         color = subregion)) +
   geom_line() + 
   facet_wrap(~subregion) +
-  xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in London") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in London") +
   theme_bw(base_size=18)
 ```
+]
 ]
 .pull-right[
 ![](slides_distributions-relationships_files/figure-html/london-6-1.svg)
@@ -1389,6 +1497,7 @@ We have a plot we like for Westminster...
 ### 7: Legend
 
 .pull-left[
+.text-85[
 
 ```r
  ggplot(data = metro_2021, 
@@ -1396,12 +1505,14 @@ We have a plot we like for Westminster...
 *         color = subregion)) +
   geom_line() + 
   facet_wrap(~subregion) +
-  xlab("Month") + 
-  ylab("Robbery") +
-  ggtitle("Robbery in London") +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title= "Robbery in London") +
   theme_bw(base_size=18) +
   theme(legend.position = "none")
 ```
+]
 ]
 .pull-right[
 ![](slides_distributions-relationships_files/figure-html/london-7-1.svg)
@@ -1410,12 +1521,18 @@ We have a plot we like for Westminster...
 .footnote[Not bad!]
 
 ---
-  
-  # Wrap-Up
-  
-  * Reading for next week
 
-* `swirl` units
+# Wrap-Up
+  
+* Recommended rading for next week
+
+   * Kaplan, chapters 10 and 14 are a review of today's content
+   * You're pretty busy, so make it low priority!
+
+* `swirl` units if you want practice
+
+   * 5 covers missing values
+   * 6 covers subsetting
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

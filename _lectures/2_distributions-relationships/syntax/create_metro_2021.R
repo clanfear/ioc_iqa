@@ -43,7 +43,7 @@ metro_2021 <- vroom::vroom(list.files("C:/Users/cl948/Downloads/metro_2021/", re
   mutate(month = lubridate::ym(month)) %>%
   pivot_wider(names_from = crime_type, values_from = n) %>%
   left_join(london_subregion) %>%
-  left_join(borough_deprivation)
+  left_join(borough_deprivation) %>%
   left_join(borough_pop_density)
 
 write_csv(metro_2021, file = "./_data/metro_2021.csv")
