@@ -276,7 +276,7 @@ If you have not already installed the tidyverse, type, in the console: `install.
 
 --
 
-This will install a *large* number of R packages we will use throughout the term, including `readr` and `dplyr`.
+This will install a *large* number of R packages we will use throughout the term, including `readr`, `ggplot2`, and `dplyr`.
 
 ---
 
@@ -284,6 +284,7 @@ This will install a *large* number of R packages we will use throughout the term
 
 ```{r}
 library(readr)
+library(ggplot2)
 library(dplyr)
 ```
 
@@ -381,7 +382,6 @@ class: inverse
 
 .text-62[
 ```{r}
-
 glimpse(communities)
 ```
 ]
@@ -395,7 +395,7 @@ glimpse(communities)
 Instead of nesting functions like this:
 
 ```{r}
-sort(table(communities$Incarceration))
+proportions(table(communities$disadvantage))
 ```
 
 --
@@ -403,18 +403,18 @@ sort(table(communities$Incarceration))
 We can pipe them like this:
 
 ```{r}
-communities |> pull(Incarceration) |> table() |> sort()
+communities |> pull(disadvantage) |> table() |> proportions()
 ```
 
 --
 
-Read this as, "take `communities`, and then pull out the `Incarceration` column, and then make a `table()`, and then `sort()` it."
+Read this as, "take `communities`, and then pull out the `incarceration` column, and then make a `table()`, and then calculate `proportions()`."
 
 
 ---
-# Fixing Columns
+# Creating Columns
 
-Incarceration looks like an ordinal variable (Disadvantage too) but R doesn't know this—it just puts them in alphabetical order
+`incarceration` looks like an ordinal variable (`disadvantage` too) but R doesn't know this—it just puts them in alphabetical order
 
 --
 
@@ -426,62 +426,73 @@ To fix this, we need to know how to create or modify variables in our data
 
 ```{r}
 communities |>
-  mutate(high_crime = `Crime Rate` > mean(`Crime Rate`)) |>
+  mutate(high_crime = crime_rate > mean(crime_rate)) |>
   head(4)
 ```
 
-
+This created a **logical** (`TRUE`/`FALSE`) variable because we used a logical expression
 
 ---
-We can give them a proper order by making them **factors** and specifying their **levels**
+# Modifying Columns
+
+In R, we "modify" objects—including columns in our data—by replacing them with new versions
 
 --
 
+We saw before that our disadvantage and incarceration variables are ordinal but not being recognized that way
+
+--
+
+We can give them a proper order by making them **factors** and specifying their **levels**
+
 ```{r}
-communities <- communities |>
-  mutate(Disadvantage = 
-           factor(Disadvantage, 
-                  levels = c("Low", "Medium", "High")),
-         Incarceration = 
-           factor(Incarceration, 
-                  levels = c("Low", "Medium", "High")))
+communities <- communities |> #<<
+  mutate(disadvantage = 
+           factor(disadvantage, levels = c("Low", "Medium", "High")), #<<
+         incarceration = 
+           factor(incarceration, levels = c("Low", "Medium", "High"))
+         )
 ```
 
+To modify the original dataset, we just assign back to it—overwriting it with our changes!
+
+---
+# Fixed!
+
+```{r}
+communities |> pull(disadvantage) |> table()
+```
+
+
+```{r}
+communities |> pull(incarceration) |> table()
+```
+
+--
+
+.text-center[
+*We'll create and modify variables more another day, but for now let's look at subsetting again*
+]
 
 ---
 
 # `filter` Data Frames
 
 ```{r}
-communities |> filter(Incarceration == "High") |> head()
+communities |> filter(incarceration == "High") |> head()
 ```
 
 .text-center[
 *What is this doing?*
 ]
 
-.footnote[
-Note that `dplyr` hides excess columns from output so it fits the console!
-]
-
----
-
-# `filter`
+--
 
 `filter()` is `dplyr`'s function for indexing **rows** of a dataframe
 
 --
 
 It takes *only* logical vectors (the result of **expressions**) as an argument
-
---
-
-If you want to `filter()` by *position*, use `slice()`:
-
-```{r}
-communities |> slice(c(1, 5, 9))
-```
-
 
 ---
 # Multiple Conditions
@@ -491,16 +502,12 @@ communities |> slice(c(1, 5, 9))
 ### And: `&`
 
 ```{r, eval=FALSE}
-shootings |>
-    filter(armed == "unarmed" & 
-             age < 18)
+communities |>
+  filter(disadvantage == "Low" & 
+         crime_rate > 40)
 ```
 
-.image-100[
-![](img/armed_and_age.svg)
-]
-
-*Give me rows where the subject was unarmed **and** their age is under 18.*
+![:width 100%](img/disadvantage_and_crime.svg)
 
 ]
 
@@ -511,17 +518,13 @@ shootings |>
 ### Or: `|`
 
 ```{r, eval=FALSE}
-shootings |>
-    filter(armed == "unarmed" |
-          age < 18)
+communities |>
+  filter(disadvantage == "Low" | 
+         crime_rate > 40)
 ```
 
-.image-100[
-![](img/armed_or_age.svg)
-]
 
-*Give me rows where the subject was unarmed **or** their age is under 18... or **both**.*
-
+![:width 100%](img/disadvantage_or_crime.svg)
 ]
 
 ---
@@ -529,34 +532,88 @@ class: inverse
 
 # Distributions
 
----
-# Loading Data
+&nbsp;
 
-We'll revisit the shootings data again soon.
+### Numbers today (boo!)
 
-For now, let's load another example dataset: 
+&nbsp;
 
-
----
-# Community Data
-
-```{r}
-glimpse(communities)
-```
+### Pictures next week (fun!)
 
 ---
+
 # Tabulations
 
-Let's look at tabulations first. They're most useful for summarizing categorical data.
+Let's look at tabulations first. They're useful for summarizing categorical data.
 
 --
 
 `count()` is a `dplyr` function for tabulating one or more columns
 
 ```{r}
-communities |> count(Incarceration)
+communities |> count(incarceration)
 ```
 
+--
+
+```{r}
+communities |> count(incarceration) |> mutate(proportion = n/sum(n))
+```
+
+---
+
+# `janitor`
+
+`janitor` is a data cleaning package, but it makes tabulations easier too
+
+```{r, eval = FALSE}
+install.packages("janitor")
+```
+
+```{r}
+library(janitor)
+```
+
+
+```{r}
+communities |> tabyl(incarceration)
+```
+
+
+--
+
+.pull-right[
+.footnote[
+It comes in *really* handy for **cross-tabs**—we'll see them soon!
+]
+]
+
+---
+# `summarize()`
+
+`dplyr`'s **`summarize()`** takes your column(s) of data and computes something using **every row**: 
+
+* Calculate the mean
+* Calculate the standard deviation
+* Obtain a sample size
+--
+
+```{r}
+communities |>
+  summarize(mean_crime_rate = mean(crime_rate),
+            sd_crime_rate = sd(crime_rate), 
+            n = n())
+```
+
+--
+
+You can use any function in `summarize()` that aggregates *multiple values* into a *single value* (like `sum()`, `median()`, or `max()`).
+
+
+---
+class: inverse
+
+# Associations
 
 ---
 
@@ -564,17 +621,214 @@ communities |> count(Incarceration)
 
 Let's look at cross-tabs first. They're used for associations between categorical variables.
 
+--
+
+This is where `janitor`'s `tabyl()` begins to shine:
+
+--
+
+```{r}
+communities |> tabyl(disadvantage, incarceration)
+```
+
+--
+
+```{r}
+communities |> tabyl(disadvantage, incarceration) |>
+  adorn_percentages() # converts to cell percentages #<<
+```
+
+---
+count: false
+
+# Fancy Cross-Tabs 1
+
+We can assemble *fancy* tables bit-by-bit with `janitor`
+
+```{r}
+communities |> 
+  tabyl(disadvantage, incarceration) # make table
+```
+
+---
+count: false
+
+# Fancy Cross-Tabs 2
+
+Add row and column totals!
+
+```{r}
+communities |> 
+  tabyl(disadvantage, incarceration) |> # make table
+  adorn_totals(c("row", "col")) # add row/col totals
+```
+
+---
+count: false
+
+# Fancy Cross-Tabs 3
+
+Turn cells into (row) percentages instead of counts
+
+```{r}
+communities |> 
+  tabyl(disadvantage, incarceration) |> # make table
+  adorn_totals(c("row", "col")) |> # add row/col totals
+  adorn_percentages()# make cells percentages
+```
+
+---
+count: false
+
+# Fancy Cross-Tabs 4
+
+Round those percentages to two decimal places!
+
+```{r}
+communities |> 
+  tabyl(disadvantage, incarceration) |> # make table
+  adorn_totals(c("row", "col")) |> # add row/col totals
+  adorn_percentages() |> # make cells percentages
+  adorn_pct_formatting(digits = 2) # round to 2 digits
+```
+
+---
+count: false
+
+# Fancy Cross-Tabs 5
+
+Add counts back in parentheses!
+
+```{r}
+communities |> 
+  tabyl(disadvantage, incarceration) |> # make table
+  adorn_totals(c("row", "col")) |> # add row/col totals
+  adorn_percentages() |> # make cells percentages
+  adorn_pct_formatting(digits = 2) |> # round to 2 digits
+  adorn_ns() # add counts in parentheses
+```
+
+
+---
+count: false
+
+# Fancy Cross-Tabs 6
+
+Add column variable name!
+
+```{r}
+communities |> 
+  tabyl(disadvantage, incarceration) |> # make table
+  adorn_totals(c("row", "col")) |> # add row/col totals
+  adorn_percentages() |> # make cells percentages
+  adorn_pct_formatting(digits = 2) |> # round to 2 digits
+  adorn_ns() |> # add counts in parentheses
+  adorn_title() # add col variable name
+```
+
+Not bad! That's not far from paper ready!
 
 ---
 
-```{r}
+# Grouped Measures
 
-communities %>% group_by(Area) %>% summarize(`Mean Crime Rate` = round(mean(`Crime Rate`), 2), 
-                                       `Std. Dev.` = round(sd(`Crime Rate`),2 ),
-                                       N = n()) %>%
-  knitr::kable()
+If we wanted to calculated means for different groups, one easy way is to just subset the data
+
+--
+
+.pull-left[
+```{r}
+communities |>
+  filter(disadvantage=="High") |> #<<
+  summarize(
+   mean_crime = mean(crime_rate),
+   sd_crime   = sd(crime_rate), 
+   n          = n())
+```
+]
+
+.pull-right[
+```{r}
+communities |>
+  filter(disadvantage=="Low") |> #<<
+  summarize(
+   mean_crime = mean(crime_rate),
+   sd_crime   = sd(crime_rate), 
+   n          = n())
+```
+]
+
+--
+
+Imagine if you had many groups, though! There's a better way.
+
+---
+  
+# `group_by()`
+
+
+The special function `group_by()` changes how functions operate on the data, most importantly `summarize()`.
+
+Functions after `group_by()` are computed *within each group* as defined by variables given, rather than over all rows at once.
+
+Excel analogue: pivot tables
+
+.image-50[![Pivot table](http://www.excel-easy.com/data-analysis/images/pivot-tables/two-dimensional-pivot-table.png)]
+
+---
+# `group_by()` example
+
+```{r}
+communities |>
+  group_by(disadvantage) |> #<<
+  summarize(mean_crime = mean(crime_rate),
+            sd_crime = sd(crime_rate), 
+            n = n())
 ```
 
+Because we did `group_by()` with `disadvantage` then used `summarize()`, we get *one row per value of `disadvantage`*!
+
+Each value of disadvantage is its own **group**!
+
+---
+
+# Correlations
+
+Correlations are mathematically complicated but simple to code
+
+```{r}
+cor(communities$pop_density, communities$crime_rate)
+```
+
+--
+
+Alternatively, you can use the `with()` command for a bit less typing
+
+```{r}
+with(communities, cor(pop_density, crime_rate))
+```
+
+--
+
+These are a bit easier than `dplyr` if you just want one correlation
+
+```{r}
+communities |> summarize(R = cor(pop_density, crime_rate))
+```
+
+---
+
+# Multiple Correlations
+
+If you want to do correlations *within groups*, `dplyr` is king again
+
+```{r}
+communities |>
+  group_by(disadvantage) |>
+  summarize(R = cor(pop_density, crime_rate))
+```
+
+In this case, the correlation between `pop_density` and `crime_rate` is similar at all levels of disadvantage
 
 ---
 
@@ -582,7 +836,8 @@ communities %>% group_by(Area) %>% summarize(`Mean Crime Rate` = round(mean(`Cri
   
 * Recommended reading for next week
 
-   * Kaplan, chapters 10 and 14 are a review of today's content
+   * Kaplan, chapters 10 is review of today's content
+      * Chapter 14 (graphing) is what we'll get into next week
    * You're pretty busy, so make it low priority!
 
 * `swirl` units if you want practice

@@ -5,6 +5,23 @@ class: inverse
 
 ---
 
+---
+
+# Barplots
+
+.pull-left[
+```{r barplot, fig.height = 5, fig.show = 'hide'}
+ggplot(communities,
+       aes(x = incarceration)) + 
+  geom_bar()
+```
+
+]
+
+.pull-right[
+![](`r knitr::fig_chunk("barplot", "svg")`)
+]
+
 
 # London Crime
 

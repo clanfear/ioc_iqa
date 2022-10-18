@@ -356,7 +356,7 @@ If you have not already installed the tidyverse, type, in the console: `install.
 
 --
 
-This will install a *large* number of R packages we will use throughout the term, including `readr` and `dplyr`.
+This will install a *large* number of R packages we will use throughout the term, including `readr`, `ggplot2`, and `dplyr`.
 
 ---
 
@@ -365,6 +365,7 @@ This will install a *large* number of R packages we will use throughout the term
 
 ```r
 library(readr)
+library(ggplot2)
 library(dplyr)
 ```
 
@@ -451,25 +452,23 @@ I recommend using the versions in the `readr` package instead: `read_csv()`, `re
 
 # `readr` Importing Example
 
-Let's use `read_csv()` from `readr` to import some data about fatal police shootings from Kaplan (2022).
+Let's use `read_csv()` from `readr` to import some community crime data based on those in yesterday's CRM lecture
 
 .small[
 
 ```r
-shootings &lt;- 
-  read_csv( 
-    "https://clanfear.github.io/ioc_iqa/_data/fatal-police-shootings-data.csv"
+communities &lt;- 
+  read_csv(
+    "https://clanfear.github.io/ioc_iqa/_data/communities.csv"
     )
 ```
 
 ```
-## Rows: 4371 Columns: 14
+## Rows: 300 Columns: 5
 ## ── Column specification ────────────────────────────────────────────
 ## Delimiter: ","
-## chr  (9): name, manner_of_death, armed, gender, race, city, stat...
-## dbl  (2): id, age
-## lgl  (2): signs_of_mental_illness, body_camera
-## date (1): date
+## chr (3): area, disadvantage, incarceration
+## dbl (2): pop_density, crime_rate
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -494,26 +493,17 @@ class: inverse
 .text-62[
 
 ```r
-glimpse(shootings)
+glimpse(communities)
 ```
 
 ```
-## Rows: 4,371
-## Columns: 14
-## $ id                      &lt;dbl&gt; 3, 4, 5, 8, 9, 11, 13, 15, 16, 17,…
-## $ name                    &lt;chr&gt; "Tim Elliot", "Lewis Lee Lembke", …
-## $ date                    &lt;date&gt; 2015-01-02, 2015-01-02, 2015-01-0…
-## $ manner_of_death         &lt;chr&gt; "shot", "shot", "shot and Tasered"…
-## $ armed                   &lt;chr&gt; "gun", "gun", "unarmed", "toy weap…
-## $ age                     &lt;dbl&gt; 53, 47, 23, 32, 39, 18, 22, 35, 34…
-## $ gender                  &lt;chr&gt; "M", "M", "M", "M", "M", "M", "M",…
-## $ race                    &lt;chr&gt; "A", "W", "H", "W", "H", "W", "H",…
-## $ city                    &lt;chr&gt; "Shelton", "Aloha", "Wichita", "Sa…
-## $ state                   &lt;chr&gt; "WA", "OR", "KS", "CA", "CO", "OK"…
-## $ signs_of_mental_illness &lt;lgl&gt; TRUE, FALSE, FALSE, TRUE, FALSE, F…
-## $ threat_level            &lt;chr&gt; "attack", "attack", "other", "atta…
-## $ flee                    &lt;chr&gt; "Not fleeing", "Not fleeing", "Not…
-## $ body_camera             &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE,…
+## Rows: 300
+## Columns: 5
+## $ area          &lt;chr&gt; "Urban", "Rural", "Rural", "Rural", "Urban",…
+## $ pop_density   &lt;dbl&gt; 18.761318, 7.503175, 9.351905, 8.471700, 18.…
+## $ crime_rate    &lt;dbl&gt; 24.20, 0.20, 1.25, 2.45, 11.25, 4.05, 12.80,…
+## $ disadvantage  &lt;chr&gt; "Low", "Medium", "Low", "Low", "Medium", "Hi…
+## $ incarceration &lt;chr&gt; "Medium", "Medium", "Low", "Low", "Low", "Me…
 ```
 ]
 
@@ -527,13 +517,13 @@ Instead of nesting functions like this:
 
 
 ```r
-sort(table(shootings$race))
+proportions(table(communities$disadvantage))
 ```
 
 ```
 ## 
-##    O    N    A    H    B    W 
-##   38   64   71  719 1001 1962
+##      High       Low    Medium 
+## 0.2900000 0.3466667 0.3633333
 ```
 
 --
@@ -542,18 +532,108 @@ We can pipe them like this:
 
 
 ```r
-shootings |&gt; pull(race) |&gt; table() |&gt; sort()
+communities |&gt; pull(disadvantage) |&gt; table() |&gt; proportions()
 ```
 
 ```
 ## 
-##    O    N    A    H    B    W 
-##   38   64   71  719 1001 1962
+##      High       Low    Medium 
+## 0.2900000 0.3466667 0.3633333
 ```
 
 --
 
-Read this as, "get `shootings`, and then pull out the `race` column, and then make a `table()`, and then `sort()` it."
+Read this as, "take `communities`, and then pull out the `incarceration` column, and then make a `table()`, and then calculate `proportions()`."
+
+
+---
+# Creating Columns
+
+`incarceration` looks like an ordinal variable (`disadvantage` too) but R doesn't know this—it just puts them in alphabetical order
+
+--
+
+To fix this, we need to know how to create or modify variables in our data
+
+--
+
+`dplyr` uses the `mutate()` function to create or modify variables:
+
+
+```r
+communities |&gt;
+  mutate(high_crime = crime_rate &gt; mean(crime_rate)) |&gt;
+  head(4)
+```
+
+```
+## # A tibble: 4 × 6
+##   area  pop_density crime_rate disadvantage incarceration high_crime
+##   &lt;chr&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;         &lt;lgl&gt;     
+## 1 Urban       18.8       24.2  Low          Medium        TRUE      
+## 2 Rural        7.50       0.2  Medium       Medium        FALSE     
+## 3 Rural        9.35       1.25 Low          Low           FALSE     
+## 4 Rural        8.47       2.45 Low          Low           FALSE
+```
+
+This created a **logical** (`TRUE`/`FALSE`) variable because we used a logical expression
+
+---
+# Modifying Columns
+
+In R, we "modify" objects—including columns in our data—by replacing them with new versions
+
+--
+
+We saw before that our disadvantage and incarceration variables are ordinal but not being recognized that way
+
+--
+
+We can give them a proper order by making them **factors** and specifying their **levels**
+
+
+```r
+*communities &lt;- communities |&gt;
+  mutate(disadvantage = 
+*          factor(disadvantage, levels = c("Low", "Medium", "High")),
+         incarceration = 
+           factor(incarceration, levels = c("Low", "Medium", "High"))
+         )
+```
+
+To modify the original dataset, we just assign back to it—overwriting it with our changes!
+
+---
+# Fixed!
+
+
+```r
+communities |&gt; pull(disadvantage) |&gt; table()
+```
+
+```
+## 
+##    Low Medium   High 
+##    104    109     87
+```
+
+
+
+```r
+communities |&gt; pull(incarceration) |&gt; table()
+```
+
+```
+## 
+##    Low Medium   High 
+##    104    102     94
+```
+
+--
+
+.text-center[
+*We'll create and modify variables more another day, but for now let's look at subsetting again*
+]
 
 ---
 
@@ -561,65 +641,32 @@ Read this as, "get `shootings`, and then pull out the `race` column, and then ma
 
 
 ```r
-shootings |&gt; filter(armed == "unarmed") |&gt; head()
+communities |&gt; filter(incarceration == "High") |&gt; head()
 ```
 
 ```
-## # A tibble: 6 × 14
-##      id name       date       manne…¹ armed   age gender race  city 
-##   &lt;dbl&gt; &lt;chr&gt;      &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;
-## 1     5 John Paul… 2015-01-03 shot a… unar…    23 M      H     Wich…
-## 2    16 Autumn St… 2015-01-06 shot    unar…    34 F      W     Burl…
-## 3    36 Artago Da… 2015-01-08 shot    unar…    36 M      B     Stro…
-## 4   352 Joshua Om… 2015-01-26 shot    unar…    24 M      H     Taho…
-## 5   342 Ralph Wil… 2015-01-29 shot    unar…    42 M      W     Stil…
-## 6   114 David Kas… 2015-02-02 shot    unar…    59 M      W     Humm…
-## # … with 5 more variables: state &lt;chr&gt;,
-## #   signs_of_mental_illness &lt;lgl&gt;, threat_level &lt;chr&gt;, flee &lt;chr&gt;,
-## #   body_camera &lt;lgl&gt;, and abbreviated variable name
-## #   ¹​manner_of_death
+## # A tibble: 6 × 5
+##   area  pop_density crime_rate disadvantage incarceration
+##   &lt;chr&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;fct&gt;        &lt;fct&gt;        
+## 1 Rural        5.95       3.2  Low          High         
+## 2 Urban       15.8        5    Medium       High         
+## 3 Rural       10.7        6.05 High         High         
+## 4 Rural       10.7        6.05 Low          High         
+## 5 Urban       15.1       39.2  High         High         
+## 6 Urban       24.2       42.0  Low          High
 ```
 
 .text-center[
 *What is this doing?*
 ]
 
-.footnote[
-Note that `dplyr` hides excess columns from output so it fits the console!
-]
-
----
-
-# `filter`
+--
 
 `filter()` is `dplyr`'s function for indexing **rows** of a dataframe
 
 --
 
 It takes *only* logical vectors (the result of **expressions**) as an argument
-
---
-
-If you want to `filter()` by *position*, use `slice()`:
-
-
-```r
-shootings |&gt; slice(c(1, 5, 9))
-```
-
-```
-## # A tibble: 3 × 14
-##      id name       date       manne…¹ armed   age gender race  city 
-##   &lt;dbl&gt; &lt;chr&gt;      &lt;date&gt;     &lt;chr&gt;   &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;
-## 1     3 Tim Elliot 2015-01-02 shot    gun      53 M      A     Shel…
-## 2     9 Michael R… 2015-01-04 shot    nail…    39 M      H     Evans
-## 3    16 Autumn St… 2015-01-06 shot    unar…    34 F      W     Burl…
-## # … with 5 more variables: state &lt;chr&gt;,
-## #   signs_of_mental_illness &lt;lgl&gt;, threat_level &lt;chr&gt;, flee &lt;chr&gt;,
-## #   body_camera &lt;lgl&gt;, and abbreviated variable name
-## #   ¹​manner_of_death
-```
-
 
 ---
 # Multiple Conditions
@@ -630,16 +677,12 @@ shootings |&gt; slice(c(1, 5, 9))
 
 
 ```r
-shootings |&gt;
-    filter(armed == "unarmed" &amp; 
-             age &lt; 18)
+communities |&gt;
+  filter(disadvantage == "Low" &amp; 
+         crime_rate &gt; 40)
 ```
 
-.image-100[
-![](img/armed_and_age.svg)
-]
-
-*Give me rows where the subject was unarmed **and** their age is under 18.*
+![:width 100%](img/disadvantage_and_crime.svg)
 
 ]
 
@@ -651,17 +694,13 @@ shootings |&gt;
 
 
 ```r
-shootings |&gt;
-    filter(armed == "unarmed" |
-          age &lt; 18)
+communities |&gt;
+  filter(disadvantage == "Low" | 
+         crime_rate &gt; 40)
 ```
 
-.image-100[
-![](img/armed_or_age.svg)
-]
 
-*Give me rows where the subject was unarmed **or** their age is under 18... or **both**.*
-
+![:width 100%](img/disadvantage_or_crime.svg)
 ]
 
 ---
@@ -669,53 +708,19 @@ class: inverse
 
 # Distributions
 
----
-# Loading Data
+&amp;nbsp;
 
-We'll revisit the shootings data again soon.
+### Numbers today (boo!)
 
-For now, let's load another example dataset: 
+&amp;nbsp;
 
-Community crime data based on those in yesterday's CRM lecture
-
-
-```r
-communities &lt;- read_csv("https://clanfear.github.io/ioc_iqa/_data/communities.csv")
-```
-
-```
-## Rows: 300 Columns: 5
-## ── Column specification ────────────────────────────────────────────
-## Delimiter: ","
-## chr (3): Area, Disadvantage, Incarceration
-## dbl (2): Pop Density, Crime Rate
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-```
+### Pictures next week (fun!)
 
 ---
-# Community Data
 
-
-```r
-glimpse(communities)
-```
-
-```
-## Rows: 300
-## Columns: 5
-## $ Area          &lt;chr&gt; "Rural", "Rural", "Urban", "Rural", "Urban",…
-## $ `Pop Density` &lt;dbl&gt; 8.223022, 10.948389, 18.961921, 11.906154, 2…
-## $ `Crime Rate`  &lt;dbl&gt; 1.80, 9.80, 22.05, 5.00, 31.25, 3.20, 7.20, …
-## $ Disadvantage  &lt;chr&gt; "Medium", "Medium", "Low", "Low", "High", "H…
-## $ Incarceration &lt;chr&gt; "Low", "Low", "High", "Low", "High", "Medium…
-```
-
----
 # Tabulations
 
-Let's look at tabulations first. They're most useful for summarizing categorical data.
+Let's look at tabulations first. They're useful for summarizing categorical data.
 
 --
 
@@ -723,18 +728,117 @@ Let's look at tabulations first. They're most useful for summarizing categorical
 
 
 ```r
-communities |&gt; count(Incarceration)
+communities |&gt; count(incarceration)
 ```
 
 ```
 ## # A tibble: 3 × 2
-##   Incarceration     n
-##   &lt;chr&gt;         &lt;int&gt;
-## 1 High            103
-## 2 Low              93
-## 3 Medium          104
+##   incarceration     n
+##   &lt;fct&gt;         &lt;int&gt;
+## 1 Low             104
+## 2 Medium          102
+## 3 High             94
 ```
 
+--
+
+
+```r
+communities |&gt; count(incarceration) |&gt; mutate(proportion = n/sum(n))
+```
+
+```
+## # A tibble: 3 × 3
+##   incarceration     n proportion
+##   &lt;fct&gt;         &lt;int&gt;      &lt;dbl&gt;
+## 1 Low             104      0.347
+## 2 Medium          102      0.34 
+## 3 High             94      0.313
+```
+
+---
+
+# `janitor`
+
+`janitor` is a data cleaning package, but it makes tabulations easier too
+
+
+```r
+install.packages("janitor")
+```
+
+
+```r
+library(janitor)
+```
+
+```
+## 
+## Attaching package: 'janitor'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     chisq.test, fisher.test
+```
+
+
+
+```r
+communities |&gt; tabyl(incarceration)
+```
+
+```
+##  incarceration   n   percent
+##            Low 104 0.3466667
+##         Medium 102 0.3400000
+##           High  94 0.3133333
+```
+
+
+--
+
+.pull-right[
+.footnote[
+It comes in *really* handy for **cross-tabs**—we'll see them soon!
+]
+]
+
+---
+# `summarize()`
+
+`dplyr`'s **`summarize()`** takes your column(s) of data and computes something using **every row**: 
+
+* Calculate the mean
+* Calculate the standard deviation
+* Obtain a sample size
+--
+
+
+```r
+communities |&gt;
+  summarize(mean_crime_rate = mean(crime_rate),
+            sd_crime_rate = sd(crime_rate), 
+            n = n())
+```
+
+```
+## # A tibble: 1 × 3
+##   mean_crime_rate sd_crime_rate     n
+##             &lt;dbl&gt;         &lt;dbl&gt; &lt;int&gt;
+## 1            13.5          11.9   300
+```
+
+--
+
+You can use any function in `summarize()` that aggregates *multiple values* into a *single value* (like `sum()`, `median()`, or `max()`).
+
+
+---
+class: inverse
+
+# Associations
 
 ---
 
@@ -742,24 +846,338 @@ communities |&gt; count(Incarceration)
 
 Let's look at cross-tabs first. They're used for associations between categorical variables.
 
+--
 
----
+This is where `janitor`'s `tabyl()` begins to shine:
+
+--
 
 
 ```r
-communities %&gt;% group_by(Area) %&gt;% summarize(`Mean Crime Rate` = round(mean(`Crime Rate`), 2), 
-                                       `Std. Dev.` = round(sd(`Crime Rate`),2 ),
-                                       N = n()) %&gt;%
-  knitr::kable()
+communities |&gt; tabyl(disadvantage, incarceration)
+```
+
+```
+##  disadvantage Low Medium High
+##           Low  54     31   19
+##        Medium  38     44   27
+##          High  12     27   48
+```
+
+--
+
+
+```r
+communities |&gt; tabyl(disadvantage, incarceration) |&gt;
+* adorn_percentages() # converts to cell percentages
+```
+
+```
+##  disadvantage       Low    Medium      High
+##           Low 0.5192308 0.2980769 0.1826923
+##        Medium 0.3486239 0.4036697 0.2477064
+##          High 0.1379310 0.3103448 0.5517241
+```
+
+---
+count: false
+
+# Fancy Cross-Tabs 1
+
+We can assemble *fancy* tables bit-by-bit with `janitor`
+
+
+```r
+communities |&gt; 
+  tabyl(disadvantage, incarceration) # make table
+```
+
+```
+##  disadvantage Low Medium High
+##           Low  54     31   19
+##        Medium  38     44   27
+##          High  12     27   48
+```
+
+---
+count: false
+
+# Fancy Cross-Tabs 2
+
+Add row and column totals!
+
+
+```r
+communities |&gt; 
+  tabyl(disadvantage, incarceration) |&gt; # make table
+  adorn_totals(c("row", "col")) # add row/col totals
+```
+
+```
+##  disadvantage Low Medium High Total
+##           Low  54     31   19   104
+##        Medium  38     44   27   109
+##          High  12     27   48    87
+##         Total 104    102   94   300
+```
+
+---
+count: false
+
+# Fancy Cross-Tabs 3
+
+Turn cells into (row) percentages instead of counts
+
+
+```r
+communities |&gt; 
+  tabyl(disadvantage, incarceration) |&gt; # make table
+  adorn_totals(c("row", "col")) |&gt; # add row/col totals
+  adorn_percentages()# make cells percentages
+```
+
+```
+##  disadvantage       Low    Medium      High Total
+##           Low 0.5192308 0.2980769 0.1826923     1
+##        Medium 0.3486239 0.4036697 0.2477064     1
+##          High 0.1379310 0.3103448 0.5517241     1
+##         Total 0.3466667 0.3400000 0.3133333     1
+```
+
+---
+count: false
+
+# Fancy Cross-Tabs 4
+
+Round those percentages to two decimal places!
+
+
+```r
+communities |&gt; 
+  tabyl(disadvantage, incarceration) |&gt; # make table
+  adorn_totals(c("row", "col")) |&gt; # add row/col totals
+  adorn_percentages() |&gt; # make cells percentages
+  adorn_pct_formatting(digits = 2) # round to 2 digits
+```
+
+```
+##  disadvantage    Low Medium   High   Total
+##           Low 51.92% 29.81% 18.27% 100.00%
+##        Medium 34.86% 40.37% 24.77% 100.00%
+##          High 13.79% 31.03% 55.17% 100.00%
+##         Total 34.67% 34.00% 31.33% 100.00%
+```
+
+---
+count: false
+
+# Fancy Cross-Tabs 5
+
+Add counts back in parentheses!
+
+
+```r
+communities |&gt; 
+  tabyl(disadvantage, incarceration) |&gt; # make table
+  adorn_totals(c("row", "col")) |&gt; # add row/col totals
+  adorn_percentages() |&gt; # make cells percentages
+  adorn_pct_formatting(digits = 2) |&gt; # round to 2 digits
+  adorn_ns() # add counts in parentheses
+```
+
+```
+##  disadvantage          Low       Medium        High         Total
+##           Low 51.92%  (54) 29.81%  (31) 18.27% (19) 100.00% (104)
+##        Medium 34.86%  (38) 40.37%  (44) 24.77% (27) 100.00% (109)
+##          High 13.79%  (12) 31.03%  (27) 55.17% (48) 100.00%  (87)
+##         Total 34.67% (104) 34.00% (102) 31.33% (94) 100.00% (300)
 ```
 
 
+---
+count: false
 
-|Area  | Mean Crime Rate| Std. Dev.|   N|
-|:-----|---------------:|---------:|---:|
-|Rural |            6.08|      3.74| 139|
-|Urban |           22.40|     12.37| 161|
+# Fancy Cross-Tabs 6
 
+Add column variable name!
+
+
+```r
+communities |&gt; 
+  tabyl(disadvantage, incarceration) |&gt; # make table
+  adorn_totals(c("row", "col")) |&gt; # add row/col totals
+  adorn_percentages() |&gt; # make cells percentages
+  adorn_pct_formatting(digits = 2) |&gt; # round to 2 digits
+  adorn_ns() |&gt; # add counts in parentheses
+  adorn_title() # add col variable name
+```
+
+```
+##               incarceration                                       
+##  disadvantage           Low       Medium        High         Total
+##           Low  51.92%  (54) 29.81%  (31) 18.27% (19) 100.00% (104)
+##        Medium  34.86%  (38) 40.37%  (44) 24.77% (27) 100.00% (109)
+##          High  13.79%  (12) 31.03%  (27) 55.17% (48) 100.00%  (87)
+##         Total  34.67% (104) 34.00% (102) 31.33% (94) 100.00% (300)
+```
+
+Not bad! That's not far from paper ready!
+
+---
+
+# Grouped Measures
+
+If we wanted to calculated means for different groups, one easy way is to just subset the data
+
+--
+
+.pull-left[
+
+```r
+communities |&gt;
+* filter(disadvantage=="High") |&gt;
+  summarize(
+   mean_crime = mean(crime_rate),
+   sd_crime   = sd(crime_rate), 
+   n          = n())
+```
+
+```
+## # A tibble: 1 × 3
+##   mean_crime sd_crime     n
+##        &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
+## 1       19.4     15.3    87
+```
+]
+
+.pull-right[
+
+```r
+communities |&gt;
+* filter(disadvantage=="Low") |&gt;
+  summarize(
+   mean_crime = mean(crime_rate),
+   sd_crime   = sd(crime_rate), 
+   n          = n())
+```
+
+```
+## # A tibble: 1 × 3
+##   mean_crime sd_crime     n
+##        &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
+## 1       10.7     9.36   104
+```
+]
+
+--
+
+Imagine if you had many groups, though! There's a better way.
+
+---
+  
+# `group_by()`
+
+
+The special function `group_by()` changes how functions operate on the data, most importantly `summarize()`.
+
+Functions after `group_by()` are computed *within each group* as defined by variables given, rather than over all rows at once.
+
+Excel analogue: pivot tables
+
+.image-50[![Pivot table](http://www.excel-easy.com/data-analysis/images/pivot-tables/two-dimensional-pivot-table.png)]
+
+---
+# `group_by()` example
+
+
+```r
+communities |&gt;
+* group_by(disadvantage) |&gt;
+  summarize(mean_crime = mean(crime_rate),
+            sd_crime = sd(crime_rate), 
+            n = n())
+```
+
+```
+## # A tibble: 3 × 4
+##   disadvantage mean_crime sd_crime     n
+##   &lt;fct&gt;             &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
+## 1 Low                10.7     9.36   104
+## 2 Medium             11.5     8.96   109
+## 3 High               19.4    15.3     87
+```
+
+Because we did `group_by()` with `disadvantage` then used `summarize()`, we get *one row per value of `disadvantage`*!
+
+Each value of disadvantage is its own **group**!
+
+---
+
+# Correlations
+
+Correlations are mathematically complicated but simple to code
+
+
+```r
+cor(communities$pop_density, communities$crime_rate)
+```
+
+```
+## [1] 0.7943986
+```
+
+--
+
+Alternatively, you can use the `with()` command for a bit less typing
+
+
+```r
+with(communities, cor(pop_density, crime_rate))
+```
+
+```
+## [1] 0.7943986
+```
+
+--
+
+These are a bit easier than `dplyr` if you just want one correlation
+
+
+```r
+communities |&gt; summarize(R = cor(pop_density, crime_rate))
+```
+
+```
+## # A tibble: 1 × 1
+##       R
+##   &lt;dbl&gt;
+## 1 0.794
+```
+
+---
+
+# Multiple Correlations
+
+If you want to do correlations *within groups*, `dplyr` is king again
+
+
+```r
+communities |&gt;
+  group_by(disadvantage) |&gt;
+  summarize(R = cor(pop_density, crime_rate))
+```
+
+```
+## # A tibble: 3 × 2
+##   disadvantage     R
+##   &lt;fct&gt;        &lt;dbl&gt;
+## 1 Low          0.823
+## 2 Medium       0.784
+## 3 High         0.789
+```
+
+In this case, the correlation between `pop_density` and `crime_rate` is similar at all levels of disadvantage
 
 ---
 
@@ -767,7 +1185,8 @@ communities %&gt;% group_by(Area) %&gt;% summarize(`Mean Crime Rate` = round(mea
   
 * Recommended reading for next week
 
-   * Kaplan, chapters 10 and 14 are a review of today's content
+   * Kaplan, chapters 10 is review of today's content
+      * Chapter 14 (graphing) is what we'll get into next week
    * You're pretty busy, so make it low priority!
 
 * `swirl` units if you want practice
