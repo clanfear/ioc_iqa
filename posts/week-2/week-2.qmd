@@ -6,11 +6,9 @@ date: "2022-10-19"
 draft: false
 ---
 
-Lecture Slides (forthcoming)
+[Lecture Slides](https://clanfear.github.io/ioc_iqa/_lectures/2_distributions-relationships/slides_distributions-relationships.html)
 
-.R script to follow along (forthcoming)
-
-Lecture Recording (forthcoming)
+[.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/2_distributions-relationships/slides_distributions-relationships.R)
 
 Reading (for *before* the seminar):
 
