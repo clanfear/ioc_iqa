@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 19 Oct 2022<br>Updated: 18 Oct 2022
+### 19 Oct 2022<br>Updated: 19 Oct 2022
 ]
 
 ---
@@ -796,8 +796,8 @@ It comes in *really* handy for **cross-tabs**—we'll see them soon!
 ```r
 communities |&gt;
   summarize(mean_crime_rate = mean(crime_rate),
-            sd_crime_rate = sd(crime_rate), 
-            n = n())
+            sd_crime_rate   = sd(crime_rate), 
+            n               = n())
 ```
 
 ```
@@ -914,7 +914,7 @@ Turn cells into (row) percentages instead of counts
 communities |&gt; 
   tabyl(disadvantage, incarceration) |&gt; # make table
   adorn_totals(c("row", "col")) |&gt; # add row/col totals
-  adorn_percentages()# make cells percentages
+  adorn_percentages()# make cells proportions
 ```
 
 ```
@@ -938,15 +938,15 @@ communities |&gt;
   tabyl(disadvantage, incarceration) |&gt; # make table
   adorn_totals(c("row", "col")) |&gt; # add row/col totals
   adorn_percentages() |&gt; # make cells percentages
-  adorn_pct_formatting(digits = 2) # round to 2 digits
+  adorn_pct_formatting(digits = 1) # percents with 1 digit
 ```
 
 ```
-##  disadvantage    Low Medium   High   Total
-##           Low 39.22% 44.12% 16.67% 100.00%
-##        Medium 31.96% 30.93% 37.11% 100.00%
-##          High 23.76% 30.69% 45.54% 100.00%
-##         Total 31.67% 35.33% 33.00% 100.00%
+##  disadvantage   Low Medium  High  Total
+##           Low 39.2%  44.1% 16.7% 100.0%
+##        Medium 32.0%  30.9% 37.1% 100.0%
+##          High 23.8%  30.7% 45.5% 100.0%
+##         Total 31.7%  35.3% 33.0% 100.0%
 ```
 
 ---
@@ -962,16 +962,16 @@ communities |&gt;
   tabyl(disadvantage, incarceration) |&gt; # make table
   adorn_totals(c("row", "col")) |&gt; # add row/col totals
   adorn_percentages() |&gt; # make cells percentages
-  adorn_pct_formatting(digits = 2) |&gt; # round to 2 digits
+  adorn_pct_formatting(digits = 1) |&gt; # round to 2 digits
   adorn_ns() # add counts in parentheses
 ```
 
 ```
-##  disadvantage         Low       Medium        High         Total
-##           Low 39.22% (40) 44.12%  (45) 16.67% (17) 100.00% (102)
-##        Medium 31.96% (31) 30.93%  (30) 37.11% (36) 100.00%  (97)
-##          High 23.76% (24) 30.69%  (31) 45.54% (46) 100.00% (101)
-##         Total 31.67% (95) 35.33% (106) 33.00% (99) 100.00% (300)
+##  disadvantage        Low      Medium       High        Total
+##           Low 39.2% (40) 44.1%  (45) 16.7% (17) 100.0% (102)
+##        Medium 32.0% (31) 30.9%  (30) 37.1% (36) 100.0%  (97)
+##          High 23.8% (24) 30.7%  (31) 45.5% (46) 100.0% (101)
+##         Total 31.7% (95) 35.3% (106) 33.0% (99) 100.0% (300)
 ```
 
 
@@ -988,18 +988,18 @@ communities |&gt;
   tabyl(disadvantage, incarceration) |&gt; # make table
   adorn_totals(c("row", "col")) |&gt; # add row/col totals
   adorn_percentages() |&gt; # make cells percentages
-  adorn_pct_formatting(digits = 2) |&gt; # round to 2 digits
+  adorn_pct_formatting(digits = 1) |&gt; # round to 2 digits
   adorn_ns() |&gt; # add counts in parentheses
   adorn_title() # add col variable name
 ```
 
 ```
-##               incarceration                                       
-##  disadvantage           Low       Medium        High         Total
-##           Low   39.22% (40) 44.12%  (45) 16.67% (17) 100.00% (102)
-##        Medium   31.96% (31) 30.93%  (30) 37.11% (36) 100.00%  (97)
-##          High   23.76% (24) 30.69%  (31) 45.54% (46) 100.00% (101)
-##         Total   31.67% (95) 35.33% (106) 33.00% (99) 100.00% (300)
+##               incarceration                                    
+##  disadvantage           Low      Medium       High        Total
+##           Low    39.2% (40) 44.1%  (45) 16.7% (17) 100.0% (102)
+##        Medium    32.0% (31) 30.9%  (30) 37.1% (36) 100.0%  (97)
+##          High    23.8% (24) 30.7%  (31) 45.5% (46) 100.0% (101)
+##         Total    31.7% (95) 35.3% (106) 33.0% (99) 100.0% (300)
 ```
 
 Not bad! That's not far from paper ready!
@@ -1075,8 +1075,8 @@ Excel analogue: pivot tables
 communities |&gt;
 * group_by(disadvantage) |&gt;
   summarize(mean_crime = mean(crime_rate),
-            sd_crime = sd(crime_rate), 
-            n = n())
+            sd_crime   = sd(crime_rate), 
+            n          = n())
 ```
 
 ```

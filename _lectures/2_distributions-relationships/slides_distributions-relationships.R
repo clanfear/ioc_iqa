@@ -74,8 +74,8 @@ communities |> tabyl(incarceration)
 
 communities |>
   summarize(mean_crime_rate = mean(crime_rate),
-            sd_crime_rate = sd(crime_rate), 
-            n = n())
+            sd_crime_rate   = sd(crime_rate), 
+            n               = n())
 
 communities |> tabyl(disadvantage, incarceration)
 
@@ -92,26 +92,26 @@ communities |>
 communities |> 
   tabyl(disadvantage, incarceration) |> # make table
   adorn_totals(c("row", "col")) |> # add row/col totals
-  adorn_percentages()# make cells percentages
+  adorn_percentages()# make cells proportions
 
 communities |> 
   tabyl(disadvantage, incarceration) |> # make table
   adorn_totals(c("row", "col")) |> # add row/col totals
   adorn_percentages() |> # make cells percentages
-  adorn_pct_formatting(digits = 2) # round to 2 digits
+  adorn_pct_formatting(digits = 1) # percents with 1 digit
 
 communities |> 
   tabyl(disadvantage, incarceration) |> # make table
   adorn_totals(c("row", "col")) |> # add row/col totals
   adorn_percentages() |> # make cells percentages
-  adorn_pct_formatting(digits = 2) |> # round to 2 digits
+  adorn_pct_formatting(digits = 1) |> # round to 2 digits
   adorn_ns() # add counts in parentheses
 
 communities |> 
   tabyl(disadvantage, incarceration) |> # make table
   adorn_totals(c("row", "col")) |> # add row/col totals
   adorn_percentages() |> # make cells percentages
-  adorn_pct_formatting(digits = 2) |> # round to 2 digits
+  adorn_pct_formatting(digits = 1) |> # round to 2 digits
   adorn_ns() |> # add counts in parentheses
   adorn_title() # add col variable name
 
@@ -132,8 +132,8 @@ communities |>
 communities |>
   group_by(disadvantage) |> #<<
   summarize(mean_crime = mean(crime_rate),
-            sd_crime = sd(crime_rate), 
-            n = n())
+            sd_crime   = sd(crime_rate), 
+            n          = n())
 
 cor(communities$pop_density, communities$crime_rate)
 

@@ -578,8 +578,8 @@ It comes in *really* handy for **cross-tabs**—we'll see them soon!
 ```{r}
 communities |>
   summarize(mean_crime_rate = mean(crime_rate),
-            sd_crime_rate = sd(crime_rate), 
-            n = n())
+            sd_crime_rate   = sd(crime_rate), 
+            n               = n())
 ```
 
 --
@@ -655,7 +655,7 @@ Turn cells into (row) percentages instead of counts
 communities |> 
   tabyl(disadvantage, incarceration) |> # make table
   adorn_totals(c("row", "col")) |> # add row/col totals
-  adorn_percentages()# make cells percentages
+  adorn_percentages()# make cells proportions
 ```
 
 ---
@@ -670,7 +670,7 @@ communities |>
   tabyl(disadvantage, incarceration) |> # make table
   adorn_totals(c("row", "col")) |> # add row/col totals
   adorn_percentages() |> # make cells percentages
-  adorn_pct_formatting(digits = 2) # round to 2 digits
+  adorn_pct_formatting(digits = 1) # percents with 1 digit
 ```
 
 ---
@@ -685,7 +685,7 @@ communities |>
   tabyl(disadvantage, incarceration) |> # make table
   adorn_totals(c("row", "col")) |> # add row/col totals
   adorn_percentages() |> # make cells percentages
-  adorn_pct_formatting(digits = 2) |> # round to 2 digits
+  adorn_pct_formatting(digits = 1) |> # round to 2 digits
   adorn_ns() # add counts in parentheses
 ```
 
@@ -702,7 +702,7 @@ communities |>
   tabyl(disadvantage, incarceration) |> # make table
   adorn_totals(c("row", "col")) |> # add row/col totals
   adorn_percentages() |> # make cells percentages
-  adorn_pct_formatting(digits = 2) |> # round to 2 digits
+  adorn_pct_formatting(digits = 1) |> # round to 2 digits
   adorn_ns() |> # add counts in parentheses
   adorn_title() # add col variable name
 ```
@@ -763,8 +763,8 @@ Excel analogue: pivot tables
 communities |>
   group_by(disadvantage) |> #<<
   summarize(mean_crime = mean(crime_rate),
-            sd_crime = sd(crime_rate), 
-            n = n())
+            sd_crime   = sd(crime_rate), 
+            n          = n())
 ```
 
 Because we did `group_by()` with `disadvantage` then used `summarize()`, we get *one row per value of `disadvantage`*!
