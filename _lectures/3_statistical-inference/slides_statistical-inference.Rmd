@@ -29,6 +29,7 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
    * Simulation examples
    * TTest? Chi-Square?
       * Prob cover ttest on its own just as comparison between two distributions
+      * Maybe illustrate TTest using a line, difference as slope
 
 * Code
    * Lot of ggplot stuff
