@@ -6,8 +6,8 @@ date: "2022-10-26"
 draft: false
 ---
 
-Lecture Slides (forthcoming)
+[Lecture Slides](https://clanfear.github.io/ioc_iqa/_lectures/3_statistical-inference/slides_statistical-inference.html)
 
-.R script to follow along (forthcoming)
+[.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/3_statistical-inference/slides_statistical-inference.R)
 
-Lecture Recording (forthcoming)
+Lecture Recording (See Moodle)

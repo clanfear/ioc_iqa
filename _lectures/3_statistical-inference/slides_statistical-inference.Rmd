@@ -5,6 +5,8 @@ author: "Charles Lanfear"
 date: "19 Oct 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
+    includes:
+      after_body: "afterInit.html"
     css: "../assets/cam-css.css"
     lib_dir: libs
     nature:
@@ -22,21 +24,986 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
 ```
 
 
-# Things to include
-
-* Stats
-   * Central limit theorem illustrated
-   * Simulation examples
-   * TTest? Chi-Square?
-      * Prob cover ttest on its own just as comparison between two distributions
-      * Maybe illustrate TTest using a line, difference as slope
-
-* Code
-   * Lot of ggplot stuff
-   * Plot a 
-   * Might be good time to sneak in pivots?
 
 # Today
 
+* Code
+   * `ggplot2`
+   * More tables
+   * `{broom}` for model output
+
+* Stats
+   * Chi-square test
+   * Simple OLS regression
+
+---
+
+# London Crime
+
+Let's load another example dataset: 
+
+Real Metropolitan Police recorded crime in the 32 London boroughs (no City of London) in 2021
+
+```{r, message = FALSE, warning = FALSE}
+library(tidyverse)
+metro_2021 <- 
+  read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021.csv")
+```
+
+I obtained these from `data.police.uk`—it is easy to get your own for nearly anywhere in the UK, and in any recent period.
+
+---
+
+# London Crime
 
 
+```{r}
+glimpse(metro_2021)
+```
+
+---
+
+# `distinct()`
+
+These data have monthly observations for each borough.
+
+If we wanted to look at only unique observations of boroughs, we can use `distinct()`
+
+```{r}
+metro_2021 |> 
+  distinct(borough) |>
+  head()
+```
+
+---
+
+# `summarize()`
+
+Just as a quick check, let's see how many boroughs and months are in the data
+
+```{r}
+metro_2021 |> 
+  summarize(n_boroughs  = n_distinct(borough),
+            n_months    = n_distinct(month),
+            sample_size = n())
+```
+
+Looks like every borough is seen in 12 months
+
+```{r}
+32 * 12
+```
+
+---
+
+# Another Check
+
+A different way to see if all boroughs are observed 12 times is to count observations of each borough twice
+
+```{r}
+metro_2021 |> count(borough) |> head(3)
+```
+
+--
+
+Okay, then count how many of each value of `n`
+
+```{r, warning = FALSE, message = FALSE}
+metro_2021 |> count(borough) |> count(n) # This makes a warning! #<< 
+```
+
+Every value of `n` was 12, so there were 32 values of 12.
+
+---
+
+# Saving a Subset
+
+If we think a particular subset will be used repeatedly, we can save it and give it a name like any other object:
+
+```{r}
+westminster <- metro_2021 |> filter(borough == "Westminster")
+head(westminster, 4)
+```
+
+---
+class: inverse
+
+# Plotting
+
+![:width 40%](img/ggplot2.svg)
+
+
+---
+
+## Base R Plots from 2 Weeks Ago
+
+.pull-left[
+```{r base-plot, fig.show='hide'}
+plot(robbery ~ month, 
+     data = westminster, 
+     xlab = "Month", 
+     ylab = "Robbery",
+     main = 
+       "Robbery in Westminster", 
+     col = "red", 
+     cex.lab = 1.5,
+     cex.main= 1.5,
+     pch = 16)
+```
+]
+
+.pull-right[
+![](`r knitr::fig_chunk("base-plot", "svg")`)
+]
+
+---
+
+# `ggplot2`
+  
+An alternative way of plotting many prefer (myself included)<sup>1</sup> uses the `ggplot2` package in R, which is part of the `tidyverse`.
+
+.footnote[[1] [Though this is not without debate](http://simplystatistics.org/2016/02/11/why-i-dont-use-ggplot2/)]
+
+```{r}
+library(ggplot2)
+```
+
+The core idea underlying this package is the [**layered grammar of graphics**](https://doi.org/10.1198/jcgs.2009.07098): we can break up elements of a plot into pieces and combine them.
+
+---
+
+## Robberies in `ggplot`
+  
+.pull-left[
+```{r westminster-gg,  fig.show='hide'}
+ggplot(data = westminster, 
+        aes(x = month, 
+            y = robbery)) +
+  geom_point()
+```
+]
+
+.pull-right[
+![](`r knitr::fig_chunk("westminster-gg", "svg")`)
+]
+
+---
+
+# Structure of a ggplot
+  
+`ggplot2` graphics objects consist of two primary components:
+  
+--
+  
+**Layers**, the components of a graph.
+
+* We *add* layers to a `ggplot2` object using `+`.
+* This includes lines, shapes, and text.
+
+--
+  
+**Aesthetics**, which determine how the layers appear.
+
+* We *set* aesthetics using *arguments* (e.g. `color="red"`) inside layer functions.
+* This includes locations, colors, and sizes.
+* Aesthetics also determine how data *map* to appearances.
+
+---
+  
+# Layers
+  
+**Layers** are the components of the graph, such as:
+  
+* `ggplot()`: The initial plot canvas
+* `geom_point()`: Scatterplot points
+* `geom_line()`: Lines between data points
+* `labs()`: Plot title and axis labels
+* `facet_wrap()`: Divides plot into a sequence of panels
+* `facet_grid()`: Divides plot into a grid of plot panels
+* `theme_bw()`: Replace default gray background with black-and-white
+
+Layers are separated by a `+` sign.
+
+---
+  
+# Aesthetics
+  
+**Aesthetics** control the appearance of the layers:
+  
+* `x`, `y`: $x$ and $y$ coordinate values to use
+* `color`: Color of elements based on some data value
+* `group`: Describe which data points are grouped together (often used with lines)
+* `size`: Size of points/lines based on some data value
+* `alpha`: Transparency based on some data value
+
+---
+  
+## Aesthetics: Setting vs. mapping
+  
+Layers take arguments to control their appearance, such as point/line colors or transparency (`alpha` between 0 and 1).
+
+--
+  
+* Arguments like `color`, `size`, and `fill` can be used directly on layers (**setting aesthetics**), e.g. `geom_point(color = "red")`. These *don't depend on the data*.
+
+--
+
+* Arguments inside `aes()` (**mapping aesthetics**) will *depend on the data*, e.g. `geom_point(aes(color = continent))`.
+
+--
+
+* `aes()` in the `ggplot()` layer gives overall aesthetics to use in other layers, but can be changed on individual layers (including switching `x` or `y` to different variables)
+
+--
+
+This may seem pedantic, but precise language makes searching for help easier.
+
+--
+
+Now let's see all this jargon in action.
+
+---
+
+# Westminster Robbery
+
+### 1: Base Plot
+
+.pull-left[
+```{r westminster-1, fig.show='hide'}
+ggplot(data  = westminster,  #<<
+       aes(x = month, 
+           y = robbery)) #<<
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("westminster-1", "svg")`)
+]
+
+.footnote[Initialize the plot with `ggplot()` and `x` and `y` aesthetics **mapped** to variables.]
+
+---
+
+# Westminster Robbery
+
+### 2: Scatterplot
+
+.pull-left[
+```{r westminster-2, fig.show='hide'}
+ggplot(data  = westminster, 
+       aes(x = month, 
+           y = robbery)) +
+    geom_point() #<<
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("westminster-2", "svg")`)
+]
+
+.footnote[Add a scatterplot **layer**]
+
+---
+
+# Westminster Robbery
+
+### 3: Point Color and Size
+
+.pull-left[
+```{r westminster-3, fig.show='hide'}
+ggplot(data  = westminster, 
+       aes(x = month, 
+           y = robbery)) +
+  geom_point(color = "red", 
+             size  = 3) #<<
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("westminster-3", "svg")`)
+]
+
+.footnote[**Set** aesthetics to make the points large and red]
+
+---
+
+# Westminster Robbery
+
+### 4: X-Axis Label
+
+.pull-left[
+```{r westminster-4, fig.show='hide'}
+ggplot(data  = westminster, 
+       aes(x = month, 
+           y = robbery)) +
+  geom_point(color = "red", 
+             size  = 3) +
+  labs(x = "Month") #<<
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("westminster-4", "svg")`)
+]
+
+.footnote[Add a label layer to capitalize the x-axis label]
+
+---
+
+# Westminster Robbery
+
+### 5: Y-Axis Label
+
+.pull-left[
+```{r westminster-5, fig.show='hide'}
+ggplot(data  = westminster, 
+       aes(x = month, 
+           y = robbery)) +
+  geom_point(color = "red", 
+             size  = 3) +
+  labs(x = "Month",
+       y = "Robbery") #<<
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("westminster-5", "svg")`)
+]
+
+.footnote[Add text to clean up the y-axis label]
+
+---
+
+# Westminster Robbery
+
+### 6: Title
+
+.pull-left[
+```{r westminster-6, fig.show='hide'}
+ggplot(data  = westminster, 
+       aes(x = month, 
+           y = robbery)) +
+  geom_point(color = "red",
+             size  = 3) +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title = 
+      "Robbery in Westminster") #<<
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("westminster-6", "svg")`)
+]
+
+.footnote[Add a title]
+
+---
+
+# Westminster Robbery
+
+### 7: Theme
+
+.pull-left[
+```{r westminster-7, fig.show='hide'}
+ggplot(data  = westminster, 
+       aes(x = month, 
+           y = robbery)) +
+  geom_point(color = "red", 
+             size  = 3) +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title = 
+      "Robbery in Westminster") +
+  theme_bw() #<<
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("westminster-7", "svg")`)
+]
+
+.footnote[Pick a basic theme with a new layer]
+
+---
+
+# Westminster Robbery
+
+### 8: Text Size
+
+.pull-left[
+```{r westminster-8, fig.show='hide'}
+ggplot(data  = westminster, 
+       aes(x = month, 
+           y = robbery)) +
+geom_point(color = "red", 
+           size  = 3) +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title = 
+      "Robbery in Westminster") +
+   theme_bw(base_size = 18) #<<
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("westminster-8", "svg")`)
+]
+
+.footnote[Increase the base text size]
+
+---
+
+# Plotting All Boroughs
+  
+We have a plot we like for Westminster... 
+
+... but what if we want *all the boroughs*?
+  
+---
+
+# Plotting All Boroughs
+
+### 1: A Mess!
+
+.pull-left[
+.text-85[
+```{r london-1, fig.show='hide'}
+ ggplot(data  = metro_2021, 
+        aes(x = month, 
+            y = robbery)) +
+  geom_point(color = "red", 
+             size = 3) +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title = 
+      "Robbery in London") +
+   theme_bw(base_size = 18) #<<
+```
+]
+]
+.pull-right[
+![](`r knitr::fig_chunk("london-1", "svg")`)
+]
+
+.footnote[We can't tell boroughs apart! Maybe we could follow *lines*?]
+
+---
+
+
+# Plotting All Boroughs
+
+### 2: Lines
+
+.pull-left[
+.text-85[
+```{r london-2,  fig.show='hide'}
+ ggplot(data = metro_2021, 
+      aes(x = month, 
+          y = robbery)) +
+  geom_line(color = "red", 
+            size = 3) + #<<
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title = "Robbery in London") +
+  theme_bw(base_size = 18)
+```
+]
+]
+.pull-right[
+![](`r knitr::fig_chunk("london-2", "svg")`)
+]
+
+.footnote[`ggplot2` doesn't know how to connect the lines!]
+
+---
+
+# Plotting All Boroughs
+
+### 3: Grouping
+
+.pull-left[
+.text-85[
+```{r london-3, fig.show='hide'}
+ ggplot(data = metro_2021, 
+      aes(x = month, 
+          y = robbery, 
+          group = borough)) +
+  geom_line(color = "red", 
+            size = 3) + #<<
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title = "Robbery in London") +
+  theme_bw(base_size = 18)
+```
+]
+]
+.pull-right[
+![](`r knitr::fig_chunk("london-3", "svg")`)
+]
+
+.footnote[That looks more reasonable... but the lines are too thick!]
+
+---
+
+# Plotting All Boroughs
+
+### 4: Size
+.pull-left[
+```{r london-4, fig.height=4,  fig.show='hide'}
+ ggplot(data = metro_2021, 
+      aes(x = month, 
+          y = robbery, 
+          group = borough)) +
+  geom_line(color = "red") + #<<
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title = "Robbery in London") +
+  theme_bw(base_size = 18)
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("london-4", "svg")`)
+]
+
+.footnote[Much better... but maybe we can do highlight subregions?]
+
+---
+  
+  
+# Plotting All Boroughs
+  
+### 5: Color
+
+.pull-left[
+.text-85[
+```{r london-5,  fig.show='hide'}
+ ggplot(data = metro_2021, 
+      aes(x = month, 
+          y = robbery, 
+          group = borough,
+          color = subregion)) + #<<
+  geom_line() + 
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title = "Robbery in London") +
+  theme_bw(base_size = 18)
+```
+]
+]
+.pull-right[
+![](`r knitr::fig_chunk("london-5", "svg")`)
+]
+
+.footnote[Hmmm, hard to make out... why not separate subregions completely?]
+
+---
+
+# Plotting All Boroughs
+  
+### 6: Facets
+
+.pull-left[
+.text-85[
+```{r london-6, fig.show='hide'}
+ ggplot(data = metro_2021, 
+      aes(x = month, 
+          y = robbery, 
+          group = borough,
+          color = subregion)) + #<<
+  geom_line() + 
+  facet_wrap(~subregion) +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title = "Robbery in London") +
+  theme_bw(base_size = 18)
+```
+]
+]
+.pull-right[
+![](`r knitr::fig_chunk("london-6", "svg")`)
+]
+
+.footnote[Looking good, but the legend is redundant!]
+
+---
+
+# Plotting All Boroughs
+  
+### 7: Legend
+
+.pull-left[
+.text-85[
+```{r london-7, fig.show='hide'}
+ ggplot(data = metro_2021, 
+      aes(x = month, 
+          y = robbery,
+          group = borough,
+          color = subregion)) + #<<
+  geom_line() + 
+  facet_wrap(~subregion) +
+  labs(
+    x = "Month",
+    y = "Robbery",
+    title = "Robbery in London") +
+  theme_bw(base_size = 18) +
+  theme(legend.position = "none")
+```
+]
+]
+.pull-right[
+![](`r knitr::fig_chunk("london-7", "svg")`)
+]
+
+.footnote[Not bad!]
+
+---
+
+# Enough of that
+
+
+We'll use `{ggplot2}` throughout the rest of the term
+
+--
+
+It can do a lot more than what we've seen today, but there's so much it would be overwhelming
+
+--
+
+Time for a bit of stats
+
+---
+class: inverse
+
+# Statistical Inference
+
+---
+
+# `communities` Data
+
+Let's return to the `communities` data we've used before—making sure to fix the ordinal variables again
+
+.text-85[
+```{r, message = FALSE}
+communities <- 
+  read_csv("https://clanfear.github.io/ioc_iqa/_data/communities.csv") |> 
+  mutate(disadvantage = 
+           factor(disadvantage, levels = c("Low", "Medium", "High")), 
+         incarceration = 
+           factor(incarceration, levels = c("Low", "Medium", "High")))
+glimpse(communities)
+```
+
+]
+
+---
+
+# Cross-Tab
+
+Say we draw a sample and see this association in the table
+
+```{r, message = FALSE, warning = FALSE}
+library(janitor) # For the tabyl function
+communities |> tabyl(disadvantage, area) |> adorn_title()
+```
+
+
+It looks like disadvantage has different patterns in rural and urban areas
+
+--
+
+We want to know if there's a real relationship in the population
+
+How do we figure this out?
+
+---
+
+# Chi-square Test
+
+`janitor` adds a `chisq.test()` function that works on its special tables
+
+```{r}
+communities |> tabyl(disadvantage, area) |> chisq.test()
+```
+
+--
+
+This is the same result we saw in CRM yesterday: There appears to be an association.
+
+--
+
+If you're curious how p-values are calculated, they come from cumulative probability distributions—which R has built in!
+
+```{r}
+1 - pchisq(9.1153, df = 2)
+```
+
+.pull-right[
+.footnote[We'll mess with this a bit more another day!]
+]
+
+---
+
+# A Prettier Table
+
+There are many ways to make nicer looking tables in R
+
+For very simple tables using dataframes, I use `kable()` in `{knitr}`
+
+```{r, message = FALSE, warning = FALSE}
+communities |> 
+  tabyl(disadvantage, area) |> 
+  adorn_title() |> 
+  knitr::kable() # Access a package function without loading it #<<
+```
+
+---
+
+# More Complex
+
+IF you want to make a publication ready table that will work in any output format, such as PDF, Word, or HTML, [your best bet is `{flextable}`](https://ardata-fr.github.io/flextable-book/)
+
+```{r, warning = FALSE, message = FALSE}
+library(flextable)
+communities |> 
+  rename(Disadvantage = disadvantage) |>
+  tabyl(Disadvantage, area) |>
+  flextable() |>
+  add_header_lines("Table 1. Disadvantage by area")
+```
+
+It can be complicated, but it can do just about anything...
+
+---
+
+# `{flextable}` is... flexible
+
+![:width 95%](img/kart.png)
+
+.footnote[Source: [Flextable Gallery](https://www.ardata.fr/en/flextable-gallery/2021-01-12-mario-kart/)]
+
+---
+
+### I suppose you can use it for articles too
+
+![:width 50%](img/ce-be.png)
+
+.footnote[Source: [Lanfear (2022)](https://doi.org/10.1111/1745-9125.12304)]
+
+---
+
+# Bar Plots
+
+Aside from tables, you may want to plot categorical data
+
+
+.pull-left[
+```{r barplot-1, fig.show='hide'}
+ggplot(communities, 
+       aes(x = disadvantage)) + 
+  geom_bar()
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("barplot-1", "svg")`)
+]
+
+---
+
+# Filled Bar Plots
+
+Adding a `fill` aesthetic will color the bars by a second variable
+
+.pull-left[
+```{r barplot-2, fig.show='hide'}
+ggplot(communities, 
+       aes(x    = disadvantage,
+           fill = area)) + 
+  geom_bar()
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("barplot-2", "svg")`)
+]
+
+---
+
+# Dodgy Bar Plots
+
+Adding `position = "dodge"` in `geom_bar()` will unstack them
+
+.pull-left[
+```{r barplot-3, fig.show='hide'}
+ggplot(communities, 
+       aes(x    = disadvantage,
+           fill = area)) + 
+  geom_bar(position = "dodge")
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("barplot-3", "svg")`)
+]
+
+---
+class: inverse
+
+# Linear Regression
+
+<video controls autoplay>
+    <source src="img/parks-rec-webm.mp4" type="video/mp4">
+</video>
+
+---
+
+# `lm()`
+
+We can run an OLS linear model in R using `lm()`
+
+--
+
+It takes a **formula** as the first argument, e.g. `y ~ x`
+
+```{r}
+cr_pd_lm <- lm(crime_rate ~ pop_density, data = communities)
+cr_pd_lm
+```
+
+By default, it won't produce much output—you probably wanted significance tests!
+
+---
+
+# `summary()`
+
+To get detailed output, use `summary()` on the output from `lm()`
+
+.text-85[
+```{r}
+summary(cr_pd_lm)
+```
+]
+
+---
+
+# `lm()` Output is a List
+
+
+`lm()` produces a lot more information than what is shown by `summary()` however. We can see the structure of `lm()` output using `str()`:
+
+.text-85[
+```{r}
+str(cr_pd_lm, list.len=6) # Truncating the output a bit
+```
+]
+
+`lm()` actually has an enormous quantity of output! This is a type of object called a list.
+
+---
+
+# Digging Into a List
+
+We can access parts of lm() output using $ like with dataframe names:
+
+```{R}
+cr_pd_lm$coefficients
+```
+
+We can also do this with summary(), which provides additional statistics:
+
+```{r}
+summary(cr_pd_lm)$coefficients
+```
+
+---
+
+# `broom::tidy()`
+
+A quick way to get model output into an easy-to-use format is with the `{broom}` package's `tidy()` function
+
+```{r}
+library(broom)
+tidy(cr_pd_lm)
+```
+--
+
+`tidy()` turns model output into a dataframe—now you can use `dplyr` with it!
+
+```{r}
+tidy(cr_pd_lm) %>% filter(term == "pop_density")
+```
+
+---
+
+# `broom::augment()`
+
+`{broom}` can also add regression results back to your original data using `augment()`
+
+This includes **predicted values** and **residuals**
+
+```{r}
+cr_pd_lm |> augment() |> glimpse()
+```
+
+We'll use this later to do model diagnostics!
+
+---
+
+# Plotting Regression Lines
+
+`geom_smooth()` is used to add conditional mean lines to plots—the regression line is just one type of these!
+
+.pull-left[
+.text-85[
+```{r comm-lm, fig.show='hide'}
+communities %>%
+  ggplot(aes(x = pop_density, 
+             y = crime_rate)) + 
+  geom_point(alpha = 0.5) +
+  labs(x = "Population Density", 
+       y = "Crime Rate") +
+  geom_smooth(method = "lm", 
+              formula = "y ~ x") +
+  theme_minimal(base_size = 16)
+```
+]
+]
+.pull-right[
+![](`r knitr::fig_chunk("comm-lm", "svg")`)
+]
+
+---
+
+# More Lines
+
+If you group your data, you can draw a regression line for each separately—equivalent to running a separate model on each group
+
+.pull-left[
+.text-85[
+```{r comm-lm-area, fig.show='hide'}
+communities %>%
+  ggplot(aes(x = pop_density, 
+             y = crime_rate,
+             group = area,
+             color = area)) + 
+  geom_point(alpha = 0.5) +
+  labs(x = "Population Density", 
+       y = "Crime Rate",
+       color = "Area") +
+  geom_smooth(method = "lm", 
+              formula = "y ~ x") +
+  theme_minimal(base_size = 16)
+```
+]
+]
+.pull-right[
+![](`r knitr::fig_chunk("comm-lm-area", "svg")`)
+]
+
+---
+class: inverse
+
+# Wrap-Up
+
+* Take the week off on this course—focus on CRM and your other courses
+
+* Next week will have an assignment handed out

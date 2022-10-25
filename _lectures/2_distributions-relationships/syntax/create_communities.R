@@ -1,3 +1,4 @@
+library(tidyverse)
 communities <- tibble(Area = rep(c("Rural", "Urban"), each = 5000),
                 `Pop Density` = c(rnorm(5000, 10, 2),
                                   rnorm(5000, 20, 3)),
@@ -8,6 +9,7 @@ communities <- tibble(Area = rep(c("Rural", "Urban"), each = 5000),
          Incarceration = factor(ntile(Incarceration, 3), labels = c("Low", "Medium", "High"))) |>
   sample_n(300) |>
   janitor::clean_names()
+
 write_csv(communities, file = "_data/communities.csv")
 
-communities |> filter(disadvantage == "Low" & crime_rate < 3)
+
