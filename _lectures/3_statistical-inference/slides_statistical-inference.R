@@ -41,7 +41,7 @@ ggplot(data = westminster,
   geom_point()
 
 ggplot(data  = westminster,  #<<
-       aes(x = month, 
+       aes(x = month, #<<
            y = robbery)) #<<
 
 ggplot(data  = westminster, 
@@ -88,7 +88,7 @@ ggplot(data  = westminster,
   labs(x = "Month",
        y = "Robbery",
        title = 
-        "Robbery in Westminster")+
+        "Robbery in Westminster") +
   theme_bw() #<<
 
 ggplot(data  = westminster, 
@@ -186,6 +186,21 @@ ggplot(data  = westminster,
   theme_bw(base_size = 18) +
   theme(legend.position = "none") #<<
 
+ ggplot(data  = metro_2021, 
+        aes(x = month, 
+            y = robbery, 
+            group = borough, 
+            color = subregion)) +
+  geom_line() + 
+  scale_x_date(date_labels = "%b") + #<<
+  facet_wrap(~subregion) +
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London") +
+  theme_bw(base_size = 18) +
+  theme(legend.position = "none")
+
 ## library(gganimate)
 ## library(ggforce)
 ## 
@@ -203,7 +218,7 @@ ggplot(data  = westminster,
 ## 
 ## plot2 <-
 ##   ggplot(count_data) +
-##   geom_ellipse(aes(group = index, x0 = x, y0 = y, a = bin_width/2, b = 0.5, angle = 0), fill = '#f0f1eb') +
+##   geom_ellipse(aes(group = index, x0 = x, y0 = y, a = bin_width/2, b = 0.5, angle = 0), fill = '#f0f1eb', color = NA) +
 ##   coord_equal(bin_width, expand = FALSE)  +# to make the dots look nice and round
 ##   theme_void() +
 ##   theme(plot.background = element_rect(fill = "transparent", color = "transparent"))
@@ -214,7 +229,7 @@ ggplot(data  = westminster,
 ##   shadow_mark() +
 ##   enter_fly(y_loc = 15)
 ## 
-## balldrop <- animate(p_anim2, fps = 60, duration = 10, bg = 'transparent')
+## balldrop <- animate(p_anim2, fps = 60, duration = 10, bg = 'transparent', width = 1024, height = 1024)
 ## anim_save("img/balldrop.gif", balldrop)
 
 communities <- 
@@ -282,7 +297,7 @@ communities %>%
   geom_point(alpha = 0.5) +
   labs(x = "Population Density", 
        y = "Crime Rate") +
-  geom_smooth(method = "lm", 
+  geom_smooth(method  = "lm", 
               formula = "y ~ x") +
   theme_minimal(base_size = 16)
 
@@ -295,6 +310,6 @@ communities %>%
   labs(x = "Population Density", 
        y = "Crime Rate",
        color = "Area") +
-  geom_smooth(method = "lm", 
+  geom_smooth(method  = "lm", 
               formula = "y ~ x") +
   theme_minimal(base_size = 16)

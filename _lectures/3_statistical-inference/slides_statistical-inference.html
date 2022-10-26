@@ -214,6 +214,12 @@ head(westminster, 4)
 ## #   ³​violence_and_sexual_offences, ⁴​subregion, ⁵​deprivation
 ```
 
+--
+
+.text-center[
+*And now for something completely different*
+]
+
 ---
 class: inverse
 
@@ -277,6 +283,10 @@ ggplot(data = westminster,
 
 .pull-right[
 ![](slides_statistical-inference_files/figure-html/westminster-gg-1.svg)
+]
+
+.footnote[
+*Weird syntax and an ugly plot—what's going on here?*
 ]
 
 ---
@@ -365,7 +375,7 @@ Now let's see all this jargon in action.
 
 ```r
 *ggplot(data  = westminster,
-       aes(x = month, 
+*      aes(x = month,
 *          y = robbery))
 ```
 ]
@@ -520,7 +530,7 @@ ggplot(data  = westminster,
   labs(x = "Month",
        y = "Robbery",
        title = 
-        "Robbery in Westminster")+
+        "Robbery in Westminster") +
 * theme_bw()
 ```
 ]
@@ -777,6 +787,41 @@ We have a plot we like for Westminster...
 ![](slides_statistical-inference_files/figure-html/london-7-1.svg)
 ]
 
+.footnote[The x-axis labels are overlapping!]
+
+---
+
+# Plotting All Boroughs
+  
+### 8: Axis Labels
+
+.pull-left[
+.text-85[
+
+```r
+ ggplot(data  = metro_2021, 
+        aes(x = month, 
+            y = robbery, 
+            group = borough, 
+            color = subregion)) +
+  geom_line() + 
+* scale_x_date(date_labels = "%b") +
+  facet_wrap(~subregion) +
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London") +
+  theme_bw(base_size = 18) +
+  theme(legend.position = "none")
+```
+
+You can look at the help file `?strptime` to find these `%` codes for date formatting
+]
+]
+.pull-right[
+![](slides_statistical-inference_files/figure-html/london-8-1.svg)
+]
+
 .footnote[Not bad!]
 
 ---
@@ -961,7 +1006,7 @@ communities |&gt;
   add_header_lines("Table 1. Disadvantage by area")
 ```
 
-&lt;template id="4fdf255c-9125-4b6a-a025-a7baad1ba993"&gt;&lt;style&gt;
+&lt;template id="0e33052b-2882-46f2-af2d-bf4c67e66895"&gt;&lt;style&gt;
 .tabwid table{
   border-spacing:0px !important;
   border-collapse:collapse;
@@ -1000,11 +1045,11 @@ background-color: transparent;
 .katex-display {
     margin: 0 0 !important;
 }
-&lt;/style&gt;&lt;div class="tabwid"&gt;&lt;style&gt;.cl-c099b456{}.cl-c0932ad2{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-c095ace4{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-c095acee{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-c095bc02{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-c095bc0c{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-c095bc0d{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-c095bc0e{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-c095bc0f{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-c095bc16{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}&lt;/style&gt;&lt;table class='cl-c099b456'&gt;&lt;thead&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td  colspan="3"class="cl-c095bc02"&gt;&lt;p class="cl-c095ace4"&gt;&lt;span class="cl-c0932ad2"&gt;Table 1. Disadvantage by area&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-c095bc02"&gt;&lt;p class="cl-c095ace4"&gt;&lt;span class="cl-c0932ad2"&gt;Disadvantage&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc0c"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;Rural&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc0c"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;Urban&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-c095bc0d"&gt;&lt;p class="cl-c095ace4"&gt;&lt;span class="cl-c0932ad2"&gt;Low&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc0e"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;63&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc0e"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;39&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-c095bc0d"&gt;&lt;p class="cl-c095ace4"&gt;&lt;span class="cl-c0932ad2"&gt;Medium&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc0e"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;49&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc0e"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;48&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-c095bc0f"&gt;&lt;p class="cl-c095ace4"&gt;&lt;span class="cl-c0932ad2"&gt;High&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc16"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;41&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc16"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;60&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/template&gt;
-&lt;div class="flextable-shadow-host" id="34014478-5e44-4b06-af6f-0879eaed5636"&gt;&lt;/div&gt;
+&lt;/style&gt;&lt;div class="tabwid"&gt;&lt;style&gt;.cl-51a632f2{}.cl-519ca638{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-519fbabc{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-519fbabd{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-519fcaf2{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-519fcafc{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-519fcafd{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-519fcb06{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-519fcb07{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-519fcb10{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}&lt;/style&gt;&lt;table class='cl-51a632f2'&gt;&lt;thead&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td  colspan="3"class="cl-519fcaf2"&gt;&lt;p class="cl-519fbabc"&gt;&lt;span class="cl-519ca638"&gt;Table 1. Disadvantage by area&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-519fcaf2"&gt;&lt;p class="cl-519fbabc"&gt;&lt;span class="cl-519ca638"&gt;Disadvantage&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcafc"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;Rural&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcafc"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;Urban&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-519fcafd"&gt;&lt;p class="cl-519fbabc"&gt;&lt;span class="cl-519ca638"&gt;Low&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcb06"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;63&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcb06"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;39&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-519fcafd"&gt;&lt;p class="cl-519fbabc"&gt;&lt;span class="cl-519ca638"&gt;Medium&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcb06"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;49&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcb06"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;48&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-519fcb07"&gt;&lt;p class="cl-519fbabc"&gt;&lt;span class="cl-519ca638"&gt;High&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcb10"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;41&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcb10"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;60&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/template&gt;
+&lt;div class="flextable-shadow-host" id="50a21c3e-243f-42bc-9398-7707adb948c4"&gt;&lt;/div&gt;
 &lt;script&gt;
-var dest = document.getElementById("34014478-5e44-4b06-af6f-0879eaed5636");
-var template = document.getElementById("4fdf255c-9125-4b6a-a025-a7baad1ba993");
+var dest = document.getElementById("50a21c3e-243f-42bc-9398-7707adb948c4");
+var template = document.getElementById("0e33052b-2882-46f2-af2d-bf4c67e66895");
 var caption = template.content.querySelector("caption");
 var fantome = dest.attachShadow({mode: 'open'});
 var templateContent = template.content;
@@ -1094,6 +1139,9 @@ class: inverse
 &lt;video controls autoplay&gt;
     &lt;source src="img/parks-rec-webm.mp4" type="video/mp4"&gt;
 &lt;/video&gt;
+
+
+.footnote[Credit: [Edmund Helmur](https://twitter.com/theotheredmund/status/1349453230762196992?s=20&amp;t=bBDscDYt2was9ABePCcZhQ)]
 
 ---
 
@@ -1297,10 +1345,15 @@ communities %&gt;%
   geom_point(alpha = 0.5) +
   labs(x = "Population Density", 
        y = "Crime Rate") +
-  geom_smooth(method = "lm", 
+  geom_smooth(method  = "lm", 
               formula = "y ~ x") +
   theme_minimal(base_size = 16)
 ```
+
+By default it includes a confidence interval along the line
+
+This is the CI for the mean *at each level of `x`*
+
 ]
 ]
 .pull-right[
@@ -1326,7 +1379,7 @@ communities %&gt;%
   labs(x = "Population Density", 
        y = "Crime Rate",
        color = "Area") +
-  geom_smooth(method = "lm", 
+  geom_smooth(method  = "lm", 
               formula = "y ~ x") +
   theme_minimal(base_size = 16)
 ```
@@ -1341,9 +1394,15 @@ class: inverse
 
 # Wrap-Up
 
-* Take the week off on this course—focus on CRM and your other courses
+* That was a lot this week!
+
+   * Take the week off on this course—focus on CRM and your other courses
 
 * Next week will have an assignment handed out
+
+* Most of the rest of the course is figuring out how to apply all this
+
+   * Plus learning some more programming tools!
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
