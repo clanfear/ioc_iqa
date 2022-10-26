@@ -1,5 +1,7 @@
 project:
   type: website
+  pre-render:
+    - delete_index.R
   post-render:
     - create_redirect.R
 
