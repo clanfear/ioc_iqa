@@ -1,6 +1,6 @@
 ---
 title: "Week 2: Distributions and Relationships"
-description: "Basic univariate and bivariate statistics and a pinch of plotting with `ggplot2`"
+description: "Basic univariate and bivariate statistics plus more data manipulation"
 author: "Charles Lanfear"
 date: "2022-10-19"
 draft: false

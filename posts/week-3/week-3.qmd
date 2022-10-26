@@ -1,6 +1,6 @@
 ---
 title: "Week 3: Statistical Inference"
-description: "Basic statistical inference and more data manipulation"
+description: "`ggplot2` and basic statistical inference"
 author: "Charles Lanfear"
 date: "2022-10-26"
 draft: false
