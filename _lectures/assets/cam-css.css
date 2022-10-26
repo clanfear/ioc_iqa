@@ -32,7 +32,13 @@
   --code-highlight-color: rgba(255,255,0,0.5);
   --table-band-color: #8A1538;
 }
-
+.html-widget {
+    margin: auto;
+}
+table {
+    margin-top: 30px !important;
+    margin-bottom: 30px !important;
+}
 body {
   font-family: 'Open Sans', avenir, helvetica neue, helvetica, Ubuntu, roboto, noto, segoe ui, arial;
   font-weight: normal;
@@ -54,6 +60,11 @@ body {
 p {
   margin: 16px 0;
 }
+th, td {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
 img {
   display: block;
   margin-left: auto;

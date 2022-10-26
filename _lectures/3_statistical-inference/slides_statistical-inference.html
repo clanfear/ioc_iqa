@@ -22,7 +22,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 19 Oct 2022<br>Updated: 25 Oct 2022
+### 26 Oct 2022<br>Updated: 26 Oct 2022
 ]
 
 ---
@@ -44,6 +44,11 @@ class: center, top, title-slide
    * Simple OLS regression
 
 ---
+class: inverse
+
+# Some Review
+
+---
 
 # London Crime
 
@@ -59,6 +64,8 @@ metro_2021 &lt;-
 ```
 
 I obtained these from `data.police.uk`—it is easy to get your own for nearly anywhere in the UK, and in any recent period.
+
+I also linked them to data on deprivation and subregions, which would take more work!
 
 ---
 
@@ -354,12 +361,14 @@ Now let's see all this jargon in action.
 ### 1: Base Plot
 
 .pull-left[
+.text-85[
 
 ```r
 *ggplot(data  = westminster,
        aes(x = month, 
 *          y = robbery))
 ```
+]
 ]
 .pull-right[
 ![](slides_statistical-inference_files/figure-html/westminster-1-1.svg)
@@ -374,13 +383,15 @@ Now let's see all this jargon in action.
 ### 2: Scatterplot
 
 .pull-left[
+.text-85[
 
 ```r
 ggplot(data  = westminster, 
        aes(x = month, 
            y = robbery)) +
-*   geom_point()
+* geom_point()
 ```
+]
 ]
 .pull-right[
 ![](slides_statistical-inference_files/figure-html/westminster-2-1.svg)
@@ -395,6 +406,7 @@ ggplot(data  = westminster,
 ### 3: Point Color and Size
 
 .pull-left[
+.text-85[
 
 ```r
 ggplot(data  = westminster, 
@@ -403,6 +415,7 @@ ggplot(data  = westminster,
   geom_point(color = "red", 
 *            size  = 3)
 ```
+]
 ]
 .pull-right[
 ![](slides_statistical-inference_files/figure-html/westminster-3-1.svg)
@@ -417,6 +430,7 @@ ggplot(data  = westminster,
 ### 4: X-Axis Label
 
 .pull-left[
+.text-85[
 
 ```r
 ggplot(data  = westminster, 
@@ -426,6 +440,7 @@ ggplot(data  = westminster,
              size  = 3) +
 * labs(x = "Month")
 ```
+]
 ]
 .pull-right[
 ![](slides_statistical-inference_files/figure-html/westminster-4-1.svg)
@@ -440,6 +455,7 @@ ggplot(data  = westminster,
 ### 5: Y-Axis Label
 
 .pull-left[
+.text-85[
 
 ```r
 ggplot(data  = westminster, 
@@ -450,6 +466,7 @@ ggplot(data  = westminster,
   labs(x = "Month",
 *      y = "Robbery")
 ```
+]
 ]
 .pull-right[
 ![](slides_statistical-inference_files/figure-html/westminster-5-1.svg)
@@ -464,6 +481,7 @@ ggplot(data  = westminster,
 ### 6: Title
 
 .pull-left[
+.text-85[
 
 ```r
 ggplot(data  = westminster, 
@@ -471,12 +489,12 @@ ggplot(data  = westminster,
            y = robbery)) +
   geom_point(color = "red",
              size  = 3) +
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = 
-*     "Robbery in Westminster")
+  labs(x = "Month",
+       y = "Robbery",
+       title = 
+*       "Robbery in Westminster")
 ```
+]
 ]
 .pull-right[
 ![](slides_statistical-inference_files/figure-html/westminster-6-1.svg)
@@ -491,6 +509,7 @@ ggplot(data  = westminster,
 ### 7: Theme
 
 .pull-left[
+.text-85[
 
 ```r
 ggplot(data  = westminster, 
@@ -498,13 +517,13 @@ ggplot(data  = westminster,
            y = robbery)) +
   geom_point(color = "red", 
              size  = 3) +
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = 
-      "Robbery in Westminster") +
+  labs(x = "Month",
+       y = "Robbery",
+       title = 
+        "Robbery in Westminster")+
 * theme_bw()
 ```
+]
 ]
 .pull-right[
 ![](slides_statistical-inference_files/figure-html/westminster-7-1.svg)
@@ -519,20 +538,21 @@ ggplot(data  = westminster,
 ### 8: Text Size
 
 .pull-left[
+.text-85[
 
 ```r
 ggplot(data  = westminster, 
        aes(x = month, 
            y = robbery)) +
-geom_point(color = "red", 
-           size  = 3) +
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = 
-      "Robbery in Westminster") +
-*  theme_bw(base_size = 18)
+  geom_point(color = "red", 
+             size  = 3) +
+  labs(x = "Month",
+       y = "Robbery",
+       title = 
+        "Robbery in Westminster") +
+* theme_bw(base_size = 18)
 ```
+]
 ]
 .pull-right[
 ![](slides_statistical-inference_files/figure-html/westminster-8-1.svg)
@@ -563,12 +583,11 @@ We have a plot we like for Westminster...
             y = robbery)) +
   geom_point(color = "red", 
              size = 3) +
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = 
-      "Robbery in London") +
-*  theme_bw(base_size = 18)
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London") +
+* theme_bw(base_size = 18)
 ```
 ]
 ]
@@ -589,15 +608,15 @@ We have a plot we like for Westminster...
 .text-85[
 
 ```r
- ggplot(data = metro_2021, 
-      aes(x = month, 
-          y = robbery)) +
+ ggplot(data  = metro_2021, 
+        aes(x = month, 
+            y = robbery)) +
   geom_line(color = "red", 
-*           size = 3) +
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = "Robbery in London") +
+*           size  = 3) +
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London") +
   theme_bw(base_size = 18)
 ```
 ]
@@ -618,16 +637,16 @@ We have a plot we like for Westminster...
 .text-85[
 
 ```r
- ggplot(data = metro_2021, 
-      aes(x = month, 
-          y = robbery, 
-          group = borough)) +
+ ggplot(data  = metro_2021, 
+        aes(x = month, 
+            y = robbery, 
+            group = borough)) +
   geom_line(color = "red", 
-*           size = 3) +
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = "Robbery in London") +
+*           size  = 3) +
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London")+
   theme_bw(base_size = 18)
 ```
 ]
@@ -644,19 +663,21 @@ We have a plot we like for Westminster...
 
 ### 4: Size
 .pull-left[
+.text-85[
 
 ```r
- ggplot(data = metro_2021, 
-      aes(x = month, 
-          y = robbery, 
-          group = borough)) +
+ ggplot(data  = metro_2021, 
+        aes(x = month, 
+            y = robbery, 
+            group = borough)) +
 * geom_line(color = "red") +
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = "Robbery in London") +
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London") +
   theme_bw(base_size = 18)
 ```
+]
 ]
 .pull-right[
 ![](slides_statistical-inference_files/figure-html/london-4-1.svg)
@@ -675,16 +696,16 @@ We have a plot we like for Westminster...
 .text-85[
 
 ```r
- ggplot(data = metro_2021, 
-      aes(x = month, 
-          y = robbery, 
-          group = borough,
-*         color = subregion)) +
+ ggplot(data  = metro_2021, 
+        aes(x = month, 
+            y = robbery, 
+            group = borough, 
+*           color = subregion)) +
   geom_line() + 
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = "Robbery in London") +
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London") +
   theme_bw(base_size = 18)
 ```
 ]
@@ -705,17 +726,17 @@ We have a plot we like for Westminster...
 .text-85[
 
 ```r
- ggplot(data = metro_2021, 
-      aes(x = month, 
-          y = robbery, 
-          group = borough,
-*         color = subregion)) +
+ ggplot(data  = metro_2021, 
+        aes(x = month, 
+            y = robbery, 
+            group = borough, 
+            color = subregion)) +
   geom_line() + 
-  facet_wrap(~subregion) +
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = "Robbery in London") +
+* facet_wrap(~subregion) +
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London")+
   theme_bw(base_size = 18)
 ```
 ]
@@ -736,19 +757,19 @@ We have a plot we like for Westminster...
 .text-85[
 
 ```r
- ggplot(data = metro_2021, 
-      aes(x = month, 
-          y = robbery,
-          group = borough,
-*         color = subregion)) +
+ ggplot(data  = metro_2021, 
+        aes(x = month, 
+            y = robbery, 
+            group = borough, 
+            color = subregion)) +
   geom_line() + 
   facet_wrap(~subregion) +
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = "Robbery in London") +
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London") +
   theme_bw(base_size = 18) +
-  theme(legend.position = "none")
+* theme(legend.position = "none")
 ```
 ]
 ]
@@ -760,23 +781,45 @@ We have a plot we like for Westminster...
 
 ---
 
-# Enough of that
+# Enough for now
+
+Don't worry about understanding it all now!
+
+We'll likely return to `ggplot2` at least for a bit in every future lecture
 
 
-We'll use `{ggplot2}` throughout the rest of the term
 
---
+---
+class: inverse
 
-It can do a lot more than what we've seen today, but there's so much it would be overwhelming
+# Book Recommendation
 
---
+.pull-left[
+![](img/dv-cover-pupress.jpg)
+]
+.pull-right[
+* Targeted at social scientists without technical backgrounds
 
-Time for a bit of stats
+* Teaches good visualization principles
+
+* Uses R, `ggplot2`, and `tidyverse`
+
+* Free online version:
+
+   * [https://socviz.co/](https://socviz.co/)
+
+* Affordable in print
+]
 
 ---
 class: inverse
 
 # Statistical Inference
+
+
+
+
+![:width 50%](img/balldrop.gif)
 
 ---
 
@@ -918,7 +961,7 @@ communities |&gt;
   add_header_lines("Table 1. Disadvantage by area")
 ```
 
-&lt;template id="3f83822e-5bcc-44d6-a52a-a6ea3d15bf8a"&gt;&lt;style&gt;
+&lt;template id="4fdf255c-9125-4b6a-a025-a7baad1ba993"&gt;&lt;style&gt;
 .tabwid table{
   border-spacing:0px !important;
   border-collapse:collapse;
@@ -957,11 +1000,11 @@ background-color: transparent;
 .katex-display {
     margin: 0 0 !important;
 }
-&lt;/style&gt;&lt;div class="tabwid"&gt;&lt;style&gt;.cl-f8d5c698{}.cl-f8cd4cca{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-f8d1469a{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-f8d1469b{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-f8d15702{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f8d1570c{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f8d1570d{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f8d15716{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f8d15717{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f8d15720{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}&lt;/style&gt;&lt;table class='cl-f8d5c698'&gt;&lt;thead&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td  colspan="3"class="cl-f8d15702"&gt;&lt;p class="cl-f8d1469a"&gt;&lt;span class="cl-f8cd4cca"&gt;Table 1. Disadvantage by area&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-f8d15702"&gt;&lt;p class="cl-f8d1469a"&gt;&lt;span class="cl-f8cd4cca"&gt;Disadvantage&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-f8d1570c"&gt;&lt;p class="cl-f8d1469b"&gt;&lt;span class="cl-f8cd4cca"&gt;Rural&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-f8d1570c"&gt;&lt;p class="cl-f8d1469b"&gt;&lt;span class="cl-f8cd4cca"&gt;Urban&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-f8d1570d"&gt;&lt;p class="cl-f8d1469a"&gt;&lt;span class="cl-f8cd4cca"&gt;Low&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-f8d15716"&gt;&lt;p class="cl-f8d1469b"&gt;&lt;span class="cl-f8cd4cca"&gt;63&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-f8d15716"&gt;&lt;p class="cl-f8d1469b"&gt;&lt;span class="cl-f8cd4cca"&gt;39&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-f8d1570d"&gt;&lt;p class="cl-f8d1469a"&gt;&lt;span class="cl-f8cd4cca"&gt;Medium&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-f8d15716"&gt;&lt;p class="cl-f8d1469b"&gt;&lt;span class="cl-f8cd4cca"&gt;49&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-f8d15716"&gt;&lt;p class="cl-f8d1469b"&gt;&lt;span class="cl-f8cd4cca"&gt;48&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-f8d15717"&gt;&lt;p class="cl-f8d1469a"&gt;&lt;span class="cl-f8cd4cca"&gt;High&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-f8d15720"&gt;&lt;p class="cl-f8d1469b"&gt;&lt;span class="cl-f8cd4cca"&gt;41&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-f8d15720"&gt;&lt;p class="cl-f8d1469b"&gt;&lt;span class="cl-f8cd4cca"&gt;60&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/template&gt;
-&lt;div class="flextable-shadow-host" id="6865b238-f527-4018-bb9e-92a6d5db2808"&gt;&lt;/div&gt;
+&lt;/style&gt;&lt;div class="tabwid"&gt;&lt;style&gt;.cl-c099b456{}.cl-c0932ad2{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-c095ace4{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-c095acee{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-c095bc02{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-c095bc0c{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-c095bc0d{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-c095bc0e{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-c095bc0f{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-c095bc16{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}&lt;/style&gt;&lt;table class='cl-c099b456'&gt;&lt;thead&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td  colspan="3"class="cl-c095bc02"&gt;&lt;p class="cl-c095ace4"&gt;&lt;span class="cl-c0932ad2"&gt;Table 1. Disadvantage by area&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-c095bc02"&gt;&lt;p class="cl-c095ace4"&gt;&lt;span class="cl-c0932ad2"&gt;Disadvantage&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc0c"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;Rural&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc0c"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;Urban&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-c095bc0d"&gt;&lt;p class="cl-c095ace4"&gt;&lt;span class="cl-c0932ad2"&gt;Low&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc0e"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;63&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc0e"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;39&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-c095bc0d"&gt;&lt;p class="cl-c095ace4"&gt;&lt;span class="cl-c0932ad2"&gt;Medium&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc0e"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;49&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc0e"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;48&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-c095bc0f"&gt;&lt;p class="cl-c095ace4"&gt;&lt;span class="cl-c0932ad2"&gt;High&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc16"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;41&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-c095bc16"&gt;&lt;p class="cl-c095acee"&gt;&lt;span class="cl-c0932ad2"&gt;60&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/template&gt;
+&lt;div class="flextable-shadow-host" id="34014478-5e44-4b06-af6f-0879eaed5636"&gt;&lt;/div&gt;
 &lt;script&gt;
-var dest = document.getElementById("6865b238-f527-4018-bb9e-92a6d5db2808");
-var template = document.getElementById("3f83822e-5bcc-44d6-a52a-a6ea3d15bf8a");
+var dest = document.getElementById("34014478-5e44-4b06-af6f-0879eaed5636");
+var template = document.getElementById("4fdf255c-9125-4b6a-a025-a7baad1ba993");
 var caption = template.content.querySelector("caption");
 var fantome = dest.attachShadow({mode: 'open'});
 var templateContent = template.content;

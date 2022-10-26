@@ -2,7 +2,7 @@
 title: "Statistical Inference"
 subtitle: "IQA Lecture 3"
 author: "Charles Lanfear"
-date: "19 Oct 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "26 Oct 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     includes:
@@ -37,6 +37,11 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
    * Simple OLS regression
 
 ---
+class: inverse
+
+# Some Review
+
+---
 
 # London Crime
 
@@ -51,6 +56,8 @@ metro_2021 <-
 ```
 
 I obtained these from `data.police.uk`—it is easy to get your own for nearly anywhere in the UK, and in any recent period.
+
+I also linked them to data on deprivation and subregions, which would take more work!
 
 ---
 
@@ -269,11 +276,13 @@ Now let's see all this jargon in action.
 ### 1: Base Plot
 
 .pull-left[
+.text-85[
 ```{r westminster-1, fig.show='hide'}
 ggplot(data  = westminster,  #<<
        aes(x = month, 
            y = robbery)) #<<
 ```
+]
 ]
 .pull-right[
 ![](`r knitr::fig_chunk("westminster-1", "svg")`)
@@ -288,12 +297,14 @@ ggplot(data  = westminster,  #<<
 ### 2: Scatterplot
 
 .pull-left[
+.text-85[
 ```{r westminster-2, fig.show='hide'}
 ggplot(data  = westminster, 
        aes(x = month, 
            y = robbery)) +
-    geom_point() #<<
+  geom_point() #<<
 ```
+]
 ]
 .pull-right[
 ![](`r knitr::fig_chunk("westminster-2", "svg")`)
@@ -308,6 +319,7 @@ ggplot(data  = westminster,
 ### 3: Point Color and Size
 
 .pull-left[
+.text-85[
 ```{r westminster-3, fig.show='hide'}
 ggplot(data  = westminster, 
        aes(x = month, 
@@ -315,6 +327,7 @@ ggplot(data  = westminster,
   geom_point(color = "red", 
              size  = 3) #<<
 ```
+]
 ]
 .pull-right[
 ![](`r knitr::fig_chunk("westminster-3", "svg")`)
@@ -329,6 +342,7 @@ ggplot(data  = westminster,
 ### 4: X-Axis Label
 
 .pull-left[
+.text-85[
 ```{r westminster-4, fig.show='hide'}
 ggplot(data  = westminster, 
        aes(x = month, 
@@ -337,6 +351,7 @@ ggplot(data  = westminster,
              size  = 3) +
   labs(x = "Month") #<<
 ```
+]
 ]
 .pull-right[
 ![](`r knitr::fig_chunk("westminster-4", "svg")`)
@@ -351,6 +366,7 @@ ggplot(data  = westminster,
 ### 5: Y-Axis Label
 
 .pull-left[
+.text-85[
 ```{r westminster-5, fig.show='hide'}
 ggplot(data  = westminster, 
        aes(x = month, 
@@ -360,6 +376,7 @@ ggplot(data  = westminster,
   labs(x = "Month",
        y = "Robbery") #<<
 ```
+]
 ]
 .pull-right[
 ![](`r knitr::fig_chunk("westminster-5", "svg")`)
@@ -374,18 +391,19 @@ ggplot(data  = westminster,
 ### 6: Title
 
 .pull-left[
+.text-85[
 ```{r westminster-6, fig.show='hide'}
 ggplot(data  = westminster, 
        aes(x = month, 
            y = robbery)) +
   geom_point(color = "red",
              size  = 3) +
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = 
-      "Robbery in Westminster") #<<
+  labs(x = "Month",
+       y = "Robbery",
+       title = 
+        "Robbery in Westminster") #<<
 ```
+]
 ]
 .pull-right[
 ![](`r knitr::fig_chunk("westminster-6", "svg")`)
@@ -400,19 +418,20 @@ ggplot(data  = westminster,
 ### 7: Theme
 
 .pull-left[
+.text-85[
 ```{r westminster-7, fig.show='hide'}
 ggplot(data  = westminster, 
        aes(x = month, 
            y = robbery)) +
   geom_point(color = "red", 
              size  = 3) +
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = 
-      "Robbery in Westminster") +
+  labs(x = "Month",
+       y = "Robbery",
+       title = 
+        "Robbery in Westminster")+
   theme_bw() #<<
 ```
+]
 ]
 .pull-right[
 ![](`r knitr::fig_chunk("westminster-7", "svg")`)
@@ -427,19 +446,20 @@ ggplot(data  = westminster,
 ### 8: Text Size
 
 .pull-left[
+.text-85[
 ```{r westminster-8, fig.show='hide'}
 ggplot(data  = westminster, 
        aes(x = month, 
            y = robbery)) +
-geom_point(color = "red", 
-           size  = 3) +
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = 
-      "Robbery in Westminster") +
-   theme_bw(base_size = 18) #<<
+  geom_point(color = "red", 
+             size  = 3) +
+  labs(x = "Month",
+       y = "Robbery",
+       title = 
+        "Robbery in Westminster") +
+  theme_bw(base_size = 18) #<<
 ```
+]
 ]
 .pull-right[
 ![](`r knitr::fig_chunk("westminster-8", "svg")`)
@@ -469,12 +489,11 @@ We have a plot we like for Westminster...
             y = robbery)) +
   geom_point(color = "red", 
              size = 3) +
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = 
-      "Robbery in London") +
-   theme_bw(base_size = 18) #<<
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London") +
+  theme_bw(base_size = 18) #<<
 ```
 ]
 ]
@@ -494,15 +513,15 @@ We have a plot we like for Westminster...
 .pull-left[
 .text-85[
 ```{r london-2,  fig.show='hide'}
- ggplot(data = metro_2021, 
-      aes(x = month, 
-          y = robbery)) +
+ ggplot(data  = metro_2021, 
+        aes(x = month, 
+            y = robbery)) +
   geom_line(color = "red", 
-            size = 3) + #<<
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = "Robbery in London") +
+            size  = 3) + #<<
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London") +
   theme_bw(base_size = 18)
 ```
 ]
@@ -522,16 +541,16 @@ We have a plot we like for Westminster...
 .pull-left[
 .text-85[
 ```{r london-3, fig.show='hide'}
- ggplot(data = metro_2021, 
-      aes(x = month, 
-          y = robbery, 
-          group = borough)) +
+ ggplot(data  = metro_2021, 
+        aes(x = month, 
+            y = robbery, 
+            group = borough)) +
   geom_line(color = "red", 
-            size = 3) + #<<
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = "Robbery in London") +
+            size  = 3) + #<<
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London")+
   theme_bw(base_size = 18)
 ```
 ]
@@ -548,18 +567,20 @@ We have a plot we like for Westminster...
 
 ### 4: Size
 .pull-left[
+.text-85[
 ```{r london-4, fig.height=4,  fig.show='hide'}
- ggplot(data = metro_2021, 
-      aes(x = month, 
-          y = robbery, 
-          group = borough)) +
+ ggplot(data  = metro_2021, 
+        aes(x = month, 
+            y = robbery, 
+            group = borough)) +
   geom_line(color = "red") + #<<
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = "Robbery in London") +
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London") +
   theme_bw(base_size = 18)
 ```
+]
 ]
 .pull-right[
 ![](`r knitr::fig_chunk("london-4", "svg")`)
@@ -577,16 +598,16 @@ We have a plot we like for Westminster...
 .pull-left[
 .text-85[
 ```{r london-5,  fig.show='hide'}
- ggplot(data = metro_2021, 
-      aes(x = month, 
-          y = robbery, 
-          group = borough,
-          color = subregion)) + #<<
+ ggplot(data  = metro_2021, 
+        aes(x = month, 
+            y = robbery, 
+            group = borough, 
+            color = subregion)) + #<<
   geom_line() + 
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = "Robbery in London") +
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London") +
   theme_bw(base_size = 18)
 ```
 ]
@@ -606,17 +627,17 @@ We have a plot we like for Westminster...
 .pull-left[
 .text-85[
 ```{r london-6, fig.show='hide'}
- ggplot(data = metro_2021, 
-      aes(x = month, 
-          y = robbery, 
-          group = borough,
-          color = subregion)) + #<<
+ ggplot(data  = metro_2021, 
+        aes(x = month, 
+            y = robbery, 
+            group = borough, 
+            color = subregion)) +
   geom_line() + 
-  facet_wrap(~subregion) +
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = "Robbery in London") +
+  facet_wrap(~subregion) + #<<
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London")+
   theme_bw(base_size = 18)
 ```
 ]
@@ -636,19 +657,19 @@ We have a plot we like for Westminster...
 .pull-left[
 .text-85[
 ```{r london-7, fig.show='hide'}
- ggplot(data = metro_2021, 
-      aes(x = month, 
-          y = robbery,
-          group = borough,
-          color = subregion)) + #<<
+ ggplot(data  = metro_2021, 
+        aes(x = month, 
+            y = robbery, 
+            group = borough, 
+            color = subregion)) +
   geom_line() + 
   facet_wrap(~subregion) +
-  labs(
-    x = "Month",
-    y = "Robbery",
-    title = "Robbery in London") +
+  labs(x     = "Month",
+       y     = "Robbery",
+       title = 
+         "Robbery in London") +
   theme_bw(base_size = 18) +
-  theme(legend.position = "none")
+  theme(legend.position = "none") #<<
 ```
 ]
 ]
@@ -660,23 +681,76 @@ We have a plot we like for Westminster...
 
 ---
 
-# Enough of that
+# Enough for now
+
+Don't worry about understanding it all now!
+
+We'll likely return to `ggplot2` at least for a bit in every future lecture
 
 
-We'll use `{ggplot2}` throughout the rest of the term
 
---
+---
+class: inverse
 
-It can do a lot more than what we've seen today, but there's so much it would be overwhelming
+# Book Recommendation
 
---
+.pull-left[
+![](img/dv-cover-pupress.jpg)
+]
+.pull-right[
+* Targeted at social scientists without technical backgrounds
 
-Time for a bit of stats
+* Teaches good visualization principles
+
+* Uses R, `ggplot2`, and `tidyverse`
+
+* Free online version:
+
+   * [https://socviz.co/](https://socviz.co/)
+
+* Affordable in print
+]
 
 ---
 class: inverse
 
 # Statistical Inference
+
+
+```{r, cache = TRUE, message = FALSE, echo = FALSE, eval = FALSE, warning = FALSE}
+library(gganimate)
+library(ggforce)
+
+samples <- rnorm(100)
+index <- seq(1:length(samples))
+df <- tibble(value = samples, index = index)
+
+bin_width <- 0.25
+
+count_data <- # some minor data transformation
+  df %>%
+  mutate(x = plyr::round_any(value, bin_width)) %>%
+  group_by(x) %>%
+  mutate(y = seq_along(x))
+
+plot2 <- 
+  ggplot(count_data) +
+  geom_ellipse(aes(group = index, x0 = x, y0 = y, a = bin_width/2, b = 0.5, angle = 0), fill = '#f0f1eb', color = NA) +
+  coord_equal(bin_width, expand = FALSE)  +# to make the dots look nice and round
+  theme_void() +
+  theme(plot.background = element_rect(fill = "transparent", color = "transparent"))
+
+p_anim2 <- 
+  plot2 +
+  transition_states(states = index, transition_length = 100, state_length = 1) +
+  shadow_mark() +
+  enter_fly(y_loc = 15) 
+
+balldrop <- animate(p_anim2, fps = 60, duration = 10, bg = 'transparent', width = 1024, height = 1024)
+anim_save("img/balldrop.gif", balldrop)
+```
+
+![:width 50%](img/balldrop.gif)
 
 ---
 
@@ -853,6 +927,9 @@ class: inverse
 <video controls autoplay>
     <source src="img/parks-rec-webm.mp4" type="video/mp4">
 </video>
+
+
+.footnote[Credit: [Edmund Helmur](https://twitter.com/theotheredmund/status/1349453230762196992?s=20&t=bBDscDYt2was9ABePCcZhQ)]
 
 ---
 
