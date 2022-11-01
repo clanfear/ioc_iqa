@@ -2,7 +2,7 @@
 title: "Linear Models I"
 subtitle: "IQA Lecture 4"
 author: "Charles Lanfear"
-date: "26 Oct 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "2 Nov 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -24,11 +24,206 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
 
 # Things to include
 
+How do multiple vars work?
+
+* Demeaning with dummies
+* Partial correlations (is that pairs plot?)
+
 * Stats
    * TTest is an lm() with 2 category (binary) predictor
    * ANOVA is an lm() with 3+ category predictor
 
 * Code
-   * lm() in ggplot
 
-# Today
+
+---
+class: inverse
+
+# Controls
+
+---
+
+
+```{r}
+library(tidyverse)
+communities <- 
+  read_csv("https://clanfear.github.io/ioc_iqa/_data/communities.csv") |>
+  mutate(across(c(incarceration, disadvantage), ~ factor(., levels = c("Low", "Medium", "High"))),
+         area = factor(area, levels = c("Rural", "Urban")))
+```
+
+---
+
+# Dummy Variables
+
+What is a regression model doing when you have a binary predictor?
+
+--
+
+.pull-left[
+
+```{r}
+communities |>
+  group_by(area) |>
+  summarize(crime_rate = mean(crime_rate))
+```
+We can calculate group-specific average crime rates
+
+
+]
+.pull-right[
+
+```{r}
+dummy_model <- lm(crime_rate ~ area, data = communities)
+dummy_model
+```
+
+The intercept is the average crime rate for rural places
+
+The value for `areaUrban` is the difference between rural and urban places
+
+]
+
+Linear regression is just estimating means by group!
+
+---
+
+# Testing
+
+
+```{r}
+summary(dummy_model)
+```
+
+--
+
+This is what a T-test is!
+
+```{r}
+t.test(crime_rate ~ area, data = communities, var.equal=TRUE)
+```
+
+
+---
+
+# More Categories
+
+When you have 3+ 
+
+```{r}
+cat_lm <- lm(crime_rate ~ incarceration, data = communities)
+cat_lm
+
+```
+
+```{r}
+communities |>
+  group_by(incarceration) |>
+  summarize(crime_rate = mean(crime_rate))
+```
+
+---
+
+# ANOVA
+
+```{r}
+summary(cat_lm)
+```
+
+
+
+```{r}
+summary(aov(crime_rate ~ incarceration, data = communities))
+```
+
+```{r}
+coef(aov(crime_rate ~ incarceration, data = communities))
+```
+
+
+---
+
+# Dummy Controls
+
+Some of X and Y's relationship is due to groups having different average levels of both X and Y
+
+If we remove group-specific averages of X and Y, we can get rid of that
+
+```{r}
+lm(crime_rate ~ pop_density, data = communities)
+```
+
+
+```{r}
+communities |>
+  group_by(area) |>
+  mutate(pop_density_res = pop_density - mean(pop_density),
+         crime_rate_res  = crime_rate - mean(crime_rate)) |>
+  lm(crime_rate_res ~ pop_density_res, data = _)
+```
+
+```{r}
+lm(crime_rate ~ pop_density + area, data = communities)
+```
+
+
+---
+
+# Continuous Variables
+
+Some of X and Y's relationship is because Z makes X and Y higher
+
+If we remove variation in X and Y due to Z, we can get rid of that
+
+This is a bit more complicated—to get the residuals, we need to run bivariate models predicting what we want to residualize
+
+```{r}
+communities %>%
+  mutate(area_num       = as.numeric(area == "Urban"),
+         crime_rate_res = residuals(lm(crime_rate ~ pop_density, data = .)),
+         area_resid     = residuals(lm(area_num ~ pop_density, data = .))) |>
+  lm(crime_rate_res ~ area_resid, data = _)
+```
+
+
+
+---
+
+
+# Curves
+
+```{r}
+form <- y ~ x + I(x^2)
+communities %>%
+  ggplot(aes(x = `Pop Density`, y = `Crime Rate`)) + 
+  geom_point(alpha = 0.5) +
+  xlab("Population Density") +
+  stat_poly_line(formula = form, se = FALSE) +
+  stat_poly_eq(formula = form, mapping = use_label("eq"), eq.x.rhs = "PopDensity", eq.with.lhs= "CrimeRate~`=`~") +
+  theme_minimal(base_size = 16)
+```
+
+
+---
+
+# Collider Bias
+
+
+```{r, fig.height = 3.5}
+ex_data <- tibble(Skill = runif(1000, 0, 10), 
+                  Frequency = runif(1000, 0, 10), 
+                  Who = c(rep("Arrested", 500), 
+                          rep("Everyone", 500))) |>
+  filter(Who == "Everyone" | (10 + (-1*Skill) + Frequency > 10))
+
+ex_data |> 
+  ggplot(aes(x = Skill, y = Frequency, color = Who)) + 
+  geom_point() + 
+  labs(x = "Skill at Crime", y = "Frequency of Crime") +
+  geom_smooth(method = "lm", formula = "y~x", se = FALSE, color = "black") + 
+  facet_wrap(~Who)  + 
+  theme_minimal(base_size = 16) + 
+  theme(legend.position = "none",
+        panel.spacing.x = unit(0.4, "in"))
+```
+
