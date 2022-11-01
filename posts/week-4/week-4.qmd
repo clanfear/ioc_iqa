@@ -6,8 +6,8 @@ date: "2022-11-02"
 draft: false
 ---
 
-Lecture Slides (forthcoming)
+[Lecture Slides](https://clanfear.github.io/ioc_iqa/_lectures/4_linear-models-i/slides_linear-models-i.html)
 
-.R script to follow along (forthcoming)
+[.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/4_linear-models-i/slides_linear-models-i.R)
 
 Lecture Recording (forthcoming)

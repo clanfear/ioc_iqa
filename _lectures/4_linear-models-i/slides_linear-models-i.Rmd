@@ -18,16 +18,22 @@ output:
 ```{r setup, purl=FALSE}
 #| include: false
 options(width = 68)
-knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "svg")
+knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, dev = "svg", fig.height = 4)
 ```
 
 
 # Things to include
 
-How do multiple vars work?
+Categorical predictors
+
+* Binary
+* 3+ category
+
+Controlling for variables
 
 * Demeaning with dummies
 * Partial correlations (is that pairs plot?)
+
 
 * Stats
    * TTest is an lm() with 2 category (binary) predictor
@@ -36,21 +42,95 @@ How do multiple vars work?
 * Code
 
 
----
-class: inverse
 
-# Controls
 
 ---
 
+# Setup
 
-```{r}
+Like usual, let's start by loading the communities data
+
+First, let's convert our categorical variables to factors with appropriate levels
+
+.text-85[
+```{r, message = FALSE, warning = FALSE}
 library(tidyverse)
 communities <- 
   read_csv("https://clanfear.github.io/ioc_iqa/_data/communities.csv") |>
-  mutate(across(c(incarceration, disadvantage), ~ factor(., levels = c("Low", "Medium", "High"))),
+  mutate(across(c(incarceration, disadvantage), 
+                ~ factor(., levels = c("Low", "Medium", "High"))),
          area = factor(area, levels = c("Rural", "Urban")))
 ```
+]
+
+We can use `across()` as a shortcut to perform the same operation on multiple variables
+
+--
+
+This is the same as doing this:
+
+.text-85[
+```{r, eval = FALSE}
+mutate(incarceration = 
+         factor(incarceration, levels = c("Low", "Medium", "High")), 
+       disadvantage = 
+         factor(disadvantage, levels = c("Low", "Medium", "High")))
+```
+]
+
+---
+
+# Another `across()`
+
+You can also give `across()` a list of functions and it will apply them to each variable
+
+```{r}
+communities |>
+  group_by(incarceration) |>
+  summarize(across(c(crime_rate, pop_density), 
+                   list(mu = ~mean(.), 
+                        sd = ~sd(.))))
+```
+
+This calculated a `mean()` and `sd()` each for `crime_rate` and `pop_density` within each level of `incarceration` with very little code!
+
+---
+class: inverse
+
+# Linear Models
+
+### Different predictors
+
+---
+
+# Continuous
+
+
+
+.pull-left[
+```{r}
+lm(crime_rate ~ pop_density, 
+   data = communities) |> 
+  coef() # extract coefficients
+```
+
+We've seen a lot of linear models with continuous predictors
+
+It is easy to visualize what the model is doing with a line laid over a scatterplot
+]
+
+.pull-right[
+```{r, message = FALSE, warning = FALSE}
+ggplot(communities, 
+       aes(x = pop_density, 
+           y = crime_rate)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+]
+
+
+
 
 ---
 
@@ -60,149 +140,483 @@ What is a regression model doing when you have a binary predictor?
 
 --
 
+
+
 .pull-left[
-
 ```{r}
-communities |>
-  group_by(area) |>
-  summarize(crime_rate = mean(crime_rate))
+lm(crime_rate ~ area, 
+   data = communities) |>
+  coef()
 ```
-We can calculate group-specific average crime rates
 
+The data look weird and `geom_smooth()` doesn't even do anything!
+
+Why do the data look like this?
+]
+
+.pull-right[
+```{r, message = FALSE, warning = FALSE}
+ggplot(communities, 
+       aes(x = area, 
+           y = crime_rate)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+]
+
+
+
+
+
+---
+
+# A Slight Modification
+
+.pull-left[
+```{r}
+lm(crime_rate ~ area, 
+   data = communities) |>
+  coef()
+```
+
+It turns out the linear model actually treats a binary variable as a numeric one that takes values of 0 or 1.
+
+When `areaUrban` is 0 (`area` is `"Rural"`) the mean `crime_rate` is $10.43$
+
+When `areaUrban` is 1 (`area` is `"Urban"`) the mean is $10.43 + 30.18 = 40.61$
 
 ]
 .pull-right[
+```{r, message = FALSE, warning = FALSE}
+communities |> 
+  mutate(urban = 
+    as.numeric(area=="Urban")) |>
+  ggplot(aes(x = urban, 
+             y = crime_rate)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+]
+
+
+
+
+
+---
+
+# Mean Differences
+
+
+
+.pull-left[
+Linear regression is just estimating means by group!
 
 ```{r}
-dummy_model <- lm(crime_rate ~ area, data = communities)
-dummy_model
+dummy_model <- 
+  lm(crime_rate ~ area, 
+     data = communities)
+dummy_model |> coef()
 ```
 
 The intercept is the average crime rate for rural places
 
-The value for `areaUrban` is the difference between rural and urban places
+The value for `areaUrban` is the **difference** between rural and urban places
+
+]
+.pull-right[
+Compare the model to group-specific average crime rates:
+```{r}
+communities |>
+  group_by(area) |>
+  summarize(crime_rate = 
+              mean(crime_rate))
+```
+
+$\text{Urban} = 40.61 = 10.43 + 30.18$
 
 ]
 
-Linear regression is just estimating means by group!
+These are saying the exact same thing!
+
 
 ---
 
-# Testing
+# Hypothesis Testing
 
+Significance testing with dummy variables works like any others
 
+.text-85[
 ```{r}
-summary(dummy_model)
+summary(dummy_model)$coefficients
 ```
+]
 
 --
 
-This is what a T-test is!
+This is *identical* to a two-sample t-test!
 
+.text-85[
 ```{r}
 t.test(crime_rate ~ area, data = communities, var.equal=TRUE)
 ```
+]
 
+.pull-right-40[
+.footnote[
+This is a significance test for a difference in group means—the same as our dummy variable model!
+]
+]
 
 ---
 
 # More Categories
 
-When you have 3+ 
+When a variable has more than two categories, all but one category is converted to a mutually exclusive binary variable
 
+.pull-left[
 ```{r}
-cat_lm <- lm(crime_rate ~ incarceration, data = communities)
-cat_lm
+lm(crime_rate ~ incarceration, 
+   data = communities) |> 
+  broom::tidy() |> 
+  select(term, estimate)
 
 ```
-
+]
+.pull-right[
 ```{r}
 communities |>
   group_by(incarceration) |>
-  summarize(crime_rate = mean(crime_rate))
+  summarize(crime_rate = 
+              mean(crime_rate))
 ```
+]
+
+Here our intercept represent the mean when `incarceration` is neither `"Medium"` nor `"High"`. Our **reference category** is `"Low"`
 
 ---
 
 # ANOVA
 
+Some of you may be familiar with ANOVA for analysing how 3+ category variables relate to a continuous outcome
+
+.text-85[
 ```{r}
-summary(cat_lm)
+aov(crime_rate ~ incarceration, data = communities) |> summary()
+```
+]
+
+--
+
+Turns out ANOVA is just a standard linear model with a categorical variable
+
+```{r}
+aov(crime_rate ~ incarceration, data = communities) |> coef()
 ```
 
+--
 
+Until you get to very advanced methods (i.e., mixed effects models), ANOVA is just a less flexible linear model with more complicated terminology
 
+---
+
+# As an `lm()`
+
+.text-85[
 ```{r}
-summary(aov(crime_rate ~ incarceration, data = communities))
+summary(crime_rate ~ incarceration, data = communities)
 ```
+]
 
-```{r}
-coef(aov(crime_rate ~ incarceration, data = communities))
-```
+.footnote[
+Note the F-statistic for the regression is the F value for the ANOVA
+]
+
+---
+class: inverse
+
+# Controls
+
+&nbsp;
+
+&nbsp;
+
+![:width 50%](img/yoda.gif)
+
+---
+
+# Controlling for Variables
+
+Remember that we control for variables for the purpose of **identifying** something we're interested in
+
+--
+
+In causal research, this is some **treatment effect**.
+
+* In the following examples, we'll assume we want to identify $X \rightarrow Y$
+
+--
+
+In other cases, it may just be some association we're interested in.
+
+--
+
+To know if a control does what you want (e.g., closes a back door), it is important to understand:
+
+* What including that control implies for your model
+* Exactly what including it really does numerically
+
 
 
 ---
 
-# Dummy Controls
+# Categorical Controls
 
-Some of X and Y's relationship is due to groups having different average levels of both X and Y
 
-If we remove group-specific averages of X and Y, we can get rid of that
 
+We include a categorical control $Z$ if we believe some of $X$ and $Y$'s apparent relationship is due to *some $Z$ groups having different average levels of X and Y*
+
+--
+
+If we remove group-specific averages of both X and Y, we can get rid of that
+
+--
+
+.pull-left[
+.text-85[
 ```{r}
-lm(crime_rate ~ pop_density, data = communities)
+lm(crime_rate ~ pop_density + area,
+   data = communities) |> 
+  broom::tidy() |>
+  select(term, estimate)
 ```
+]
 
-
+Note the identical `pop_density` slopes!
+]
+.pull-right[
+.text-85[
 ```{r}
-communities |>
+residualized_data <- communities |>
   group_by(area) |>
-  mutate(pop_density_res = pop_density - mean(pop_density),
-         crime_rate_res  = crime_rate - mean(crime_rate)) |>
-  lm(crime_rate_res ~ pop_density_res, data = _)
+  mutate(pop_density_res =  #<<
+      pop_density - mean(pop_density), #<<
+         crime_rate_res  =  #<<
+      crime_rate - mean(crime_rate)) #<<
+lm(crime_rate_res ~ pop_density_res, #<<
+   data = residualized_data)  |> 
+  broom::tidy() |> select(term, estimate)
 ```
+]
+]
 
+--
+
+.text-center[
+This is residualising our data—what does that mean?
+]
+
+---
+
+# Residuals
+
+Residuals are the difference between model predictions and the actual data
+
+.text-85[
 ```{r}
-lm(crime_rate ~ pop_density + area, data = communities)
+lm_res <- lm(crime_rate ~ pop_density, data = communities) |> broom::augment()
+```
+]
+
+.pull-left[
+.text-85[
+```{r}
+ggplot(lm_res, 
+    aes(x = pop_density, 
+        y = crime_rate)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+]
+]
+.pull-right[
+.text-85[
+```{r}
+ggplot(lm_res,
+    aes(x = pop_density, 
+        y = .resid)) +  #<<
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+]
+]
+
+--
+
+.text-center[
+When we residualise, we're left with what our predictors *don't explain*
+]
+
+---
+
+# Visualising It
+
+.pull-left[
+```{r, message = FALSE}
+ggplot(communities, 
+       aes(x = pop_density, 
+           y = crime_rate, 
+           color = area)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", 
+              color = "black") 
 ```
 
+]
+.pull-right[
+```{r, message = FALSE}
+ggplot(residualized_data, 
+       aes(x = pop_density_res, #<<
+           y = crime_rate_res, #<<
+           color = area))+ 
+  geom_point() + 
+  geom_smooth(method = "lm",
+              color = "black")
+```
+]
+
+Rural and urban data points now occupy a similar area due to subtracting their average $X$ and $Y$ values
+
+---
+
+# `car::avPlot()`
+
+This type of plot is sometimes called an **added variable plot** and there are existing functions to produce it for us
+
+.pull-left[
+```{r, message = FALSE}
+ggplot(residualized_data, 
+       aes(x = pop_density_res,
+           y = crime_rate_res))+ 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+]
+.pull-right[
+```{r}
+lm(crime_rate ~ pop_density + 
+   area, 
+   data = communities) |> 
+  car::avPlot(
+    variable = "pop_density")
+```
+]
+
+These show the regression line *controlling for all other included variables*
 
 ---
 
 # Continuous Variables
 
-Some of X and Y's relationship is because Z makes X and Y higher
+We include continuous controls if some of X and Y's relationship is because Z makes X and Y higher/lower
 
 If we remove variation in X and Y due to Z, we can get rid of that
 
-This is a bit more complicated—to get the residuals, we need to run bivariate models predicting what we want to residualize
+Here we use bivariate models predicting what we want to residualize
 
+.text-85[
 ```{r}
-communities %>%
+residualized_data <- communities %>%
   mutate(area_num       = as.numeric(area == "Urban"),
-         crime_rate_res = residuals(lm(crime_rate ~ pop_density, data = .)),
-         area_resid     = residuals(lm(area_num ~ pop_density, data = .))) |>
-  lm(crime_rate_res ~ area_resid, data = _)
+         crime_rate_res = residuals(lm(crime_rate ~ pop_density, data = .)), #<<
+         area_res       = residuals(lm(area_num ~ pop_density, data = .))) #<<
+```
+]
+
+.pull-left[
+.text-85[
+```{r}
+lm(crime_rate ~ pop_density + area, 
+   data = communities) |> 
+  broom::tidy() |> select(term, estimate)
 ```
 
+]
+]
+
+.pull-right[
+.text-85[
+```{r}
+lm(crime_rate_res ~ area_res, #<<
+   data = residualized_data) |> #<<
+  broom::tidy() |> select(term, estimate)
+```
+
+]
+]
 
 
 ---
 
+# Visualising It
 
-# Curves
-
-```{r}
-form <- y ~ x + I(x^2)
-communities %>%
-  ggplot(aes(x = `Pop Density`, y = `Crime Rate`)) + 
-  geom_point(alpha = 0.5) +
-  xlab("Population Density") +
-  stat_poly_line(formula = form, se = FALSE) +
-  stat_poly_eq(formula = form, mapping = use_label("eq"), eq.x.rhs = "PopDensity", eq.with.lhs= "CrimeRate~`=`~") +
-  theme_minimal(base_size = 16)
+.pull-left[
+```{r, message = FALSE}
+ggplot(residualized_data, 
+       aes(x = area_num, 
+           y = crime_rate, 
+           color = area)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", 
+              color = "black") 
 ```
 
+]
+.pull-right[
+```{r, message = FALSE}
+ggplot(residualized_data, 
+       aes(x = area_res, #<<
+           y = crime_rate_res, #<<
+           color = area))+ 
+  geom_point() + 
+  geom_smooth(method = "lm",
+              color = "black")
+```
+]
+
+--
+
+.text-center[
+*Wait, wat? I thought it was binary?*
+]
+
+---
+
+# wat
+
+Yep, that's not a mistake—our model predicted *how urban* each point was and the residual is the unexpected level of urban.
+
+.pull-left[
+```{r, message = FALSE}
+ggplot(residualized_data, 
+       aes(x = area_res, #<<
+           y = crime_rate_res, #<<
+           color = area))+ 
+  geom_point() + 
+  geom_smooth(method = "lm",
+              color = "black")
+```
+]
+
+.pull-right[
+```{r}
+lm(crime_rate ~ pop_density + 
+       area, 
+   data = communities) |> 
+    car::avPlot(
+        variable = "areaUrban")
+```
+
+]
 
 ---
 
