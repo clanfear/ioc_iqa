@@ -1,4 +1,5 @@
 library(tidyverse)
+library(broom) # Going to use this a bunch today
 communities <- 
   read_csv("https://clanfear.github.io/ioc_iqa/_data/communities.csv") |>
   mutate(across(c(incarceration, disadvantage), 
@@ -64,7 +65,7 @@ t.test(crime_rate ~ area, data = communities, var.equal=TRUE)
 
 lm(crime_rate ~ incarceration, 
    data = communities) |> 
-  broom::tidy() |> 
+  tidy() |> 
   select(term, estimate)
 
 
@@ -77,11 +78,11 @@ aov(crime_rate ~ incarceration, data = communities) |> summary()
 
 aov(crime_rate ~ incarceration, data = communities) |> coef()
 
-summary(crime_rate ~ incarceration, data = communities)
+summary(lm(crime_rate ~ incarceration, data = communities))
 
 lm(crime_rate ~ pop_density + area,
    data = communities) |> 
-  broom::tidy() |>
+  tidy() |>
   select(term, estimate)
 
 residualized_data <- communities |>
@@ -92,21 +93,7 @@ residualized_data <- communities |>
       crime_rate - mean(crime_rate)) #<<
 lm(crime_rate_res ~ pop_density_res, #<<
    data = residualized_data)  |> 
-  broom::tidy() |> select(term, estimate)
-
-lm_res <- lm(crime_rate ~ pop_density, data = communities) |> broom::augment()
-
-ggplot(lm_res, 
-    aes(x = pop_density, 
-        y = crime_rate)) + 
-  geom_point() + 
-  geom_smooth(method = "lm")
-
-ggplot(lm_res,
-    aes(x = pop_density, 
-        y = .resid)) +  #<<
-  geom_point() + 
-  geom_smooth(method = "lm")
+  tidy() |> select(term, estimate)
 
 ggplot(communities, 
        aes(x = pop_density, 
@@ -123,6 +110,20 @@ ggplot(residualized_data,
   geom_point() + 
   geom_smooth(method = "lm",
               color = "black")
+
+lm_res <- lm(crime_rate ~ pop_density, data = communities) |> augment()
+
+ggplot(lm_res, 
+    aes(x = pop_density, 
+        y = crime_rate)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+
+ggplot(lm_res,
+    aes(x = pop_density, 
+        y = .resid)) +  #<<
+  geom_point() + 
+  geom_smooth(method = "lm")
 
 ggplot(residualized_data, 
        aes(x = pop_density_res,
@@ -143,11 +144,11 @@ residualized_data <- communities %>%
 
 lm(crime_rate ~ pop_density + area, 
    data = communities) |> 
-  broom::tidy() |> select(term, estimate)
+  tidy() |> select(term, estimate)
 
 lm(crime_rate_res ~ area_res, #<<
    data = residualized_data) |> #<<
-  broom::tidy() |> select(term, estimate)
+  tidy() |> select(term, estimate)
 
 ggplot(residualized_data, 
        aes(x = area_num, 
@@ -179,18 +180,98 @@ lm(crime_rate ~ pop_density +
     car::avPlot(
         variable = "areaUrban")
 
-ex_data <- tibble(Skill = runif(1000, 0, 10), 
+sample_size <- 10000
+sim_data <- 
+  tibble(bd =
+    rnorm(sample_size, #<<
+          mean = 3, sd = 1)) #<<
+sim_data |>
+  summarize(bd_mean = mean(bd), 
+            bd_sd   = sd(bd))
+
+ggplot(sim_data, 
+       aes(x = bd)) +
+  geom_density()
+
+sim_data <- sim_data |>
+  mutate(
+    x = rnorm(n(), 0.3*bd, 1),
+    y = rnorm(n(), 3 + 0.3*x + 0.3*bd, 1), #<<
+    coll = rnorm(n(), -0.2*x + -0.2*y, 1))
+
+
+
+lm(y ~ x + bd, #<<
+   data = sim_data) |>
+  tidy() |> 
+  select(term, estimate)
+
+lm(y ~ x , #<<
+   data = sim_data) |>
+  tidy() |> 
+  select(term, estimate)
+
+lm(y ~ x + bd, #<<
+   data = sim_data) |>
+  tidy() |> 
+  select(term, estimate)
+
+lm(y ~ x + bd + coll, #<<
+   data = sim_data) |>
+  tidy() |> 
+  select(term, estimate)
+
+coll_data <- tibble(Skill     = runif(1000, 0, 10), 
                   Frequency = runif(1000, 0, 10), 
-                  Who = c(rep("Arrested", 500), 
-                          rep("Everyone", 500))) |>
+                  Who =   c(rep("Arrested", 500), 
+                            rep("Everyone", 500))) |>
   filter(Who == "Everyone" | (10 + (-1*Skill) + Frequency > 10))
 
-ex_data |> 
-  ggplot(aes(x = Skill, y = Frequency, color = Who)) + 
-  geom_point() + 
+
+lm(Frequency ~ Skill, #<<
+   data = coll_data |> 
+     filter(Who=="Everyone")) |>
+  tidy() |> 
+  select(term, estimate)
+
+lm(Frequency ~ Skill, #<<
+   data = coll_data |> 
+     filter(Who=="Arrested")) |>
+  tidy() |> 
+  select(term, estimate)
+
+ggplot(coll_data, aes(x = Skill, y = Frequency, color = Who)) + 
+  facet_wrap(~Who) + geom_point() +
+  geom_smooth(method = "lm", color = "black") +
   labs(x = "Skill at Crime", y = "Frequency of Crime") +
-  geom_smooth(method = "lm", formula = "y~x", se = FALSE, color = "black") + 
-  facet_wrap(~Who)  + 
-  theme_minimal(base_size = 16) + 
-  theme(legend.position = "none",
-        panel.spacing.x = unit(0.4, "in"))
+  theme_minimal(base_size = 16) + theme(legend.position = "none")
+
+sample_size <- 10000
+po_data <- tibble(
+  bd = runif(sample_size, 0, 1), # Random uniform variable
+  x  = rbinom(sample_size, 1, bd), # Random binary variable
+  y0 = rnorm(sample_size, 2*bd, 1),
+  y1 = rnorm(sample_size, 2*bd + 1, 1)) |> # Effect size of 1 #<<
+  mutate(y = ifelse(x==1, y1, y0)) # Treatment just selects outcome
+
+lm(y ~ x + bd, data = po_data) |>
+  tidy() |> 
+  select(term, estimate)
+
+lm(y ~ x, data = po_data) |>
+  tidy() |> 
+  select(term, estimate)
+
+sample(0:1, 20, replace= TRUE)
+
+po_data <- po_data |>
+  mutate(treat = sample(0:1, n(), replace=TRUE),
+         yt = ifelse(treat==1, y1, y0))
+
+lm(y ~ x + bd, data = po_data) |>
+  tidy() |> 
+  select(term, estimate)
+
+lm(yt ~ treat, data = po_data) |>
+  tidy() |> 
+  select(term, estimate)

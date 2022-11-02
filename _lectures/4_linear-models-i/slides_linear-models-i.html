@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 2 Nov 2022<br>Updated: 01 Nov 2022
+### 2 Nov 2022<br>Updated: 02 Nov 2022
 ]
 
 ---
@@ -35,20 +35,21 @@ class: center, top, title-slide
 Categorical predictors
 
 * Binary
+  * T-Test
 * 3+ category
+  * ANOVA
 
 Controlling for variables
 
 * Demeaning with dummies
+* Residuals
 * Partial correlations (is that pairs plot?)
 
+How linear models work
 
-* Stats
-   * TTest is an lm() with 2 category (binary) predictor
-   * ANOVA is an lm() with 3+ category predictor
-
-* Code
-
+* Simulating data
+* Back doors
+* Colliders
 
 
 
@@ -64,6 +65,7 @@ First, let's convert our categorical variables to factors with appropriate level
 
 ```r
 library(tidyverse)
+library(broom) # Going to use this a bunch today
 communities &lt;- 
   read_csv("https://clanfear.github.io/ioc_iqa/_data/communities.csv") |&gt;
   mutate(across(c(incarceration, disadvantage), 
@@ -363,7 +365,7 @@ When a variable has more than two categories, all but one category is converted 
 ```r
 lm(crime_rate ~ incarceration, 
    data = communities) |&gt; 
-  broom::tidy() |&gt; 
+  tidy() |&gt; 
   select(term, estimate)
 ```
 
@@ -443,12 +445,29 @@ Until you get to very advanced methods (i.e., mixed effects models), ANOVA is ju
 .text-85[
 
 ```r
-summary(crime_rate ~ incarceration, data = communities)
+summary(lm(crime_rate ~ incarceration, data = communities))
 ```
 
 ```
-##  Length   Class    Mode 
-##       3 formula    call
+## 
+## Call:
+## lm(formula = crime_rate ~ incarceration, data = communities)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -34.553 -14.044  -5.796  11.041  73.811 
+## 
+## Coefficients:
+##                     Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)           17.726      2.070   8.565 5.97e-16 ***
+## incarcerationMedium    3.217      2.850   1.129     0.26    
+## incarcerationHigh     19.265      2.897   6.649 1.41e-10 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 20.17 on 297 degrees of freedom
+## Multiple R-squared:  0.148,	Adjusted R-squared:  0.1422 
+## F-statistic: 25.79 on 2 and 297 DF,  p-value: 4.7e-11
 ```
 ]
 
@@ -512,7 +531,7 @@ If we remove group-specific averages of both X and Y, we can get rid of that
 ```r
 lm(crime_rate ~ pop_density + area,
    data = communities) |&gt; 
-  broom::tidy() |&gt;
+  tidy() |&gt;
   select(term, estimate)
 ```
 
@@ -540,7 +559,7 @@ residualized_data &lt;- communities |&gt;
 *     crime_rate - mean(crime_rate))
 *lm(crime_rate_res ~ pop_density_res,
    data = residualized_data)  |&gt; 
-  broom::tidy() |&gt; select(term, estimate)
+  tidy() |&gt; select(term, estimate)
 ```
 
 ```
@@ -553,59 +572,7 @@ residualized_data &lt;- communities |&gt;
 ]
 ]
 
---
 
-.text-center[
-This is residualising our data—what does that mean?
-]
-
----
-
-# Residuals
-
-Residuals are the difference between model predictions and the actual data
-
-.text-85[
-
-```r
-lm_res &lt;- lm(crime_rate ~ pop_density, data = communities) |&gt; broom::augment()
-```
-]
-
-.pull-left[
-.text-85[
-
-```r
-ggplot(lm_res, 
-    aes(x = pop_density, 
-        y = crime_rate)) + 
-  geom_point() + 
-  geom_smooth(method = "lm")
-```
-
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-22-1.svg)&lt;!-- --&gt;
-]
-]
-.pull-right[
-.text-85[
-
-```r
-ggplot(lm_res,
-    aes(x = pop_density, 
-*       y = .resid)) +
-  geom_point() + 
-  geom_smooth(method = "lm")
-```
-
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-23-1.svg)&lt;!-- --&gt;
-]
-]
-
---
-
-.text-center[
-When we residualise, we're left with what our predictors *don't explain*
-]
 
 ---
 
@@ -623,7 +590,7 @@ ggplot(communities,
               color = "black") 
 ```
 
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-24-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-21-1.svg)&lt;!-- --&gt;
 
 ]
 .pull-right[
@@ -638,16 +605,64 @@ ggplot(residualized_data,
               color = "black")
 ```
 
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-25-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-22-1.svg)&lt;!-- --&gt;
 ]
 
-Rural and urban data points now occupy a similar area due to subtracting their average `\(X\)` and `\(Y\)` values
+Rural and urban data points now occupy a similar area due to subtracting their average `\(X\)` and `\(Y\)` values—this gives us their **residuals**
+
+---
+
+# Residuals
+
+Residuals are the difference between model predictions and the actual data
+
+.text-85[
+
+```r
+lm_res &lt;- lm(crime_rate ~ pop_density, data = communities) |&gt; augment()
+```
+]
+
+.pull-left[
+.text-85[
+
+```r
+ggplot(lm_res, 
+    aes(x = pop_density, 
+        y = crime_rate)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-24-1.svg)&lt;!-- --&gt;
+]
+]
+.pull-right[
+.text-85[
+
+```r
+ggplot(lm_res,
+    aes(x = pop_density, 
+*       y = .resid)) +
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-25-1.svg)&lt;!-- --&gt;
+]
+]
+
+--
+
+.text-center[
+The residuals are what our model *doesn't explain*
+]
 
 ---
 
 # `car::avPlot()`
 
-This type of plot is sometimes called an **added variable plot** and there are existing functions to produce it for us
+This type of plot is sometimes called an **added variable plot**
 
 .pull-left[
 
@@ -661,6 +676,9 @@ ggplot(residualized_data,
 
 ![](slides_linear-models-i_files/figure-html/unnamed-chunk-26-1.svg)&lt;!-- --&gt;
 ]
+
+--
+
 .pull-right[
 
 ```r
@@ -674,17 +692,21 @@ lm(crime_rate ~ pop_density +
 ![](slides_linear-models-i_files/figure-html/unnamed-chunk-27-1.svg)&lt;!-- --&gt;
 ]
 
-These show the regression line *controlling for all other included variables*
+These show the regression line *controlling for all other included variables*—and unlike `ggplot2`, `avPlot()` can accept more variables at once
 
 ---
 
 # Continuous Variables
 
-We include continuous controls if some of X and Y's relationship is because Z makes X and Y higher/lower
+We include continuous controls if some of X and Y's relationship is because Z makes X and Y higher/lower—sometimes called **spuriousness**
 
-If we remove variation in X and Y due to Z, we can get rid of that
+--
 
-Here we use bivariate models predicting what we want to residualize
+If we remove variation in X and Y due to Z, we can fix this
+
+--
+
+Here we use bivariate models predicting what we want to residualise
 
 .text-85[
 
@@ -696,13 +718,15 @@ residualized_data &lt;- communities %&gt;%
 ```
 ]
 
+--
+
 .pull-left[
 .text-85[
 
 ```r
 lm(crime_rate ~ pop_density + area, 
    data = communities) |&gt; 
-  broom::tidy() |&gt; select(term, estimate)
+  tidy() |&gt; select(term, estimate)
 ```
 
 ```
@@ -723,7 +747,7 @@ lm(crime_rate ~ pop_density + area,
 ```r
 *lm(crime_rate_res ~ area_res,
 *  data = residualized_data) |&gt;
-  broom::tidy() |&gt; select(term, estimate)
+  tidy() |&gt; select(term, estimate)
 ```
 
 ```
@@ -744,6 +768,9 @@ lm(crime_rate ~ pop_density + area,
 
 .pull-left[
 
+Original data:
+
+
 ```r
 ggplot(residualized_data, 
        aes(x = area_num, 
@@ -758,6 +785,8 @@ ggplot(residualized_data,
 
 ]
 .pull-right[
+Residuals of `\(X\)` and `\(Y\)`:
+
 
 ```r
 ggplot(residualized_data, 
@@ -772,13 +801,17 @@ ggplot(residualized_data,
 ![](slides_linear-models-i_files/figure-html/unnamed-chunk-32-1.svg)&lt;!-- --&gt;
 ]
 
-Rural and urban data points now occupy a similar area due to subtracting their average `\(X\)` and `\(Y\)` values
+--
+
+.text-center[
+*Wait, wat? I thought it was binary?*
+]
 
 ---
 
 # wat
 
-Yep, that's not a mistake
+Yep, that's not a mistake—our model predicted *how urban* each point was and the residual is the *unexpected level of urban* on a 0 to 1 scale—weird!
 
 .pull-left[
 
@@ -810,31 +843,475 @@ lm(crime_rate ~ pop_density +
 ]
 
 ---
+class: inverse
 
-# Collider Bias
+# How It Works
+
+&amp;nbsp;
+
+![:width 80%](img/trebuchet.jpg)
+
+---
+
+# Generating Data
+
+If you don't like doing mathematical proofs to figure out if something works, you can often test things with simulation
+
+--
+
+`rnorm()` and similar functions randomly generate data *drawn* from a particular distribution
+
+
+.pull-left[
+
+
+```r
+sample_size &lt;- 10000
+sim_data &lt;- 
+  tibble(bd =
+*   rnorm(sample_size,
+*         mean = 3, sd = 1))
+sim_data |&gt;
+  summarize(bd_mean = mean(bd), 
+            bd_sd   = sd(bd))
+```
+
+```
+## # A tibble: 1 × 2
+##   bd_mean bd_sd
+##     &lt;dbl&gt; &lt;dbl&gt;
+## 1    2.99  1.00
+```
+]
+
+--
+
+.pull-right[
+
+```r
+ggplot(sim_data, 
+       aes(x = bd)) +
+  geom_density()
+```
+
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-36-1.svg)&lt;!-- --&gt;
+]
+
+---
+
+# Simulation
+
+Now we can add other variables to our data to generate a dataset that obeys the DAG on the right
+
+.pull-left-60[
+.text-85[
+
+```r
+sim_data &lt;- sim_data |&gt;
+  mutate(
+    x = rnorm(n(), 0.3*bd, 1),
+*   y = rnorm(n(), 3 + 0.3*x + 0.3*bd, 1),
+    coll = rnorm(n(), -0.2*x + -0.2*y, 1))
+```
+
+
+]
+]
+
+.pull-right-40[
+![](slides_linear-models-i_files/figure-html/sim-dag-1.svg)&lt;!-- --&gt;
+]
+
+--
+
+"Y is equal to 3 plus 0.3 X and 0.3 BD, with about 1 SD of error on average"
+
+--
+
+Note that we generate the variables in causal order of the diagram
+
+* We started with `bd`
+* We finished with `coll`
+
+---
+
+# Estimates with Back Doors
+
+Because we know the **data generating process**—we created it—we know what our estimates should be
+
+--
+
+.pull-left[
+
+```r
+*lm(y ~ x + bd,
+   data = sim_data) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 3 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)    2.97 
+## 2 x              0.288
+## 3 bd             0.317
+```
+]
+
+--
+
+.pull-right[
+
+```r
+*lm(y ~ x ,
+   data = sim_data) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 2 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)    3.84 
+## 2 x              0.374
+```
+]
+
+Excluding `bd` makes the effect of `x` larger than it should be—they're **magnified**
+
+--
+
+This occurs whenever a back door has effects with the *same sign* on both `\(X\)` and `\(Y\)` (e.g., both positive)—opposite signs would **attenuate** the estimate
+
+---
+
+# Estimates with Colliders
+
+Again, we know what effects should be identified and how to identify them. What if we add the collider?
+
+.pull-left[
+
+```r
+*lm(y ~ x + bd,
+   data = sim_data) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 3 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)    2.97 
+## 2 x              0.288
+## 3 bd             0.317
+```
+]
+
+--
+
+.pull-right[
+
+```r
+*lm(y ~ x + bd + coll,
+   data = sim_data) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 4 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)    2.85 
+## 2 x              0.236
+## 3 bd             0.307
+## 4 coll          -0.191
+```
+]
+
+This **attenuates** `\(X\)` but does nothing to `\(BD\)`—it isn't a collider for `\(BD\)`!
+
+.text-center[
+*Let's look at a more severe example*
+]
+
+
+---
+
+# Selection (Collider) Bias
+
+Let's create the data from CRM yesterday.
+
+
+
 
 
 
 ```r
-ex_data &lt;- tibble(Skill = runif(1000, 0, 10), 
+coll_data &lt;- tibble(Skill     = runif(1000, 0, 10), 
                   Frequency = runif(1000, 0, 10), 
-                  Who = c(rep("Arrested", 500), 
-                          rep("Everyone", 500))) |&gt;
+                  Who =   c(rep("Arrested", 500), 
+                            rep("Everyone", 500))) |&gt;
   filter(Who == "Everyone" | (10 + (-1*Skill) + Frequency &gt; 10))
-
-ex_data |&gt; 
-  ggplot(aes(x = Skill, y = Frequency, color = Who)) + 
-  geom_point() + 
-  labs(x = "Skill at Crime", y = "Frequency of Crime") +
-  geom_smooth(method = "lm", formula = "y~x", se = FALSE, color = "black") + 
-  facet_wrap(~Who)  + 
-  theme_minimal(base_size = 16) + 
-  theme(legend.position = "none",
-        panel.spacing.x = unit(0.4, "in"))
 ```
 
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-35-1.svg)&lt;!-- --&gt;
+What's going on here?
 
+* It is actually *two* sets of data in one: 
+  * A pool of "everyone" and a pool of only "arrested" people
+* *No relationship* between Skill at crime and Frequency of crime
+* Skilled or infrequent offenders don't get arrested
+  * i.e., we remove arrested people with high Skills or low Frequency
+
+--
+
+If we only see arrested people, we've *selected* on a collider—this is just like including one in a model
+
+
+---
+
+# Collider Model
+
+.pull-left[
+
+```r
+*lm(Frequency ~ Skill,
+   data = coll_data |&gt; 
+     filter(Who=="Everyone")) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 2 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)   4.97  
+## 2 Skill        -0.0153
+```
+]
+
+--
+
+.pull-right[
+
+```r
+*lm(Frequency ~ Skill,
+   data = coll_data |&gt; 
+     filter(Who=="Arrested")) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 2 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)    5.05 
+## 2 Skill          0.512
+```
+]
+
+--
+
+
+We know there is no real relationship, but because we **selected** data based on an outcome of Frequency and Skill, it creates a **spurious** relationship
+
+--
+
+.text-center[
+*The collider is still producing bias without being explicitly in the model!*
+]
+
+
+---
+
+# Visualizing Collider Bias
+
+
+```r
+ggplot(coll_data, aes(x = Skill, y = Frequency, color = Who)) + 
+  facet_wrap(~Who) + geom_point() +
+  geom_smooth(method = "lm", color = "black") +
+  labs(x = "Skill at Crime", y = "Frequency of Crime") +
+  theme_minimal(base_size = 16) + theme(legend.position = "none")
+```
+
+![](slides_linear-models-i_files/figure-html/coll-plot-1.svg)&lt;!-- --&gt;
+
+---
+class: inverse
+
+# Randomization
+
+
+
+---
+
+# Non-Randomized Treatment
+
+Let's create example data with actual **potential outcomes**
+
+
+```r
+sample_size &lt;- 10000
+po_data &lt;- tibble(
+  bd = runif(sample_size, 0, 1), # Random uniform variable
+  x  = rbinom(sample_size, 1, bd), # Random binary variable
+  y0 = rnorm(sample_size, 2*bd, 1),
+* y1 = rnorm(sample_size, 2*bd + 1, 1)) |&gt; # Effect size of 1
+  mutate(y = ifelse(x==1, y1, y0)) # Treatment just selects outcome
+```
+
+
+* `x` is a binary **treatment** with effect size of **1**
+* `y0` is the outcome if the unit is **untreated**
+* `y1` is the outcome if the unit is **treated**
+* `bd` is a backdoor predicting treatment *and* `y`
+   * `bd` improves both potential outcomes *the same* amount
+   * `bd` also makes treatment more likely
+
+.text-center[
+*Units that get treated tend to have higher potential outcomes*
+]
+
+---
+
+# Estimation
+
+Like usual, if we can *see* the back door, we can identify the effect of `\(X\)` on `\(Y\)`
+
+.pull-left[
+
+```r
+lm(y ~ x + bd, data = po_data) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 3 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)  0.00525
+## 2 x            0.989  
+## 3 bd           2.03
+```
+]
+.pull-right[
+
+```r
+lm(y ~ x, data = po_data) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 2 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)    0.683
+## 2 x              1.67
+```
+]
+
+--
+
+.text-center[
+*But even if we can't, we can randomize it away*
+]
+
+--
+
+`sample()` is an easy way to randomly select units
+
+
+```r
+sample(0:1, 20, replace= TRUE)
+```
+
+```
+##  [1] 0 0 0 1 0 0 0 1 0 1 0 1 1 1 0 1 1 0 1 0
+```
+
+---
+
+# Random Assignment
+
+Let's select random units to receive the treatment
+
+
+```r
+po_data &lt;- po_data |&gt;
+  mutate(treat = sample(0:1, n(), replace=TRUE),
+         yt = ifelse(treat==1, y1, y0))
+```
+
+All the treatment does is determine which potential outcome we see
+
+--
+
+.pull-left[
+
+```r
+lm(y ~ x + bd, data = po_data) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 3 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)  0.00525
+## 2 x            0.989  
+## 3 bd           2.03
+```
+]
+.pull-right[
+
+```r
+lm(yt ~ treat, data = po_data) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 2 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)     1.02
+## 2 treat           1.02
+```
+]
+
+.text-center[
+*Randomization closes back doors without adjustment!*
+]
+
+---
+
+# Wrap-Up
+
+Assignment:
+
+* Posted tomorrow morning:
+  * On website in units (both week 4 and 5)
+  * On Moodle
+* Read instructions carefully
+   * No trick questions intended
+* Doc types:
+  * Word or equivalent + .R script file for code
+     * Use comments to indicate question code applies to
+  * Quarto / Rmarkdown if you're feeling fancy
+* Due 11:59 PM Friday 12 November
+  * **Do not spend that entire time working on it**
+
+No reading until next week
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
