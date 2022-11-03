@@ -22,7 +22,8 @@ street_crime <- tibble(
            3  * as.numeric(crime_type=="Assault") + 
            2 * sex_num + 
            (age/4),
-         sentence = rnbinom(n(), mean_months, 0.6))
+         sentence = as.numeric(rnbinom(n(), mean_months, 0.6))) |>
+  select(sex, age, crime_type, sentence)
 
 write_csv(street_crime, file = "_data/street_crime.csv")
 
