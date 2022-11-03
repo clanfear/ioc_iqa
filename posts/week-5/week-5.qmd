@@ -12,5 +12,5 @@ Lecture Slides (forthcoming)
 
 Lecture Recording (forthcoming)
 
-https://clanfear.github.io/ioc_iqa/_assignments/assignment-1.docx
+[Download Assignment 1](https://clanfear.github.io/ioc_iqa/_assignments/assignment-1.docx)
 
