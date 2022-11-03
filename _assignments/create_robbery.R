@@ -19,14 +19,14 @@ street_crime <- tibble(
   mutate(mean_months = 
            4 +
            12 * as.numeric(crime_type=="Robbery") +
-           3  * as.numeric(crime_type=="Assault") + 
+           2  * as.numeric(crime_type=="Assault") + 
            2 * sex_num + 
            (age/4),
          sentence = as.numeric(rnbinom(n(), mean_months, 0.6))) |>
   select(sex, age, crime_type, sentence)
 
 write_csv(street_crime, file = "_data/street_crime.csv")
-
+street_crime <- read_csv("_data/street_crime.csv")
 lm(sentence ~ sex + age + crime_type, data = street_crime) |> summary()
 
 ggplot(street_crime, aes(x = age, y = sentence)) + geom_point() + geom_smooth(method = "lm")
