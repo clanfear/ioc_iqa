@@ -12,4 +12,4 @@ draft: false
 
 Lecture Recording (forthcoming)
 
-[Download Assignment 1 here](https://clanfear.github.io/ioc_iqa/_assignments/assignment-1.docx)
+https://clanfear.github.io/ioc_iqa/_assignments/assignment-1.docx

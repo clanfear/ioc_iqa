@@ -12,7 +12,5 @@ Lecture Slides (forthcoming)
 
 Lecture Recording (forthcoming)
 
-Reading:
+https://clanfear.github.io/ioc_iqa/_assignments/assignment-1.docx
 
-* Huntington-Klein, N. (2022) *The Effect: An Introduction to Research Design and Causality*, New York, NY: Chapman and Hall/CRC Press. 
-   * Read Chapter 12: Opening the Toolbox and Chapter 13: Regression only up to (but not including) 13.2.2 Polynomials
