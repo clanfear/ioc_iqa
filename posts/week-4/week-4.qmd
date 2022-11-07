@@ -13,3 +13,5 @@ draft: false
 Lecture Recording (See Moodle)
 
 [Download Assignment 1](https://clanfear.github.io/ioc_iqa/_assignments/assignment-1.docx)
+
+* Due Friday, 11th of November

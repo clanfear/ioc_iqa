@@ -40,4 +40,6 @@ _ignore/
 ignore/
 data/
 /.quarto/
+.quarto/*
 .quarto/
+.quarto/preview/lock

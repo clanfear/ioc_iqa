@@ -1011,7 +1011,7 @@ Assignment:
   * Word or equivalent + .R script file for code
      * Use comments to indicate question code applies to
   * Quarto / Rmarkdown if you're feeling fancy
-* Due 11:59 PM Friday 12 November
+* Due 11:59 PM Friday 11 November
   * **Do not spend that entire time working on it**
 
 No reading until next week
