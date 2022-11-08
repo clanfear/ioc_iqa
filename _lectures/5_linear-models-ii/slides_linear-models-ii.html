@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Linear Models II</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Charles Lanfear" />
+    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
+    <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, top, title-slide
+
+.title[
+# Linear Models II
+]
+.subtitle[
+## IQA Lecture 5
+]
+.author[
+### Charles Lanfear
+]
+.date[
+### 9 Nov 2022<br>Updated: 08 Nov 2022
+]
+
+---
+
+
+
+
+
+# Today
+
+Randomization (from last week)
+
+Regression Formulae
+
+Making Predictions
+
+Model Fit
+
+HELP FILES
+
+---
+
+# Setup
+
+Like usual, let's start by loading the communities data and converting our categorical variables to factors with appropriate levels
+
+.text-85[
+
+```r
+library(tidyverse)
+library(broom) 
+communities &lt;- 
+  read_csv("https://clanfear.github.io/ioc_iqa/_data/communities.csv") |&gt;
+  mutate(across(c(incarceration, disadvantage), 
+                ~ factor(., levels = c("Low", "Medium", "High"))))
+```
+]
+
+Again, we'll use `tidyverse` and `broom` today.
+
+---
+class: inverse
+
+# Randomization
+
+
+
+---
+
+# Non-Randomized Treatment
+
+Let's create example data with actual **potential outcomes**
+
+
+```r
+s_n &lt;- 10000
+po_data &lt;- tibble(
+  bd = runif(s_n, 0, 1), # Random uniform variable
+  x  = rbinom(s_n, 1, bd), # Random binary variable
+  y0 = rnorm(s_n, 2*bd, 1),
+* y1 = rnorm(s_n, 2*bd + 1, 1)) |&gt; # Effect size of 1
+  mutate(y = ifelse(x==1, y1, y0)) # Treatment just selects outcome
+```
+
+
+* `x` is a binary **treatment** with effect size of **1**
+* `y0` is the outcome if the unit is **untreated**
+* `y1` is the outcome if the unit is **treated**
+* `bd` is a backdoor predicting treatment *and* `y`
+   * `bd` improves both potential outcomes *the same* amount
+   * `bd` also makes treatment more likely
+
+.text-center[
+*Units that get treated tend to have higher potential outcomes*
+]
+
+---
+
+# Estimation
+
+Like usual, if we can *see* the back door, we can identify the effect of `\(X\)` on `\(Y\)`
+
+.pull-left[
+
+```r
+lm(y ~ x + bd, data = po_data) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 3 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)  0.00475
+## 2 x            0.985  
+## 3 bd           2.02
+```
+]
+.pull-right[
+
+```r
+lm(y ~ x, data = po_data) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 2 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)    0.683
+## 2 x              1.65
+```
+]
+
+--
+
+.text-center[
+*But even if we can't, we can randomize it away*
+]
+
+--
+
+`sample()` is an easy way to randomly select units
+
+
+```r
+sample(0:1, 20, replace= TRUE)
+```
+
+```
+##  [1] 0 1 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1
+```
+
+---
+
+# Random Assignment
+
+Let's select random units to receive the treatment
+
+
+```r
+po_data &lt;- po_data |&gt;
+  mutate(treat = sample(0:1, n(), replace=TRUE),
+         yt = ifelse(treat==1, y1, y0))
+```
+
+All the treatment does is determine which potential outcome we see
+
+--
+
+.pull-left[
+
+```r
+lm(y ~ x + bd, data = po_data) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 3 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)  0.00475
+## 2 x            0.985  
+## 3 bd           2.02
+```
+]
+.pull-right[
+
+```r
+lm(yt ~ treat, data = po_data) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 2 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)    0.997
+## 2 treat          1.02
+```
+]
+
+.text-center[
+*Randomization closes back doors without adjustment!*
+]
+
+---
+
+# Randomization DAGs
+
+Randomization breaks back doors—even when we can't observe the responsible variables!
+
+
+.pull-left[
+
+Confounded by an unobservable `\(BD\)`:
+
+![](slides_linear-models-ii_files/figure-html/bd-dag-1.svg)&lt;!-- --&gt;
+]
+
+.pull-right[
+
+`\(BD\)` is irrelevant if we can randomize!
+
+![](slides_linear-models-ii_files/figure-html/ran-dag-1.svg)&lt;!-- --&gt;
+]
+
+--
+
+&amp;nbsp;
+
+If we're interested in the effect of `\(X\)` here, we have to assume `\(T\)` is roughly equivalent to `\(X\)` (it is **consistent** with `\(X\)`)
+
+---
+class: inverse
+
+# Two small asides
+
+&amp;nbsp;
+
+&amp;nbsp;
+
+.pull-left[
+![:width 50%](img/soundgarden.jpg)
+]
+.pull-right[
+![:width 50%](img/soundgarden.jpg)
+]
+
+---
+
+# Help Files and Methods
+
+Remember you can get help with a function using `?` (e.g., `lm()`):
+
+
+```r
+?tidy
+```
+
+--
+
+Some functions, `tidy()`, work differently when you give them different types of **arguments**.
+
+--
+
+These different ways of working are called **methods**.
+
+For example, `tidy.lm()` is the `tidy()` method for objects made my `lm()`
+
+
+```r
+?tidy.lm
+```
+
+--
+
+`summary()` works this way too:
+
+
+```r
+?summary.lm # Method for lm objects
+```
+
+
+---
+
+# Dagitty
+
+
+Let's say we have this DAG and we're not sure if we can identify the effect of `\(Z\)` on `\(Y\)`
+
+![](slides_linear-models-ii_files/figure-html/sim-dag-1.svg)&lt;!-- --&gt;
+
+--
+
+&amp;nbsp;
+
+We could do it all by hand, writing down the paths and thinking it out. 
+
+--
+
+But thinking hurts brain, so instead we could also use [`dagitty` (http://www.dagitty.net/dags.html)](http://www.dagitty.net/dags.html) to determine if we can identify an effect.
+
+---
+class: inverse
+
+# Prediction
+
+---
+
+# Fitted Values
+
+We can get **fitted values** using `fitted()` or `broom::augment()`
+
+
+```r
+ex_lm &lt;- lm(crime_rate ~ pop_density + disadvantage, 
+            data = communities)
+fitted(ex_lm) |&gt; head(4) # Returns them as a vector
+```
+
+```
+##         1         2         3         4 
+## 32.873785 43.959257  8.250988 24.512137
+```
+
+
+
+```r
+augment(ex_lm) |&gt; head(4) # Returns them added to original data
+```
+
+```
+## # A tibble: 4 × 9
+##   crime_rate pop_dens…¹ disad…² .fitted .resid   .hat .sigma .cooksd
+##        &lt;dbl&gt;      &lt;dbl&gt; &lt;fct&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+## 1       28.6       18.2 Low       32.9   -4.24 0.0122   12.8 3.46e-4
+## 2       58.6       21.4 Medium    44.0   14.6  0.0145   12.7 4.93e-3
+## 3       14.2       10.0 Low        8.25   5.95 0.0111   12.7 6.18e-4
+## 4       22.3       14.9 Medium    24.5   -2.22 0.0103   12.8 8.01e-5
+## # … with 1 more variable: .std.resid &lt;dbl&gt;, and abbreviated
+## #   variable names ¹​pop_density, ²​disadvantage
+```
+
+
+---
+
+# Where They Come From
+
+.pull-left[
+
+```r
+ex_lm |&gt; 
+  tidy() |&gt;
+  select(term, estimate)
+```
+
+```
+## # A tibble: 4 × 2
+##   term               estimate
+##   &lt;chr&gt;                 &lt;dbl&gt;
+## 1 (Intercept)          -22.1 
+## 2 pop_density            3.02
+## 3 disadvantageMedium     1.44
+## 4 disadvantageHigh       5.52
+```
+]
+
+.pull-right[
+
+```r
+communities[1,c(2, 4)]
+```
+
+```
+## # A tibble: 1 × 2
+##   pop_density disadvantage
+##         &lt;dbl&gt; &lt;fct&gt;       
+## 1        18.2 Low
+```
+
+```r
+fitted(ex_lm)[1]
+```
+
+```
+##        1 
+## 32.87378
+```
+]
+
+--
+
+Our regression formula:
+
+`$$\hat{y} = -22.1 + 3.02*PopDen + 1.44*DisMed + 5.52*DisHigh$$`
+--
+
+Multiplying through:
+
+`$$32.87 = -22.1 + 3.02*18.2 + 1.44*0 + 5.52*0$$`
+
+---
+
+# Counterfactual Values
+
+Sometimes we want to make a prediction using a set of **counterfactual** values
+
+--
+
+We can do this using the equation:
+
+`$$\hat{y} = -22.1 + 3.02*PopDen + 1.44*DisMed + 5.52*DisHigh$$`
+--
+
+What is our prediction for the average crime rate in a high disadvantage place with 10 population density?
+
+--
+
+Plug in, multiply through:
+
+`$$13.62 = -22.1 + 3.02*10 + 1.44*0 + 5.52*1$$`
+--
+
+We can do this with `predict()` and the `newdata =` argument:
+
+
+```r
+predict(ex_lm, newdata = data.frame(pop_density = 10, 
+                                    disadvantage = "High"))
+```
+
+```
+##        1 
+## 13.69857
+```
+
+.pull-right[
+.footnote[
+Only different due to rounding!
+]
+]
+
+---
+
+# Interpreting Intercepts
+
+This highlights what the intercept means:
+
+`$$-22.1 = -22.1 + 3.02*0 + 1.44*0 + 5.52*0$$`
+The expected crime rate for an area with *0 population density* and *low disadvantage* (i.e., not medium and not high)
+
+
+```r
+predict(ex_lm, newdata = data.frame(pop_density = 0, 
+                                    disadvantage = "Low"))
+```
+
+```
+##        1 
+## -22.0631
+```
+
+--
+
+The intercept alone is often not a useful parameter to interpret
+
+A location with 0 population density likely has a lot *lower* crime
+
+--
+
+
+```r
+communities |&gt; pull(pop_density) |&gt; min()
+```
+
+```
+## [1] 5.207884
+```
+
+.pull-right[
+.footnote[
+There aren't even any areas near 0!
+]
+]
+
+---
+class: inverse
+
+# Model Fit and Comparison
+
+
+---
+
+# Terminology
+
+**Specification**
+
+* The variables you include in your statistical model
+
+   * DAGs (and theory) help us with this!
+   * But so do **specification tests**
+   * We'll mess with this today
+
+--
+
+* The functional forms of those variables
+
+   * DAGs don't help us with this
+   * But theory and **specification tests** do!
+   * We'll mess with functional forms *next week*
+
+--
+
+**Specification tests** are a statistical method for testing if our model gets "better" (or "worse") when we make changes
+
+--
+
+**Fit statistics** are numbers that indicate how well a model fits the data
+
+--
+
+.text-center[
+*So what does it mean to be better or worse? Or to fit well?*
+]
+
+---
+
+# `\(R^2\)`
+
+The `\(R^2\)` value is a **fit statistic** that indicates the proportion of variation in outcome explained by the model
+
+--
+
+* Values closer to 1 mean the model explains more
+
+--
+
+* Values closer to 0 mean it explains less
+
+--
+
+`broom::glance()` is a quick way to get `\(R^2\)` (and some other fit statistics)
+
+
+```r
+lm_1 &lt;- lm(crime_rate ~ disadvantage, data = communities)
+glance(lm_1)
+```
+
+```
+## # A tibble: 1 × 12
+##   r.squared adj.r.s…¹ sigma stati…² p.value    df logLik   AIC   BIC
+##       &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1    0.0619    0.0555  21.2    9.79 7.61e-5     2 -1340. 2688. 2703.
+## # … with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;,
+## #   nobs &lt;int&gt;, and abbreviated variable names ¹​adj.r.squared,
+## #   ²​statistic
+```
+
+---
+# Comparing `\(R^2\)`
+
+
+```r
+lm_2 &lt;- lm(crime_rate ~ disadvantage + pop_density, data = communities)
+lm_3 &lt;- lm(crime_rate ~ disadvantage + pop_density + area, 
+           data = communities)
+*rbind(glance(lm_1), # rbind() stacks output as rows
+      glance(lm_2), 
+      glance(lm_3)) |&gt; select(r.squared)
+```
+
+```
+## # A tibble: 3 × 1
+##   r.squared
+##       &lt;dbl&gt;
+## 1    0.0619
+## 2    0.662 
+## 3    0.663
+```
+
+Adding `pop_density` explained a ton of the variation—but `area` didn't add much to that.
+
+
+---
+
+# Limitations of `\(R^2\)`
+
+`\(R^2\)` has drawbacks that limit utility for assessing a model
+
+* Adding variables always increases it, even if they're irrelevant
+
+--
+
+* Some things are harder or easier to predict
+
+   * `\(R^2 = 0.2\)` is great in some applications
+   * `\(R^2 = 0.9\)` is mediocre in others
+
+--
+
+* It doesn't give us a *decision rule* on whether one specification is better than another
+
+--
+
+* Later we'll `\(R^2\)` doesn't work for some types of models
+
+---
+
+# Why not include everything?
+
+Theory should be the first guide on whether to include (or omit) variables
+
+--
+
+But, all else equal, simple models have advantages:
+
+--
+
+* More statistical power / smaller standard errors&lt;sup&gt;1&lt;/sup&gt;
+
+.footnote[[1] Caveat: Including variables that are completely independent of treatment can *increase* statistical power]
+
+--
+
+* Easier to interpret
+
+   * What does the effect of `\(X\)` on `\(Y\)` conditional on `\(Z, W, K, J, and P\)` mean?
+
+--
+
+* Simple models are often more robust
+
+   * Less likely to accidentally control for a front door or collider
+
+
+--
+
+.text-center[
+**Parsimonious** models are ones that use fewer (or as few as possible) variables to accomplish their goal
+]
+
+---
+
+# (Multi)collinearity
+
+**Collinearity** is another practical reason to prefer parsimony
+
+--
+
+When an independent variable in your model is strongly predicted by one or more other independent variables in your model:
+
+* The model has difficulty separating their effects
+   * They're explaining the same variation!
+   * This makes identification *imprecise*
+* Consequence: Large standard errors
+
+--
+
+For example, if `\(y ~= b_1x + b_2z\)` but `\(r(x,z) = 0.9\)`
+* `\(b_1\)` and `\(b_2\)` won't be biased
+   * On *average* they'll be correct
+* `\(b_1\)` and `\(b_2\)` will be *unstable*
+   * Standard errors will be large
+   * Estimate magnitudes will be erratic
+
+
+---
+
+# Example
+
+
+```r
+cor_mat &lt;- matrix(c(1, 0.9, 0.3, 0.9, 1, 0.3, 0.3, 0.3, 1), nrow = 3)
+ex_data &lt;- MASS::mvrnorm(n = 250, rep(0, 3), cor_mat) |&gt;
+  data.frame() |&gt; setNames(c("x", "z", "y"))
+cor(ex_data)
+```
+
+```
+##           x         z         y
+## x 1.0000000 0.8933791 0.4221414
+## z 0.8933791 1.0000000 0.3680623
+## y 0.4221414 0.3680623 1.0000000
+```
+
+```r
+lm(y ~ x + z, data = ex_data) |&gt; tidy()
+```
+
+```
+## # A tibble: 3 × 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)  -0.0841    0.0623    -1.35  0.179   
+## 2 x             0.502     0.139      3.60  0.000382
+## 3 z            -0.0520    0.149     -0.350 0.727
+```
+
+This instability can even *flip signs*!
+
+---
+
+# Adjusted `\(R^2\)`
+
+The  **adjusted `\(R^2\)`** is one way to favor parsimony
+
+
+```r
+rbind(glance(lm_1),
+      glance(lm_2), 
+      glance(lm_3)) |&gt; 
+  select(r.squared, adj.r.squared)
+```
+
+```
+## # A tibble: 3 × 2
+##   r.squared adj.r.squared
+##       &lt;dbl&gt;         &lt;dbl&gt;
+## 1    0.0619        0.0555
+## 2    0.662         0.658 
+## 3    0.663         0.659
+```
+
+While the `\(R^2\)` went up a bit, the adjusted `\(R^2\)` didn't budge
+
+--
+
+Some drawbacks:
+
+* Still doesn't give us a hard rule on whether to use a variable
+* No longer can be interpreted as proportion of variance explained
+
+---
+
+# Specification Tests
+
+**Specification tests** are hypothesis tests for evaluating how well a model fits
+
+--
+
+They can be used to test if...
+
+* Including a variable improves fit
+
+--
+
+* Coefficients are equal to a value (e.g., 0)
+
+   * The t-test in regression output is doing this!
+
+--
+
+* Coefficients are equal to each other
+
+   * Useful if you're considering *combining* two variables
+
+--
+
+* Test if some other assumption is violated
+
+   * *We'll use a few of these later on*
+
+---
+
+# `anova()` for Comparisons
+
+
+Unintuitively, the `anova()` function can be used to compare linear models
+
+
+```r
+anova(lm_2, lm_3)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Model 1: crime_rate ~ disadvantage + pop_density
+## Model 2: crime_rate ~ disadvantage + pop_density + area
+##   Res.Df   RSS Df Sum of Sq      F Pr(&gt;F)
+## 1    296 47986                           
+## 2    295 47748  1    238.59 1.4741 0.2257
+```
+
+
+This produces a chi-square test of whether a given specification significantly reduces the sum of squares
+
+--
+
+Here `area` does *not* statistically significantly improve the model
+
+--
+
+This statistical test requires one model be **nested** in the other
+
+---
+
+# Nested Models
+
+Models are nested if every variable in the *less complex* model is included in the *more complex model*
+
+--
+
+When models are nested, we say...
+
+* The less complex one is the **restricted model**
+* The more complex one is the **unrestricted model**
+
+--
+
+What is something *restricted*?
+
+--
+
+Excluding a variable from a model is equivalent to say it has a *coefficient of zero*
+
+* i.e., we *restrict the coefficient to zero* when we omit that variable
+
+--
+
+When we exclude a path from a DAG, we're also *assuming a coefficient of zero for that path*
+
+* We can test this assumption using `anova()` and other specification tests
+* e.g., if our DAG indicated no direct effect of `area` on `crime_rate`, the prior test would support that assumption
+
+---
+
+# Another Example
+
+
+```r
+anova(lm_1, lm_2, lm_3)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Model 1: crime_rate ~ disadvantage
+## Model 2: crime_rate ~ disadvantage + pop_density
+## Model 3: crime_rate ~ disadvantage + pop_density + area
+##   Res.Df    RSS Df Sum of Sq        F Pr(&gt;F)    
+## 1    297 133081                                 
+## 2    296  47986  1     85095 525.7421 &lt;2e-16 ***
+## 3    295  47748  1       239   1.4741 0.2257    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+We can give `anova()` any number of models
+
+* Best to start with the *least complex* or *most restricted*
+* Each model is compared to the next one above it
+
+
+---
+
+# Warning
+
+Adding a collider to a model will almost always improve fit
+
+* `anova()` only tests if the model fits better
+* `anova()` doesn't know about your DAG
+
+.text-85[
+
+```r
+lm_4 &lt;- lm(crime_rate ~ disadvantage + incarceration, data = communities)
+anova(lm_1, lm_4)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Model 1: crime_rate ~ disadvantage
+## Model 2: crime_rate ~ disadvantage + incarceration
+##   Res.Df    RSS Df Sum of Sq      F    Pr(&gt;F)    
+## 1    297 133081                                  
+## 2    295 117321  2     15760 19.814 8.427e-09 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]
+
+--
+
+**Theory** is your first guide for what to include or not
+
+Tests are mainly to see if it is okay to exclude a *potential confounder*
+
+
+---
+
+# Wrap-Up
+
+Assignment:
+
+* Due 11:59 PM Friday 11 November
+
+Reading:
+
+* Huntington-Klein, N. (2022) *The Effect: An Introduction to Research Design and Causality*, New York, NY: Chapman and Hall/CRC Press. 
+   * Read Chapter 12: Opening the Toolbox and Chapter 13: Regression only up to (but not including) 13.2.2 Polynomials
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/cam_macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "tomorrow-night-bright",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

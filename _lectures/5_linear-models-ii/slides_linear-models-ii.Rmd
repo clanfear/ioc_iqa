@@ -1,0 +1,797 @@
+---
+title: "Linear Models II"
+subtitle: "IQA Lecture 5"
+author: "Charles Lanfear"
+date: "9 Nov 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+output:
+  xaringan::moon_reader:
+    css: "../assets/cam-css.css"
+    lib_dir: libs
+    nature:
+      highlightStyle: tomorrow-night-bright
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "../assets/cam_macros.js"
+      titleSlideClass: ["center","top"]
+---
+
+```{r setup, purl=FALSE}
+#| include: false
+options(width = 68)
+set.seed(7)
+knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, dev = "svg", fig.height = 4)
+```
+
+
+# Today
+
+Randomization (from last week)
+
+Regression Formulae
+
+Making Predictions
+
+Model Fit
+
+HELP FILES
+
+---
+
+# Setup
+
+Like usual, let's start by loading the communities data and converting our categorical variables to factors with appropriate levels
+
+.text-85[
+```{r, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(broom) 
+communities <- 
+  read_csv("https://clanfear.github.io/ioc_iqa/_data/communities.csv") |>
+  mutate(across(c(incarceration, disadvantage), 
+                ~ factor(., levels = c("Low", "Medium", "High"))))
+```
+]
+
+Again, we'll use `tidyverse` and `broom` today.
+
+---
+class: inverse
+
+# Randomization
+
+
+
+---
+
+# Non-Randomized Treatment
+
+Let's create example data with actual **potential outcomes**
+
+```{r}
+s_n <- 10000
+po_data <- tibble(
+  bd = runif(s_n, 0, 1), # Random uniform variable
+  x  = rbinom(s_n, 1, bd), # Random binary variable
+  y0 = rnorm(s_n, 2*bd, 1),
+  y1 = rnorm(s_n, 2*bd + 1, 1)) |> # Effect size of 1 #<<
+  mutate(y = ifelse(x==1, y1, y0)) # Treatment just selects outcome
+```
+
+
+* `x` is a binary **treatment** with effect size of **1**
+* `y0` is the outcome if the unit is **untreated**
+* `y1` is the outcome if the unit is **treated**
+* `bd` is a backdoor predicting treatment *and* `y`
+   * `bd` improves both potential outcomes *the same* amount
+   * `bd` also makes treatment more likely
+
+.text-center[
+*Units that get treated tend to have higher potential outcomes*
+]
+
+---
+
+# Estimation
+
+Like usual, if we can *see* the back door, we can identify the effect of $X$ on $Y$
+
+.pull-left[
+```{r}
+lm(y ~ x + bd, data = po_data) |>
+  tidy() |> 
+  select(term, estimate)
+```
+]
+.pull-right[
+```{r}
+lm(y ~ x, data = po_data) |>
+  tidy() |> 
+  select(term, estimate)
+```
+]
+
+--
+
+.text-center[
+*But even if we can't, we can randomize it away*
+]
+
+--
+
+`sample()` is an easy way to randomly select units
+
+```{r}
+sample(0:1, 20, replace= TRUE)
+```
+
+---
+
+# Random Assignment
+
+Let's select random units to receive the treatment
+
+```{r}
+po_data <- po_data |>
+  mutate(treat = sample(0:1, n(), replace=TRUE),
+         yt = ifelse(treat==1, y1, y0))
+```
+
+All the treatment does is determine which potential outcome we see
+
+--
+
+.pull-left[
+```{r}
+lm(y ~ x + bd, data = po_data) |>
+  tidy() |> 
+  select(term, estimate)
+```
+]
+.pull-right[
+```{r}
+lm(yt ~ treat, data = po_data) |>
+  tidy() |> 
+  select(term, estimate)
+```
+]
+
+.text-center[
+*Randomization closes back doors without adjustment!*
+]
+
+---
+
+# Randomization DAGs
+
+Randomization breaks back doors—even when we can't observe the responsible variables!
+
+
+.pull-left[
+
+Confounded by an unobservable $BD$:
+
+```{tikz bd-dag, fig.width = 2.75, cache = TRUE, purl = FALSE, echo = FALSE}
+\usetikzlibrary{positioning}
+\definecolor{black}{HTML}{000000}
+\tikzset{
+    > = stealth,
+    every node/.append style = {
+        draw = none,
+        scale = 3
+    },
+    every path/.append style = {
+        arrows = ->,
+        draw = black,
+        fill = none,
+        scale = 1,
+        line width = 1.5mm
+    },
+    hidden/.style = {
+        draw = black,
+        shape = circle,
+        inner sep = 1pt
+    }
+}
+\tikz{
+  \node (Y) at (0, 5) {$Y$};
+  \node[hidden] (BD) at (5, 0) {$BD$};
+  \node (X) at (5, 5) {$X$};
+  \path (X) edge (Y);
+  \path (BD) edge (Y);
+  \path (BD) edge (X);
+  }
+```
+]
+
+.pull-right[
+
+$BD$ is irrelevant if we can randomize!
+
+```{tikz ran-dag, fig.width = 2.75, cache = TRUE, purl = FALSE, echo = FALSE}
+\usetikzlibrary{positioning}
+\definecolor{black}{HTML}{000000}
+\tikzset{
+    > = stealth,
+    every node/.append style = {
+        draw = none,
+        scale = 3
+    },
+    every path/.append style = {
+        arrows = ->,
+        draw = black,
+        fill = none,
+        scale = 1,
+        line width = 1.5mm
+    },
+    hidden/.style = {
+        draw = black,
+        shape = circle,
+        inner sep = 1pt
+    }
+}
+\tikz{
+  \node (Y) at (0, 5) {$Y$};
+  \node[hidden] (BD) at (5, 0) {$BD$};
+  \node (T) at (5, 5) {$T$};
+  \path (T) edge (Y);
+  \path (BD) edge (Y);
+  }
+```
+]
+
+--
+
+&nbsp;
+
+If we're interested in the effect of $X$ here, we have to assume $T$ is roughly equivalent to $X$ (it is **consistent** with $X$)
+
+---
+class: inverse
+
+# Two small asides
+
+&nbsp;
+
+&nbsp;
+
+.pull-left[
+![:width 50%](img/soundgarden.jpg)
+]
+.pull-right[
+![:width 50%](img/soundgarden.jpg)
+]
+
+---
+
+# Help Files and Methods
+
+Remember you can get help with a function using `?` (e.g., `lm()`):
+
+```{r, eval = FALSE}
+?tidy
+```
+
+--
+
+Some functions, `tidy()`, work differently when you give them different types of **arguments**.
+
+--
+
+These different ways of working are called **methods**.
+
+For example, `tidy.lm()` is the `tidy()` method for objects made my `lm()`
+
+```{r, eval = FALSE}
+?tidy.lm
+```
+
+--
+
+`summary()` works this way too:
+
+```{r, eval = FALSE}
+?summary.lm # Method for lm objects
+```
+
+
+---
+
+# Dagitty
+
+
+Let's say we have this DAG and we're not sure if we can identify the effect of $Z$ on $Y$
+
+```{tikz sim-dag, fig.width = 2.75, cache = TRUE, purl = FALSE, echo = FALSE}
+\usetikzlibrary{positioning}
+\definecolor{black}{HTML}{000000}
+\tikzset{
+    > = stealth,
+    every node/.append style = {
+        draw = none,
+        scale = 3
+    },
+    every path/.append style = {
+        arrows = ->,
+        draw = black,
+        fill = none,
+        scale = 1,
+        line width = 1.5mm
+    },
+    hidden/.style = {
+        draw = black,
+        shape = circle,
+        inner sep = 1pt
+    }
+}
+\tikz{
+  \node (Y) at (0, 5) {$Y$};
+  \node (D) at (5, 0) {$D$};
+  \node (Z) at (5, 5) {$Z$};
+  \node (E) at (0, 0) {$E$};
+  \path (Z) edge (Y);
+  \path (D) edge (Y);
+  \path (E) edge (Y);
+  \path (E) edge (Z);
+  \path (D) edge (Z);
+  \path (E) edge (D);
+  }
+```
+
+--
+
+&nbsp;
+
+We could do it all by hand, writing down the paths and thinking it out. 
+
+--
+
+But thinking hurts brain, so instead we could also use [`dagitty` (http://www.dagitty.net/dags.html)](http://www.dagitty.net/dags.html) to determine if we can identify an effect.
+
+---
+class: inverse
+
+# Prediction
+
+---
+
+# Fitted Values
+
+We can get **fitted values** using `fitted()` or `broom::augment()`
+
+```{r}
+ex_lm <- lm(crime_rate ~ pop_density + disadvantage, 
+            data = communities)
+fitted(ex_lm) |> head(4) # Returns them as a vector
+```
+
+
+```{r}
+augment(ex_lm) |> head(4) # Returns them added to original data
+```
+
+
+---
+
+# Where They Come From
+
+.pull-left[
+```{r}
+ex_lm |> 
+  tidy() |>
+  select(term, estimate)
+```
+]
+
+.pull-right[
+```{r}
+communities[1,c(2, 4)]
+fitted(ex_lm)[1]
+```
+]
+
+--
+
+Our regression formula:
+
+$$\hat{y} = -22.1 + 3.02*PopDen + 1.44*DisMed + 5.52*DisHigh$$
+--
+
+Multiplying through:
+
+$$32.87 = -22.1 + 3.02*18.2 + 1.44*0 + 5.52*0$$
+
+---
+
+# Counterfactual Values
+
+Sometimes we want to make a prediction using a set of **counterfactual** values
+
+--
+
+We can do this using the equation:
+
+$$\hat{y} = -22.1 + 3.02*PopDen + 1.44*DisMed + 5.52*DisHigh$$
+--
+
+What is our prediction for the average crime rate in a high disadvantage place with 10 population density?
+
+--
+
+Plug in, multiply through:
+
+$$13.62 = -22.1 + 3.02*10 + 1.44*0 + 5.52*1$$
+--
+
+We can do this with `predict()` and the `newdata =` argument:
+
+```{r}
+predict(ex_lm, newdata = data.frame(pop_density = 10, 
+                                    disadvantage = "High"))
+```
+
+.pull-right[
+.footnote[
+Only different due to rounding!
+]
+]
+
+---
+
+# Interpreting Intercepts
+
+This highlights what the intercept means:
+
+$$-22.1 = -22.1 + 3.02*0 + 1.44*0 + 5.52*0$$
+The expected crime rate for an area with *0 population density* and *low disadvantage* (i.e., not medium and not high)
+
+```{r}
+predict(ex_lm, newdata = data.frame(pop_density = 0, 
+                                    disadvantage = "Low"))
+```
+
+--
+
+The intercept alone is often not a useful parameter to interpret
+
+A location with 0 population density likely has a lot *lower* crime
+
+--
+
+```{r}
+communities |> pull(pop_density) |> min()
+```
+
+.pull-right[
+.footnote[
+There aren't even any areas near 0!
+]
+]
+
+---
+class: inverse
+
+# Model Fit and Comparison
+
+
+---
+
+# Terminology
+
+**Specification**
+
+* The variables you include in your statistical model
+
+   * DAGs (and theory) help us with this!
+   * But so do **specification tests**
+   * We'll mess with this today
+
+--
+
+* The functional forms of those variables
+
+   * DAGs don't help us with this
+   * But theory and **specification tests** do!
+   * We'll mess with functional forms *next week*
+
+--
+
+**Specification tests** are a statistical method for testing if our model gets "better" (or "worse") when we make changes
+
+--
+
+**Fit statistics** are numbers that indicate how well a model fits the data
+
+--
+
+.text-center[
+*So what does it mean to be better or worse? Or to fit well?*
+]
+
+---
+
+# $R^2$
+
+The $R^2$ value is a **fit statistic** that indicates the proportion of variation in outcome explained by the model
+
+--
+
+* Values closer to 1 mean the model explains more
+
+--
+
+* Values closer to 0 mean it explains less
+
+--
+
+`broom::glance()` is a quick way to get $R^2$ (and some other fit statistics)
+
+```{r}
+lm_1 <- lm(crime_rate ~ disadvantage, data = communities)
+glance(lm_1)
+```
+
+---
+# Comparing $R^2$
+
+```{r}
+lm_2 <- lm(crime_rate ~ disadvantage + pop_density, data = communities)
+lm_3 <- lm(crime_rate ~ disadvantage + pop_density + area, 
+           data = communities)
+rbind(glance(lm_1), # rbind() stacks output as rows #<<
+      glance(lm_2), 
+      glance(lm_3)) |> select(r.squared)
+```
+
+Adding `pop_density` explained a ton of the variation—but `area` didn't add much to that.
+
+
+---
+
+# Limitations of $R^2$
+
+$R^2$ has drawbacks that limit utility for assessing a model
+
+* Adding variables always increases it, even if they're irrelevant
+
+--
+
+* Some things are harder or easier to predict
+
+   * $R^2 = 0.2$ is great in some applications
+   * $R^2 = 0.9$ is mediocre in others
+
+--
+
+* It doesn't give us a *decision rule* on whether one specification is better than another
+
+--
+
+* Later we'll $R^2$ doesn't work for some types of models
+
+---
+
+# Why not include everything?
+
+Theory should be the first guide on whether to include (or omit) variables
+
+--
+
+But, all else equal, simple models have advantages:
+
+--
+
+* More statistical power / smaller standard errors<sup>1</sup>
+
+.footnote[[1] Caveat: Including variables that are completely independent of treatment can *increase* statistical power]
+
+--
+
+* Easier to interpret
+
+   * What does the effect of $X$ on $Y$ conditional on $Z, W, K, J, and P$ mean?
+
+--
+
+* Simple models are often more robust
+
+   * Less likely to accidentally control for a front door or collider
+
+
+--
+
+.text-center[
+**Parsimonious** models are ones that use fewer (or as few as possible) variables to accomplish their goal
+]
+
+---
+
+# (Multi)collinearity
+
+**Collinearity** is another practical reason to prefer parsimony
+
+--
+
+When an independent variable in your model is strongly predicted by one or more other independent variables in your model:
+
+* The model has difficulty separating their effects
+   * They're explaining the same variation!
+   * This makes identification *imprecise*
+* Consequence: Large standard errors
+
+--
+
+For example, if $y ~= b_1x + b_2z$ but $r(x,z) = 0.9$
+* $b_1$ and $b_2$ won't be biased
+   * On *average* they'll be correct
+* $b_1$ and $b_2$ will be *unstable*
+   * Standard errors will be large
+   * Estimate magnitudes will be erratic
+
+
+---
+
+# Example
+
+```{r}
+cor_mat <- matrix(c(1, 0.9, 0.3, 0.9, 1, 0.3, 0.3, 0.3, 1), nrow = 3)
+ex_data <- MASS::mvrnorm(n = 250, rep(0, 3), cor_mat) |>
+  data.frame() |> setNames(c("x", "z", "y"))
+cor(ex_data)
+lm(y ~ x + z, data = ex_data) |> tidy()
+```
+
+This instability can even *flip signs*!
+
+---
+
+# Adjusted $R^2$
+
+The  **adjusted $R^2$** is one way to favor parsimony
+
+```{r}
+rbind(glance(lm_1),
+      glance(lm_2), 
+      glance(lm_3)) |> 
+  select(r.squared, adj.r.squared)
+```
+
+While the $R^2$ went up a bit, the adjusted $R^2$ didn't budge
+
+--
+
+Some drawbacks:
+
+* Still doesn't give us a hard rule on whether to use a variable
+* No longer can be interpreted as proportion of variance explained
+
+---
+
+# Specification Tests
+
+**Specification tests** are hypothesis tests for evaluating how well a model fits
+
+--
+
+They can be used to test if...
+
+* Including a variable improves fit
+
+--
+
+* Coefficients are equal to a value (e.g., 0)
+
+   * The t-test in regression output is doing this!
+
+--
+
+* Coefficients are equal to each other
+
+   * Useful if you're considering *combining* two variables
+
+--
+
+* Test if some other assumption is violated
+
+   * *We'll use a few of these later on*
+
+---
+
+# `anova()` for Comparisons
+
+
+Unintuitively, the `anova()` function can be used to compare linear models
+
+```{r}
+anova(lm_2, lm_3)
+```
+
+
+This produces a chi-square test of whether a given specification significantly reduces the sum of squares
+
+--
+
+Here `area` does *not* statistically significantly improve the model
+
+--
+
+This statistical test requires one model be **nested** in the other
+
+---
+
+# Nested Models
+
+Models are nested if every variable in the *less complex* model is included in the *more complex model*
+
+--
+
+When models are nested, we say...
+
+* The less complex one is the **restricted model**
+* The more complex one is the **unrestricted model**
+
+--
+
+What is something *restricted*?
+
+--
+
+Excluding a variable from a model is equivalent to say it has a *coefficient of zero*
+
+* i.e., we *restrict the coefficient to zero* when we omit that variable
+
+--
+
+When we exclude a path from a DAG, we're also *assuming a coefficient of zero for that path*
+
+* We can test this assumption using `anova()` and other specification tests
+* e.g., if our DAG indicated no direct effect of `area` on `crime_rate`, the prior test would support that assumption
+
+---
+
+# Another Example
+
+```{r}
+anova(lm_1, lm_2, lm_3)
+```
+
+We can give `anova()` any number of models
+
+* Best to start with the *least complex* or *most restricted*
+* Each model is compared to the next one above it
+
+
+---
+
+# Warning
+
+Adding a collider to a model will almost always improve fit
+
+* `anova()` only tests if the model fits better
+* `anova()` doesn't know about your DAG
+
+.text-85[
+```{r}
+lm_4 <- lm(crime_rate ~ disadvantage + incarceration, data = communities)
+anova(lm_1, lm_4)
+```
+]
+
+--
+
+**Theory** is your first guide for what to include or not
+
+Tests are mainly to see if it is okay to exclude a *potential confounder*
+
+
+---
+
+# Wrap-Up
+
+Assignment:
+
+* Due 11:59 PM Friday 11 November
+
+Reading:
+
+* Huntington-Klein, N. (2022) *The Effect: An Introduction to Research Design and Causality*, New York, NY: Chapman and Hall/CRC Press. 
+   * Read Chapter 12: Opening the Toolbox and Chapter 13: Regression only up to (but not including) 13.2.2 Polynomials
