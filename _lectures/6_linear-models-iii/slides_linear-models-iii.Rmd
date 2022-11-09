@@ -1,0 +1,36 @@
+---
+title: "Linear Models III"
+subtitle: "IQA Lecture 6"
+author: "Charles Lanfear"
+date: "14 Nov 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+output:
+  xaringan::moon_reader:
+    css: "../assets/cam-css.css"
+    lib_dir: libs
+    nature:
+      highlightStyle: tomorrow-night-bright
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "../assets/cam_macros.js"
+      titleSlideClass: ["center","top"]
+---
+
+```{r setup, purl=FALSE}
+#| include: false
+options(width = 68)
+set.seed(7)
+knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, dev = "svg", fig.height = 4)
+```
+
+
+# Today
+
+Functional Forms
+
+* Logs
+* Polynomials
+
+Residual Plots
+
+* Non-linearities
+* QQ Plots

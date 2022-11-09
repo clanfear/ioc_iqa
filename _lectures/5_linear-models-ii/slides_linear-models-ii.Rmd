@@ -873,6 +873,10 @@ class: inverse
 
 # Wrap-Up
 
+Next week:
+
+* **Rescheduled to Monday at 4 PM**
+
 Assignment:
 
 * Due 11:59 PM Friday 11 November
