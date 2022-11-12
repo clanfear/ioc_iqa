@@ -1,16 +1,16 @@
 ---
 title: "Week 6: Linear Models III"
-description: "Polynomials and interactions: You thought you'd escaped calculus, but you were wrong"
+description: "Functional Forms: You thought you'd escaped calculus, but you were wrong"
 author: "Charles Lanfear"
 date: "2022-11-16"
 draft: false
 ---
 
-Lecture Slides (forthcoming)
+[Lecture Slides](https://clanfear.github.io/ioc_iqa/_lectures/6_linear-models-iii/slides_linear-models-iii.html)
 
-.R script to follow along (forthcoming)
+[.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/6_linear-models-iii/slides_linear-models-iii.R)
 
-Lecture Recording (forthcoming)
+Lecture Recording (see Moodle)
 
 Reading:
 

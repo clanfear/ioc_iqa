@@ -20,7 +20,7 @@ borough_deprivation <- vroom::vroom("C:/Users/cl948/Downloads/indices-of-multipl
     dep == 3 ~ "High",
     TRUE ~ "ERROR"
   )) %>%
-  select(borough, deprivation)
+  select(borough, deprivation, dep_score =dep)
 
 borough_pop_density <- vroom::vroom("C:/Users/cl948/Downloads/housing-density-borough.csv") %>%
   filter(Year == 2021) %>%
@@ -47,3 +47,9 @@ metro_2021 <- vroom::vroom(list.files("C:/Users/cl948/Downloads/metro_2021/", re
   left_join(borough_pop_density)
 
 write_csv(metro_2021, file = "./_data/metro_2021.csv")
+
+metro_2021_violence_wide <- metro_2021 |> 
+  select(borough, month, violence_and_sexual_offences, deprivation, subregion, pop, area) |> 
+  mutate(month = str_c("month_", lubridate::month(month))) |> 
+  pivot_wider(names_from = month, values_from = violence_and_sexual_offences)
+write_csv(metro_2021_violence_wide, file = "./_data/metro_2021_violence_wide.csv")

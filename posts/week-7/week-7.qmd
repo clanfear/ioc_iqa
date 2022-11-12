@@ -1,6 +1,6 @@
 ---
-title: "Week 7: Generalized Linear Models"
-description: "Adapting the linear model to new problems."
+title: "Week 7: Linear Models IV"
+description: "Interactions: Handling heterogeneity"
 author: "Charles Lanfear"
 date: "2022-11-23"
 draft: false

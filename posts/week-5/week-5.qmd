@@ -11,7 +11,7 @@ draft: false
 [.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/5_linear-models-ii/slides_linear-models-ii.R)
 
 
-Lecture Recording (forthcoming)
+Lecture Recording (see Moodel)
 
 [Download Assignment 1](https://clanfear.github.io/ioc_iqa/_assignments/assignment-1.docx)
 
