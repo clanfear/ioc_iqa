@@ -25,15 +25,14 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, dev = 
 
 # Today
 
-Comparing Models
+### Comparing Models
 
-Functional Forms
+### Pivoting Data
 
-* Polynomials
+### Polynomials
 
-Residual Plots
+### Residual Plots
 
-* Non-linearities
 
 ---
 
@@ -80,12 +79,14 @@ They can be used to test if...
 
 * Many other assumptions are violated
 
+   * *We'll see some of these another day*
+
 --
 
 &nbsp;
 
 .text-center[
-*We'll do all of these things by the end of the term, but for now, let's focus on *comparing models**
+*We'll do all of these things by the end of the term, but for now, let's focus on **comparing models***
 ]
 
 ---
@@ -177,8 +178,12 @@ anova(lm_1, lm_4)
 This test is mainly to see if it is okay to exclude *potential confounder*
 
 ---
+class: inverse
 
 # Pivoting Data
+
+![:width 50%](img/tidyr-pivoting.gif)
+.footnote[Source: [Garrick Aden-Buie](https://github.com/gadenbuie/tidyexplain#pivot-wider-and-longer)]
 
 ---
 # London Boroughs
@@ -286,7 +291,21 @@ head(metro_long)
 
 --
 
-Now we can run some models again!
+Now we can run some models again—but first, let's see *pivoting back*
+
+---
+
+# `pivot_longer()`
+
+Maybe you *want* the wider data, because your model needs it (e.g., SEM) or to make a data table
+
+```{r}
+metro_wide_again <- metro_long |>
+  pivot_wider(names_from   = month, # Turn months into col names #<<
+              values_from  = violence, # Turn violence in col values #<<
+              names_prefix = "month_") # Start col names with month_ #<<
+metro_wide_again |>  head(3)
+```
 
 ---
 class: inverse
@@ -427,6 +446,10 @@ The statistical significance of the new term suggests there is indeed a **non-li
 
 # Our New Line
 
+`geom_smooth()` can produce polynomials using the same formula
+
+--
+
 .pull-left[
 ```{r viol-curve, fig.show='hide'}
 metro_long |> 
@@ -442,6 +465,8 @@ metro_long |>
 ![](`r knitr::fig_chunk("viol-curve", "svg")`)
 ]
 
+--
+
 That's a pretty strong curve!
 
 Looks like violence peaks in the summer—something we'd expect theoretically!
@@ -449,6 +474,10 @@ Looks like violence peaks in the summer—something we'd expect theoretically!
 ---
 
 # Plotting Residuals
+
+We can use the residuals from the new model for a diagnostic plot
+
+--
 
 .pull-left[
 ```{r viol-resid-3, fig.show='hide'}
@@ -567,6 +596,62 @@ How do they compare?
 --
 
 No support for the cubic model here either!
+
+---
+
+# Fitted vs. Residuals
+
+Before we plotted residuals against `month`—but a more general diagnostic is plotting residuals against the fitted values
+
+.pull-left[
+```{r resid-fit, fig.show='hide'}
+lm_viol |> 
+  augment() |>
+  ggplot(aes(x = .fitted, 
+             y = .resid)) + 
+  geom_point() +
+  geom_hline(yintercept = 0, 
+             color = "red") +
+  geom_smooth()
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("resid-fit", "svg")`)
+]
+
+This looks very familiar—it still suggests there's a curve!
+
+---
+
+# Again
+
+This one looks a little different with our quadratic term
+
+.pull-left[
+```{r resid-fit-2, fig.show='hide'}
+lm_viol_2 |> 
+  augment() |>
+  ggplot(aes(x = .fitted, 
+             y = .resid)) + 
+  geom_point() +
+  geom_hline(yintercept = 0, 
+             color = "red") +
+  geom_smooth()
+```
+]
+.pull-right[
+![](`r knitr::fig_chunk("resid-fit-2", "svg")`)
+]
+
+It still looks like we're doing a good job, though maybe there's a *bit* of poor prediction for very high values
+
+--
+
+Basic guidelines:
+
+* The line should be fairly straight
+* Residuals should be similarly spread out at every fitted value
+* Keep an eye out for outliers—points very far from the line
 
 ---
 class: inverse

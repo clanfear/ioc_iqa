@@ -32,15 +32,14 @@ class: center, top, title-slide
 
 # Today
 
-Comparing Models
+### Comparing Models
 
-Functional Forms
+### Pivoting Data
 
-* Polynomials
+### Polynomials
 
-Residual Plots
+### Residual Plots
 
-* Non-linearities
 
 ---
 
@@ -88,12 +87,14 @@ They can be used to test if...
 
 * Many other assumptions are violated
 
+   * *We'll see some of these another day*
+
 --
 
 &amp;nbsp;
 
 .text-center[
-*We'll do all of these things by the end of the term, but for now, let's focus on *comparing models**
+*We'll do all of these things by the end of the term, but for now, let's focus on **comparing models***
 ]
 
 ---
@@ -224,8 +225,12 @@ anova(lm_1, lm_4)
 This test is mainly to see if it is okay to exclude *potential confounder*
 
 ---
+class: inverse
 
 # Pivoting Data
+
+![:width 50%](img/tidyr-pivoting.gif)
+.footnote[Source: [Garrick Aden-Buie](https://github.com/gadenbuie/tidyexplain#pivot-wider-and-longer)]
 
 ---
 # London Boroughs
@@ -396,7 +401,35 @@ head(metro_long)
 
 --
 
-Now we can run some models again!
+Now we can run some models again—but first, let's see *pivoting back*
+
+---
+
+# `pivot_longer()`
+
+Maybe you *want* the wider data, because your model needs it (e.g., SEM) or to make a data table
+
+
+```r
+metro_wide_again &lt;- metro_long |&gt;
+* pivot_wider(names_from   = month, # Turn months into col names
+*             values_from  = violence, # Turn violence in col values
+*             names_prefix = "month_") # Start col names with month_
+metro_wide_again |&gt;  head(3)
+```
+
+```
+## # A tibble: 3 × 17
+##   borough       depri…¹ subre…²    pop  area month_1 month_2 month_3
+##   &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1 Barking and … High    East    221495  36.1     469     449     561
+## 2 Barnet        Medium  North   411275  86.7     530     580     772
+## 3 Bexley        Low     East    256845  60.6     370     343     507
+## # … with 9 more variables: month_4 &lt;dbl&gt;, month_5 &lt;dbl&gt;,
+## #   month_6 &lt;dbl&gt;, month_7 &lt;dbl&gt;, month_8 &lt;dbl&gt;, month_9 &lt;dbl&gt;,
+## #   month_10 &lt;dbl&gt;, month_11 &lt;dbl&gt;, month_12 &lt;dbl&gt;, and abbreviated
+## #   variable names ¹​deprivation, ²​subregion
+```
 
 ---
 class: inverse
@@ -520,7 +553,7 @@ Recall that a *squared* term (e.g. `\(x^2\)`) in an equation creates a *parabola
 curve(2 + 0.5*x + 0.25*x^2, from = -3, to = 1, ylab = "y")
 ```
 
-&lt;img src="slides_linear-models-iii_files/figure-html/unnamed-chunk-11-1.svg" style="display: block; margin: auto auto auto 0;" /&gt;
+&lt;img src="slides_linear-models-iii_files/figure-html/unnamed-chunk-12-1.svg" style="display: block; margin: auto auto auto 0;" /&gt;
 
 --
 
@@ -558,6 +591,10 @@ The statistical significance of the new term suggests there is indeed a **non-li
 
 # Our New Line
 
+`geom_smooth()` can produce polynomials using the same formula
+
+--
+
 .pull-left[
 
 ```r
@@ -574,6 +611,8 @@ metro_long |&gt;
 ![](slides_linear-models-iii_files/figure-html/viol-curve-1.svg)
 ]
 
+--
+
 That's a pretty strong curve!
 
 Looks like violence peaks in the summer—something we'd expect theoretically!
@@ -581,6 +620,10 @@ Looks like violence peaks in the summer—something we'd expect theoretically!
 ---
 
 # Plotting Residuals
+
+We can use the residuals from the new model for a diagnostic plot
+
+--
 
 .pull-left[
 
@@ -735,6 +778,64 @@ How do they compare?
 --
 
 No support for the cubic model here either!
+
+---
+
+# Fitted vs. Residuals
+
+Before we plotted residuals against `month`—but a more general diagnostic is plotting residuals against the fitted values
+
+.pull-left[
+
+```r
+lm_viol |&gt; 
+  augment() |&gt;
+  ggplot(aes(x = .fitted, 
+             y = .resid)) + 
+  geom_point() +
+  geom_hline(yintercept = 0, 
+             color = "red") +
+  geom_smooth()
+```
+]
+.pull-right[
+![](slides_linear-models-iii_files/figure-html/resid-fit-1.svg)
+]
+
+This looks very familiar—it still suggests there's a curve!
+
+---
+
+# Again
+
+This one looks a little different with our quadratic term
+
+.pull-left[
+
+```r
+lm_viol_2 |&gt; 
+  augment() |&gt;
+  ggplot(aes(x = .fitted, 
+             y = .resid)) + 
+  geom_point() +
+  geom_hline(yintercept = 0, 
+             color = "red") +
+  geom_smooth()
+```
+]
+.pull-right[
+![](slides_linear-models-iii_files/figure-html/resid-fit-2-1.svg)
+]
+
+It still looks like we're doing a good job, though maybe there's a *bit* of poor prediction for very high values
+
+--
+
+Basic guidelines:
+
+* The line should be fairly straight
+* Residuals should be similarly spread out at every fitted value
+* Keep an eye out for outliers—points very far from the line
 
 ---
 class: inverse

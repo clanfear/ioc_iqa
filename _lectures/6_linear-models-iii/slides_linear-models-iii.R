@@ -35,6 +35,12 @@ metro_long <- metro_long |>
   mutate(month = parse_number(month))
 head(metro_long)
 
+metro_wide_again <- metro_long |>
+  pivot_wider(names_from   = month, # Turn months into col names #<<
+              values_from  = violence, # Turn violence in col values #<<
+              names_prefix = "month_") # Start col names with month_ #<<
+metro_wide_again |>  head(3)
+
 lm_viol <- lm(violence ~ month, data = metro_long)
 lm_viol |> tidy() |> select(term, estimate, std.error)
 
@@ -85,3 +91,21 @@ rbind(glance(lm_viol), glance(lm_viol_2), glance(lm_viol_3)) |>
   select(r.squared, adj.r.squared)
 
 anova(lm_viol, lm_viol_2, lm_viol_3)
+
+lm_viol |> 
+  augment() |>
+  ggplot(aes(x = .fitted, 
+             y = .resid)) + 
+  geom_point() +
+  geom_hline(yintercept = 0, 
+             color = "red") +
+  geom_smooth()
+
+lm_viol_2 |> 
+  augment() |>
+  ggplot(aes(x = .fitted, 
+             y = .resid)) + 
+  geom_point() +
+  geom_hline(yintercept = 0, 
+             color = "red") +
+  geom_smooth()
