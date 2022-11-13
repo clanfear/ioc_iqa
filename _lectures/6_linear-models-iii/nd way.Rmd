@@ -29,11 +29,13 @@ Comparing Models
 
 Functional Forms
 
+* Logs
 * Polynomials
 
 Residual Plots
 
 * Non-linearities
+* QQ Plots
 
 ---
 
@@ -177,8 +179,13 @@ anova(lm_1, lm_4)
 This test is mainly to see if it is okay to exclude *potential confounder*
 
 ---
+class: inverse
 
-# Pivoting Data
+# Polynomials
+
+&nbsp;
+
+![:width 70%](img/curves.png)
 
 ---
 # London Boroughs
@@ -252,16 +259,11 @@ metro_long <- metro_wide |>
                names_to  = "month", # Put col names in month column #<<
                values_to = "violence") # Put values in violence column #<<
 metro_long |> select(borough, month, violence) |> head(3)
-```
-
---
-
-```{r}
 dim(metro_long)
 ```
 
 
-.pull-right-60[
+.pull-right[
 .footnote[Way fewer columns and way more rows!]
 ]
 
@@ -269,14 +271,14 @@ dim(metro_long)
 
 # How it works
 
-![:width 50%](img/tidyr-pivoting.gif)
+&nbsp;
+
+![:width 70%](img/tidyr-pivoting.gif)
 .footnote[Source: [Garrick Aden-Buie](https://github.com/gadenbuie/tidyexplain#pivot-wider-and-longer)]
 
 ---
 
 # `parse_number()`
-
-To make `month` analytically friendly, we can convert it from strings like `"month_1"` to numbers using `parse_number()`
 
 ```{r}
 metro_long <- metro_long |>
@@ -284,18 +286,7 @@ metro_long <- metro_long |>
 head(metro_long)
 ```
 
---
 
-Now we can run some models again!
-
----
-class: inverse
-
-# Polynomials
-
-&nbsp;
-
-![:width 70%](img/curves.png)
 
 
 ---
@@ -323,32 +314,21 @@ Or is it more likely to range *up and down* through the year?
 
 Looking at residuals can help us figure this out
 
-* Recall that residuals are *what our model isn't predicting*
-
 .pull-left[
 ```{r viol-resid-1, fig.show='hide'}
 lm_viol |> 
   augment() |>
-  ggplot(aes(x = month, 
-             y = .resid)) + 
-  geom_point() +
-  geom_hline(yintercept = 0, 
-             color = "red")
+  ggplot(aes(x = month, y = .resid)) + 
+  geom_point()
 ```
 ]
 .pull-right[
 ![](`r knitr::fig_chunk("viol-resid-1", "svg")`)
 ]
 
---
+Residuals should be flat with respect to predictors
 
-The residuals should have a mean of zero at every value of month
-
-* i.e., they should not appear to follow a *curve*
-
---
-
-With many data points it can be hard to tell if there is anything going on!
+With a lot of spread-out data points, it can be hard to tell if there is anything going on
 
 ---
 
@@ -362,11 +342,8 @@ By default, it fits a **spline**—a flexible curved line
 ```{r viol-resid-2, fig.show='hide'}
 lm_viol |> 
   augment() |>
-  ggplot(aes(x = month, 
-             y = .resid)) + 
-  geom_point() +
-  geom_hline(yintercept = 0, 
-             color = "red") +
+  ggplot(aes(x = month, y = .resid)) + 
+  geom_point() + 
   geom_smooth() #<<
 ```
 ]
@@ -374,209 +351,60 @@ lm_viol |>
 ![](`r knitr::fig_chunk("viol-resid-2", "svg")`)
 ]
 
---
-
 It looks like we're failing to account for a curved relationship
 
-* We're underpredicting crime in the summer
-* We're overpredicting crime in the winter
-
---
-
-*So why not make a curved line?*
-
-
----
-# Polynomial curves
-
-Recall that a *squared* term (e.g. $x^2$) in an equation creates a *parabola*:
-
-$$y = 2 + 0.5x + 0.25x^2$$
-
-
-```{r}
-#| fig.height: 3
-#| fig.width: 6
-#| fig.align: "left"
-curve(2 + 0.5*x + 0.25*x^2, from = -3, to = 1, ylab = "y")
-```
-
---
-
-We can create these in our regression model!
+* You can't remove a *curve* by subtracting a *straight line*
 
 ---
 
-# Quadratic polynomials
+# Quadratic Polynomials
 
-We can create the quadratic term directly in the formula using `I(x^2)` for any `x`<sup>1</sup>
+**Quadratic polynomials** 
+
 
 ```{r}
 lm_viol_2 <- lm(violence ~ month + I(month^2), data = metro_long)
-lm_viol_2 |> tidy() |> select(term, estimate, std.error, p.value)
+lm_viol_2 |> tidy() |> select(term, estimate, std.error)
 ```
-.footnote[[1] We could also create a squared term in the data using `mutate()`]
 
---
 
-The statistical significance of the new term suggests there is indeed a **non-linear** association between `month` and `violence`
+Introduce a quadratic polynomial
 
-* We could also compare it to the model without the term (and we'd come to the same conclusion)
 
 ---
 
-# Our New Line
+Run the model
 
-.pull-left[
-```{r viol-curve, fig.show='hide'}
-metro_long |> 
-  ggplot(aes(x = month, 
-             y = violence)) + 
-  geom_point() +
-  geom_smooth(
-    method = "lm",
-    formula = y ~ x + I(x^2)) #<<
-```
-]
-.pull-right[
-![](`r knitr::fig_chunk("viol-curve", "svg")`)
-]
-
-That's a pretty strong curve!
-
-Looks like violence peaks in the summer—something we'd expect theoretically!
 
 ---
 
-# Plotting Residuals
+Plot the residuials
 
-.pull-left[
-```{r viol-resid-3, fig.show='hide'}
-lm_viol_2 |> 
-  augment() |>
-  ggplot(aes(x = month, 
-             y = .resid)) + 
-  geom_point() +
-  geom_hline(yintercept = 0, 
-             color = "red") +
-  geom_smooth() #<<
-```
-]
-.pull-right[
-![](`r knitr::fig_chunk("viol-resid-3", "svg")`)
-]
-
---
-
-Looks like the quadratic term fixed the problem!
-
-There's still a lot of noise, but we don't appear to be **systematically** wrong anymore
 
 ---
 
-# Interpretation
+Interpet the model
 
-```{r}
-lm_viol_2 |> tidy() |> select(term, estimate, std.error, p.value)
-```
-
-How do we interpret this model?
-
---
-
-* Does it make sense to interpret the terms *separately*?
-
---
-
-* "Month squared" can't increase without month increasing—we can't "hold one constant"
-
---
-
-.text-center[*Remember: Coefficients are the **slopes** of lines, and curves have different slopes in different places!*]
 
 ---
 
-# Derivatives Return
-
-In week one we looked at derivatives as a way to get the slope of a curve at a given location
-
---
-
-Given $y = a + x^n$, $\frac{dy}{dx} = nx^{n-1}$
-
-* Delete any terms without $x$ (e.g., $a$ gets dropped)
-* Premultiply by exponents, then divide by $x$ (e.g.,  $x^3$ becomes $3x^2$ )
-
---
-
-So...
-
-* $violent = 431 + 62.5month -4month^2$
-* $\frac{dy}{dx} = 62.5 -8month$
-* When $month = 6$ (June) the slope is $62.5 - 48 = 14.5$.
-
---
-
-For polynomials, the effect of a one unit change depends where you look:
-
-* The expected "effect" on crime of "adding another month" in June is 14.5
-
---
-
-.text-center[*We'll spend more time with this later!*]
+Bring back the calculus from first week
 
 ---
 class: inverse
 
 # Comparing Polynomials
 
-![:width 40%](img/curve_fitting.png)
+![](img/curve_fitting.png)
 
 ---
 
-# Using $R^2$
-
-Let's go a step further with a **cubic** model and look at their fit statistics
-
-```{r}
-lm_viol_3 <- lm(violence ~ month + I(month^2) + I(month^3), 
-                data = metro_long)
-rbind(glance(lm_viol), glance(lm_viol_2), glance(lm_viol_3)) |> 
-  select(r.squared, adj.r.squared)
-```
-
-How do they compare?
-
---
-
-Looks like the cubic model isn't helping much!
+Anova comparison
 
 ---
 
-# Using `anova()`
+ggplot(metro_2021, aes(x = month, y = violence_and_sexual_offences)) + geom_point() + geom_smooth()
 
-We can test the models against each other formally with `anova()` as before
+ggplot(metro_2021, aes(x = month, y = violence_and_sexual_offences)) + geom_point() + geom_smooth(method = "lm", formula = y ~ x + I(x^2))
 
-```{r}
-anova(lm_viol, lm_viol_2, lm_viol_3)
-```
-
-
-How do they compare?
-
---
-
-No support for the cubic model here either!
-
----
-class: inverse
-
-# Wrap-Up
-
-Reading:
-
-* Huntington-Klein, N. (2022) *The Effect: An Introduction to Research Design and Causality*, New York, NY: Chapman and Hall/CRC Press. 
-   * Read the rest of Chapter 13: Regression
-
-* Kaplan, J. (2022) *Crime by the Numbers: A Criminologist's Guide to R*
-   * Read [Chapter 13: Reshaping data](https://crimebythenumbers.com/reshaping.html)
+fixest::feols(violence_and_sexual_offences ~ month + I(month^2) | borough, data =  metro_2021 |> mutate(month = lubridate::month(month)))
