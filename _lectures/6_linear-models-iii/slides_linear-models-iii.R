@@ -1,12 +1,16 @@
 library(tidyverse)
 library(broom) 
 communities <- 
-  read_csv("https://clanfear.github.io/ioc_iqa/_data/communities.csv") |>
+  read_csv(
+    "https://clanfear.github.io/ioc_iqa/_data/communities.csv"
+    ) |>
   mutate(across(c(incarceration, disadvantage), 
                 ~ factor(., levels = c("Low", "Medium", "High"))))
 
-lm_1 <- lm(crime_rate ~ disadvantage, data = communities)
-lm_2 <- lm(crime_rate ~ disadvantage + pop_density, data =communities)
+lm_1 <- lm(crime_rate ~ disadvantage, 
+           data = communities)
+lm_2 <- lm(crime_rate ~ disadvantage + pop_density, 
+           data = communities)
 lm_3 <- lm(crime_rate ~ disadvantage + pop_density + area, 
            data = communities)
 
@@ -20,8 +24,8 @@ anova(lm_1, lm_4)
 metro_wide <- read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021_violence_wide.csv")
 head(metro_wide)
 
-dim(metro_wide)
-names(metro_wide)
+dim(metro_wide) # Few rows, more columns
+names(metro_wide) # A column for each month!
 
 metro_long <- metro_wide |>
   pivot_longer(starts_with("month"), # Take each month column #<<

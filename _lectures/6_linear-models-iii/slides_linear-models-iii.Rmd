@@ -40,27 +40,33 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, dev = 
 
 Let's pick up where we left off last week with `communities` and a few different linear models to compare
 
-.text-85[
 ```{r, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(broom) 
 communities <- 
-  read_csv("https://clanfear.github.io/ioc_iqa/_data/communities.csv") |>
+  read_csv(
+    "https://clanfear.github.io/ioc_iqa/_data/communities.csv"
+    ) |>
   mutate(across(c(incarceration, disadvantage), 
                 ~ factor(., levels = c("Low", "Medium", "High"))))
 
-lm_1 <- lm(crime_rate ~ disadvantage, data = communities)
-lm_2 <- lm(crime_rate ~ disadvantage + pop_density, data =communities)
+lm_1 <- lm(crime_rate ~ disadvantage, 
+           data = communities)
+lm_2 <- lm(crime_rate ~ disadvantage + pop_density, 
+           data = communities)
 lm_3 <- lm(crime_rate ~ disadvantage + pop_density + area, 
            data = communities)
 ```
-]
 
 ---
 
 # Specification Tests
 
 **Specification tests** are hypothesis tests for evaluating how well a model fits
+
+--
+
+Importantly, they provide a hard **decision rule** about which one to use
 
 --
 
@@ -175,7 +181,7 @@ anova(lm_1, lm_4)
 
 **Theory** is your first guide for what to include or not
 
-This test is mainly to see if it is okay to exclude *potential confounder*
+This test is mainly to see if it is okay to exclude *potential confounders*... or to prefer another **functional form** (we'll get there shortly!)
 
 ---
 class: inverse
@@ -206,8 +212,8 @@ But in **wide** format this time
 
 
 ```{r}
-dim(metro_wide)
-names(metro_wide)
+dim(metro_wide) # Few rows, more columns
+names(metro_wide) # A column for each month!
 ```
 
 Here the **month** variable is in the *column names* and counts of **violent** crime are under each month
@@ -215,6 +221,12 @@ Here the **month** variable is in the *column names* and counts of **violent** c
 --
 
 How could we plot crime by month with these data?
+
+--
+
+.text-center[
+*It'd be pretty hard with `ggplot2`!*
+]
 
 ---
 
@@ -375,7 +387,7 @@ With many data points it can be hard to tell if there is anything going on!
 
 `geom_smooth()` can help us diagnose problems
 
-By default, it fits a **spline**—a flexible curved line
+By default, it fits a **loess** smoother or a **spline**—a flexible curved line
 
 .pull-left[
 ```{r viol-resid-2, fig.show='hide'}
@@ -402,7 +414,9 @@ It looks like we're failing to account for a curved relationship
 
 --
 
+.text-center[
 *So why not make a curved line?*
+]
 
 
 ---
@@ -411,7 +425,7 @@ It looks like we're failing to account for a curved relationship
 Recall that a *squared* term (e.g. $x^2$) in an equation creates a *parabola*:
 
 $$y = 2 + 0.5x + 0.25x^2$$
-
+--
 
 ```{r}
 #| fig.height: 3
@@ -513,11 +527,11 @@ How do we interpret this model?
 
 --
 
-* Does it make sense to interpret the terms *separately*?
+* Does it make sense to interpret the `month` terms *separately*?
 
 --
 
-* "Month squared" can't increase without month increasing—we can't "hold one constant"
+* *`month` squared* can't increase without `month` increasing—we can't *hold one constant*
 
 --
 
@@ -525,9 +539,9 @@ How do we interpret this model?
 
 ---
 
-# Derivatives Return
+# Revenge of the Derivatives
 
-In week one we looked at derivatives as a way to get the slope of a curve at a given location
+In week one we used derivatives to calculate the slope of a curve
 
 --
 
@@ -552,7 +566,9 @@ For polynomials, the effect of a one unit change depends where you look:
 
 --
 
-.text-center[*We'll spend more time with this later!*]
+.text-center[
+*We'll spend more time with this later!*
+]
 
 ---
 class: inverse
@@ -565,7 +581,11 @@ class: inverse
 
 # Using $R^2$
 
-Let's go a step further with a **cubic** model and look at their fit statistics
+Let's go a step further with a **cubic** model and compare it to the other models
+
+--
+
+Polynomials obey a **hierarchy rule**: Always include *lower order terms*
 
 ```{r}
 lm_viol_3 <- lm(violence ~ month + I(month^2) + I(month^3), 
@@ -603,6 +623,8 @@ No support for the cubic model here either!
 
 Before we plotted residuals against `month`—but a more general diagnostic is plotting residuals against the fitted values
 
+* This takes into account *all included variables*
+
 .pull-left[
 ```{r resid-fit, fig.show='hide'}
 lm_viol |> 
@@ -619,13 +641,15 @@ lm_viol |>
 ![](`r knitr::fig_chunk("resid-fit", "svg")`)
 ]
 
+--
+
 This looks very familiar—it still suggests there's a curve!
 
 ---
 
 # Again
 
-This one looks a little different with our quadratic term
+This one looks a little different with our quadratic term included
 
 .pull-left[
 ```{r resid-fit-2, fig.show='hide'}
@@ -642,6 +666,8 @@ lm_viol_2 |>
 .pull-right[
 ![](`r knitr::fig_chunk("resid-fit-2", "svg")`)
 ]
+
+--
 
 It still looks like we're doing a good job, though maybe there's a *bit* of poor prediction for very high values
 
