@@ -1,0 +1,69 @@
+---
+title: "Linear Models IV"
+subtitle: "IQA Lecture 7"
+author: "Charles Lanfear"
+date: "14 Nov 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+output:
+  xaringan::moon_reader:
+    css: "../assets/cam-css.css"
+    lib_dir: libs
+    nature:
+      highlightStyle: tomorrow-night-bright
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "../assets/cam_macros.js"
+      titleSlideClass: ["center","top"]
+---
+
+```{r setup, purl=FALSE}
+#| include: false
+options(width = 68)
+set.seed(7)
+knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, dev = "svg", fig.height = 4)
+```
+
+
+# Today
+
+### Comparing Models
+
+### Pivoting Data
+
+### Polynomials
+
+### Residual Plots
+
+
+---
+
+# Setup
+
+Let's pick up where we left off last week with `metro_2021`
+
+```{r, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(broom) 
+metro_2021 <- read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021_full.csv") |>
+  rename(violence = violence_and_sexual_offences,
+         asb      = antisocial_behaviour)
+```
+
+---
+
+
+```{r}
+lm_viol_2 <- lm(violence ~ month + I(month^2), data = metro_long)
+```
+
+---
+class: inverse
+
+# Wrap-Up
+
+Reading:
+
+* Huntington-Klein, N. (2022) *The Effect: An Introduction to Research Design and Causality*, New York, NY: Chapman and Hall/CRC Press. 
+   * Read the rest of Chapter 13: Regression
+
+* Kaplan, J. (2022) *Crime by the Numbers: A Criminologist's Guide to R*
+   * Read [Chapter 13: Reshaping data](https://crimebythenumbers.com/reshaping.html)

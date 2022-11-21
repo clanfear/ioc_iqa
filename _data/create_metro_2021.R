@@ -10,7 +10,7 @@ london_subregion <- bind_rows(
   data.frame(subregion = "Central", borough = c("Camden", "Kensington and Chelsea", "Islington", "Lambeth", "Southwark", "Westminster"))
 )
 
-borough_deprivation <- vroom::vroom("C:/Users/cl948/Downloads/indices-of-multiple-deprivation-borough.csv") %>%
+borough_deprivation <- vroom::vroom("./_data/source_data/indices-of-multiple-deprivation-borough.csv") %>%
   select(borough = Area, avg_deprivation = `Average Score - 2007`) %>%
   filter(borough %in% london_subregion$borough) %>%
   mutate(dep = ntile(avg_deprivation, 3)) %>%
@@ -20,16 +20,16 @@ borough_deprivation <- vroom::vroom("C:/Users/cl948/Downloads/indices-of-multipl
     dep == 3 ~ "High",
     TRUE ~ "ERROR"
   )) %>%
-  select(borough, deprivation, dep_score =dep)
+  select(borough, deprivation, dep_score =avg_deprivation)
 
-borough_pop_density <- vroom::vroom("C:/Users/cl948/Downloads/housing-density-borough.csv") %>%
+borough_pop_density <- vroom::vroom("./_data/source_data/housing-density-borough.csv") %>%
   filter(Year == 2021) %>%
   select(borough = Name, pop = Population, area = Square_Kilometres) %>%
   filter(borough %in% london_subregion$borough)
 
 
 
-metro_2021 <- vroom::vroom(list.files("C:/Users/cl948/Downloads/metro_2021/", recursive = TRUE, full.names = TRUE)) %>%
+metro_2021_full <- vroom::vroom(list.files("C:/Users/cl948/Downloads/metro_2021/", recursive = TRUE, full.names = TRUE)) %>%
   janitor::clean_names() %>%
   filter(!is.na(lsoa_name)) %>%
   mutate(borough = str_remove(lsoa_name, " [0-9].*$")) %>% 
@@ -46,6 +46,9 @@ metro_2021 <- vroom::vroom(list.files("C:/Users/cl948/Downloads/metro_2021/", re
   left_join(borough_deprivation) %>%
   left_join(borough_pop_density)
 
+write_csv(metro_2021_full, file = "./_data/metro_2021_full.csv")
+
+metro_2021 <- metro_2021 |> select(-dep_score)
 write_csv(metro_2021, file = "./_data/metro_2021.csv")
 
 metro_2021_violence_wide <- metro_2021 |> 
