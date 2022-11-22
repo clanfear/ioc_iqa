@@ -9,7 +9,7 @@ london_subregion <- bind_rows(
   data.frame(subregion = "North", borough = c( "Barnet", "Haringey", "Enfield")),
   data.frame(subregion = "Central", borough = c("Camden", "Kensington and Chelsea", "Islington", "Lambeth", "Southwark", "Westminster"))
 )
-save(london_subregion, file = "./_data/london_subregion.csv")
+write_csv(london_subregion, file = "./_data/london_subregion.csv")
 
 borough_deprivation <- vroom::vroom("./_data/source_data/indices-of-multiple-deprivation-borough.csv") %>%
   select(borough = Area, avg_deprivation = `Average Score - 2007`) %>%
@@ -23,7 +23,7 @@ borough_deprivation <- vroom::vroom("./_data/source_data/indices-of-multiple-dep
   )) %>%
   select(borough, deprivation, dep_score = avg_deprivation)
 
-save(borough_deprivation, file = "./_data/borough_deprivation.csv")
+write_csv(borough_deprivation, file = "./_data/borough_deprivation.csv")
 
 borough_pop_density <- vroom::vroom("./_data/source_data/housing-density-borough.csv") %>%
   filter(Year == 2021) %>%
@@ -31,7 +31,7 @@ borough_pop_density <- vroom::vroom("./_data/source_data/housing-density-borough
   filter(borough %in% london_subregion$borough) |>
   janitor::clean_names(case = "title")
 
-save(borough_pop_density, file = "./_data/borough_pop_density.csv")
+write_csv(borough_pop_density, file = "./_data/borough_pop_density.csv")
 
 borough_pop_density <- borough_pop_density |> janitor::clean_names()
 
@@ -57,7 +57,7 @@ metro_2021_crime <- vroom::vroom(list.files("C:/Users/cl948/Downloads/metro_2021
 write_csv(metro_2021_full, file = "./_data/metro_2021_full.csv")
 
 metro_2021_crime <- metro_2021 |> select(borough, month, antisocial_behaviour, burglary, robbery, violence_and_sexual_offences)
-save(metro_2021_crime, file = "./_data/metro_2021_crime.csv")
+write_csv(metro_2021_crime, file = "./_data/metro_2021_crime.csv")
 
 metro_2021 <- metro_2021 |> select(-dep_score)
 write_csv(metro_2021, file = "./_data/metro_2021.csv")
