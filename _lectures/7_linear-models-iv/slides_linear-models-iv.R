@@ -1,5 +1,32 @@
 library(tidyverse)
 library(broom)
+library(janitor)
+
+metro_2021_crime    <- 
+  read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021_crime.csv")
+borough_deprivation <- 
+  read_csv("https://clanfear.github.io/ioc_iqa/_data/borough_deprivation.csv")
+borough_pop_density <- 
+  read_csv("https://clanfear.github.io/ioc_iqa/_data/borough_pop_density.csv")
+london_subregion    <- 
+  read_csv("https://clanfear.github.io/ioc_iqa/_data/london_subregion.csv")
+
+
+
+names(metro_2021_crime)
+names(london_subregion)
+names(borough_pop_density)
+names(borough_deprivation)
+
+dim(metro_2021_crime)
+
+dim(london_subregion)
+dim(borough_pop_density)
+dim(borough_deprivation)
+
+
+
+
 metro_2021 <- read_csv(
   "https://clanfear.github.io/ioc_iqa/_data/metro_2021_full.csv") |>
   rename(violence = violence_and_sexual_offences,

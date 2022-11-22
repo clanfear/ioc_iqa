@@ -37,7 +37,7 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, dev = 
 
 
 
-```{r setup}
+```{r}
 library(tidyverse)
 library(broom)
 library(janitor)
@@ -46,6 +46,7 @@ library(janitor)
 
 Often you have multiple sources of data that you want to use together
 
+.text-85[
 ```{r}
 metro_2021_crime    <- 
   read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021_crime.csv")
@@ -56,19 +57,55 @@ borough_pop_density <-
 london_subregion    <- 
   read_csv("https://clanfear.github.io/ioc_iqa/_data/london_subregion.csv")
 ```
+]
 
 ---
 
 # Taking a Look
 
-```{r}
-glimpse(metro_2021_crime)
+```{r, purl=FALSE, include = FALSE}
+options(width = 40)
 ```
+
+
+.text-85[
+.pull-left[
+```{r}
+names(metro_2021_crime)
+names(london_subregion)
+names(borough_pop_density)
+names(borough_deprivation)
+```
+]
+.pull-right[
+```{r}
+dim(metro_2021_crime)
+```
+
+<p style="margin-bottom:2.25cm;">&nbsp;</p>
+
+```{r}
+dim(london_subregion)
+dim(borough_pop_density)
+dim(borough_deprivation)
+```
+
+]
+]
+
+```{r, purl=FALSE, include = FALSE}
+options(width = 68)
+```
+
+---
+
+# Joining Data
+
 
 
 ---
 
-# Setup
+# Some Setup
 
 Let's pick up where we left off last week with `metro_2021`
 
@@ -128,9 +165,7 @@ class: inverse
 
 # Logarithms
 
-&nbsp;
-
-![:width 60%](img/logs.png)
+![:width 55%](img/logs.png)
 
 ---
 

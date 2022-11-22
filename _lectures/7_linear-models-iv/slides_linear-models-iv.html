@@ -32,13 +32,130 @@ class: center, top, title-slide
 
 # Today
 
-### Comparing Models
+### Joining Data
 
-### Pivoting Data
+### Logarithms
 
-### Polynomials
+### Moderation
 
-### Residual Plots
+---
+
+# Loading Data
+
+
+
+
+```r
+library(tidyverse)
+library(broom)
+library(janitor)
+```
+
+
+Often you have multiple sources of data that you want to use together
+
+.text-85[
+
+```r
+metro_2021_crime    &lt;- 
+  read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021_crime.csv")
+borough_deprivation &lt;- 
+  read_csv("https://clanfear.github.io/ioc_iqa/_data/borough_deprivation.csv")
+borough_pop_density &lt;- 
+  read_csv("https://clanfear.github.io/ioc_iqa/_data/borough_pop_density.csv")
+london_subregion    &lt;- 
+  read_csv("https://clanfear.github.io/ioc_iqa/_data/london_subregion.csv")
+```
+]
+
+---
+
+# Taking a Look
+
+
+
+
+.text-85[
+.pull-left[
+
+```r
+names(metro_2021_crime)
+```
+
+```
+## [1] "borough"                     
+## [2] "month"                       
+## [3] "antisocial_behaviour"        
+## [4] "burglary"                    
+## [5] "robbery"                     
+## [6] "violence_and_sexual_offences"
+```
+
+```r
+names(london_subregion)
+```
+
+```
+## [1] "subregion" "borough"
+```
+
+```r
+names(borough_pop_density)
+```
+
+```
+## [1] "Borough" "Pop"     "Area"
+```
+
+```r
+names(borough_deprivation)
+```
+
+```
+## [1] "borough"     "deprivation"
+## [3] "dep_score"
+```
+]
+.pull-right[
+
+```r
+dim(metro_2021_crime)
+```
+
+```
+## [1] 384   6
+```
+
+&lt;p style="margin-bottom:2.25cm;"&gt;&amp;nbsp;&lt;/p&gt;
+
+
+```r
+dim(london_subregion)
+```
+
+```
+## [1] 32  2
+```
+
+```r
+dim(borough_pop_density)
+```
+
+```
+## [1] 32  3
+```
+
+```r
+dim(borough_deprivation)
+```
+
+```
+## [1] 32  3
+```
+
+]
+]
+
 
 
 ---
@@ -49,8 +166,6 @@ Let's pick up where we left off last week with `metro_2021`
 
 
 ```r
-library(tidyverse)
-library(broom)
 metro_2021 &lt;- read_csv(
   "https://clanfear.github.io/ioc_iqa/_data/metro_2021_full.csv") |&gt;
   rename(violence = violence_and_sexual_offences,
@@ -92,7 +207,7 @@ lm_sq |&gt; tidy() |&gt;
 ]
 ]
 .pull-right[
-![](slides_linear-models-iv_files/figure-html/unnamed-chunk-3-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-10-1.svg)&lt;!-- --&gt;
 ]
 
 --
@@ -109,9 +224,7 @@ class: inverse
 
 # Logarithms
 
-&amp;nbsp;
-
-![:width 60%](img/logs.png)
+![:width 55%](img/logs.png)
 
 ---
 
@@ -139,7 +252,7 @@ lm_log |&gt; tidy() |&gt;
 ]
 ]
 .pull-right[
-![](slides_linear-models-iv_files/figure-html/unnamed-chunk-5-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-12-1.svg)&lt;!-- --&gt;
 ]
 
 --
@@ -212,7 +325,7 @@ exp(1:3)
 curve(exp(x), from = 1, to = 3)
 ```
 
-![](slides_linear-models-iv_files/figure-html/unnamed-chunk-6-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-13-1.svg)&lt;!-- --&gt;
 ]
 
 --
@@ -232,7 +345,7 @@ log(1:3)
 curve(log(x), from = 1, to = 3)
 ```
 
-![](slides_linear-models-iv_files/figure-html/unnamed-chunk-7-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-14-1.svg)&lt;!-- --&gt;
 ]
 
 --
@@ -477,7 +590,7 @@ We can calculate the effect of `pop_den` when `deprivation` is...
 
 ---
 
-# Moderation Notes
+# Specification Test
 
 You can test if an interaction is warranted, because the interaction model is nested in the **additive** model:
 
