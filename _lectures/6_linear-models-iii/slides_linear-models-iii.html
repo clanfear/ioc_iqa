@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 14 Nov 2022<br>Updated: 14 Nov 2022
+### 14 Nov 2022<br>Updated: 22 Nov 2022
 ]
 
 ---
@@ -805,6 +805,8 @@ No support for the cubic model here either!
 
 Before we plotted residuals against `month`—but a more general diagnostic is plotting residuals against the fitted values
 
+* This takes into account *all included variables*
+
 .pull-left[
 
 ```r
@@ -822,13 +824,15 @@ lm_viol |&gt;
 ![](slides_linear-models-iii_files/figure-html/resid-fit-1.svg)
 ]
 
+--
+
 This looks very familiar—it still suggests there's a curve!
 
 ---
 
 # Again
 
-This one looks a little different with our quadratic term
+This one looks a little different with our quadratic term included
 
 .pull-left[
 
@@ -846,6 +850,8 @@ lm_viol_2 |&gt;
 .pull-right[
 ![](slides_linear-models-iii_files/figure-html/resid-fit-2-1.svg)
 ]
+
+--
 
 It still looks like we're doing a good job, though maybe there's a *bit* of poor prediction for very high values
 

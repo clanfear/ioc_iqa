@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Linear Models IV</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Charles Lanfear" />
+    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
+    <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, top, title-slide
+
+.title[
+# Linear Models IV
+]
+.subtitle[
+## IQA Lecture 7
+]
+.author[
+### Charles Lanfear
+]
+.date[
+### 23 Nov 2022<br>Updated: 22 Nov 2022
+]
+
+---
+
+
+
+
+
+# Today
+
+### Comparing Models
+
+### Pivoting Data
+
+### Polynomials
+
+### Residual Plots
+
+
+---
+
+# Setup
+
+Let's pick up where we left off last week with `metro_2021`
+
+
+```r
+library(tidyverse)
+library(broom)
+metro_2021 &lt;- read_csv(
+  "https://clanfear.github.io/ioc_iqa/_data/metro_2021_full.csv") |&gt;
+  rename(violence = violence_and_sexual_offences,
+         asb      = antisocial_behaviour) |&gt;
+  mutate(month    = lubridate::month(month),
+         pop_den = (pop/area)/1000)
+```
+
+Things done:
+
+* Shorten a couple names
+* Convert `month` to an integer
+* Create a population density (`pop_den`) in thousands per `\(km^2\)`
+
+---
+
+# Last Week's Model
+
+We created a curve with a **quadratic** functional form of `month`
+
+.pull-left[
+.text-85[
+
+```r
+lm_sq &lt;- lm(violence ~ month + I(month^2), 
+   data = metro_2021) 
+lm_sq |&gt; tidy() |&gt; 
+  select(term, estimate, std.error)
+```
+
+```
+## # A tibble: 3 × 3
+##   term        estimate std.error
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)   431.      33.6  
+## 2 month          62.5     11.9  
+## 3 I(month^2)     -4.01     0.889
+```
+]
+]
+.pull-right[
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-3-1.svg)&lt;!-- --&gt;
+]
+
+--
+
+This fits our data well, but has drawbacks:
+
+* Uses two parameters
+* Complicated interpretation
+
+
+
+---
+class: inverse
+
+# Logarithms
+
+&amp;nbsp;
+
+![:width 60%](img/logs.png)
+
+---
+
+# One Parameter Curve
+
+`log()` provides an alternative single parameter curve
+
+.pull-left[
+.text-85[
+
+```r
+lm_log &lt;- lm(violence ~ log(month), 
+   data = metro_2021)
+lm_log |&gt; tidy() |&gt; 
+  select(term, estimate, std.error)
+```
+
+```
+## # A tibble: 2 × 3
+##   term        estimate std.error
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)    513.       23.8
+## 2 log(month)      64.3      13.1
+```
+]
+]
+.pull-right[
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-5-1.svg)&lt;!-- --&gt;
+]
+
+--
+
+In this case, it doesn't look like a great fit
+
+* These models are not **nested** so they cannot be compared with `anova()`
+* *We'll see a tool to compare these shortly*
+
+--
+
+.text-center[
+*But first, what is `log()` anyway?*
+]
+
+---
+
+# Quick Maths
+
+
+
+Exponentiation, `\(b^{n} = x\)`, multiplies a number (the **base**, `\(b\)`) by itself `\(n\)` times:
+
+`$$5^2 = 5*5 = 25$$`
+
+--
+
+Roots, `\(\sqrt[n]{x} = b\)` give the base you'd need to raise to power `\(n\)` to get `\(x\)`:
+
+`$$\sqrt[2]{25} = 25 / 5 = 5$$`
+
+
+--
+
+Logarithms, `\(log_{b}(x) = n\)`, give the `\(n\)` to which you raise `\(b\)` to get `\(x\)`:
+
+`$$log_{5}(25) = 2$$`
+.text-center[
+*To get 25, you raise 5 (the base) to the power of 2*
+]
+
+--
+
+In statistics and maths, we often use *Euler's number* (~2.718), `\(e\)`, as a base
+
+* `\(log_{e}(x)\)` is the **natural logarithm** and `\(e^n\)` is the **exponential function**
+--
+
+* `log(x)` is `\(log_{e}(x)\)` or `\(ln(x)\)` and `exp(n)` is `\(e^n\)`
+--
+
+* `log(exp(x))` and `exp(log(x))` are both equal to `x`!
+
+---
+
+# Natural Logs
+
+.pull-left[
+
+
+```r
+exp(1:3)
+```
+
+```
+## [1]  2.718282  7.389056 20.085537
+```
+
+```r
+curve(exp(x), from = 1, to = 3)
+```
+
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-6-1.svg)&lt;!-- --&gt;
+]
+
+--
+
+.pull-right[
+
+
+```r
+log(1:3)
+```
+
+```
+## [1] 0.0000000 0.6931472 1.0986123
+```
+
+```r
+curve(log(x), from = 1, to = 3)
+```
+
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-7-1.svg)&lt;!-- --&gt;
+]
+
+--
+
+These are useful because they produce *curves* with simple derivatives:
+
+`$$\frac{d}{dx}e^x = e^x, \frac{d}{dx}log_e(x) = \frac{1}{x}$$`
+
+---
+
+# `log(x)` Interpretation
+
+
+```r
+lm_log |&gt; coef()
+```
+
+```
+## (Intercept)  log(month) 
+##   513.19271    64.31455
+```
+
+Natural logs allow for a special interpretation called an *elasticity* or *partial elasticity*
+
+--
+
+When only an independent variable is logged:
+
+* Divide the `\(x\)` coefficient by 100 and it is the amount `\(y\)` differs due to a `\(1\%\)` difference in `\(x\)`
+
+* A `\(1%\)` increase in `month` is associated with .64 more `violence`
+
+---
+
+# `log(y)` Interpretation
+
+
+```r
+lm(log(violence) ~ month, 
+   data = metro_2021) |&gt; coef()
+```
+
+```
+## (Intercept)       month 
+##  6.26043831  0.01777349
+```
+
+You can also log the *outcome*
+
+--
+
+When only the dependent variable is logged:
+
+* Multiply an `\(x\)` by 100 and it is the percent `\(y\)` differs due to a difference in `\(x\)`
+
+* An increase of 1 in `month` is associated with `\(1.7\%\)` higher `violence`
+
+---
+
+# Log-log Models
+
+
+```r
+lm(log(violence) ~ log(month), 
+   data = metro_2021) |&gt; coef()
+```
+
+```
+## (Intercept)  log(month) 
+##   6.1909002   0.1111105
+```
+
+If we log both `\(x\)` and `\(y\)` we get a *log-log* or *elasticity* model
+
+--
+
+When both `\(x\)` and `\(y\)` are logged:
+
+* The `\(x\)` coefficient is the percent `\(y\)` differs due to a percent difference in `\(x\)`
+
+* A `\(1\%\)` increase in `month` is associated with a `\(0.11\%\)` increase in `violence`
+
+
+---
+
+# Working with Logs
+
+By compressing higher values, they reduce *skew*
+
+* This tends to reduce **heteroskedasticity**
+* Makes some models easier to estimate
+
+--
+
+Some warnings: 
+
+* You can only take a log of a positive (non-zero) number!
+* The curve is *inflexible*
+* The percentage interpretation is an *approximation*
+   * Inaccurate for changes in `\(x\)` smaller or greater than `\(1\)`
+
+---
+class: inverse
+
+# Moderation 
+
+## Using Interaction Terms
+
+&amp;nbsp;
+
+.text-150[
+&gt; Moderation in all things is best, but it's pretty hard to get excited about it. — Mason Cooley
+]
+
+---
+
+# Moderation
+
+**Moderation** occurs when the association between `\(x\)` and `\(y\)` is different across values of another variable `\(z\)` 
+
+--
+
+This implies a **multiplicative** relationship rather than just an **additive** one
+
+* **Additive**: `\(y = b_1x + b_2z\)`
+* **Multiplicative**: `\(y = b_1x + b_2z + b_3xz\)`
+
+--
+
+Note that we obey **hierarchy**: Include `\(x\)` and `\(z\)` alone when using `\(x*z\)`&lt;sup&gt;1&lt;/sup&gt;
+
+.footnote[
+[1] There are *rare* cases when you drop one or both first order terms
+
+&amp;nbsp;
+]
+
+--
+
+.pull-left[
+
+Note that DAGs moderation is not indicated by DAGs&lt;sup&gt;2&lt;/sup&gt;
+
+Moderation is a type of *functional form* like polynomials or logarithms
+]
+
+.pull-right[
+![](slides_linear-models-iv_files/figure-html/mod-dag-1.svg)&lt;!-- --&gt;
+]
+
+.footnote[
+[2] Arrows pointing to other arrows are used in path diagrams but *not* DAGs
+]
+
+
+---
+
+# Visual Moderation
+
+Moderation produces *different slopes* for `\(x\)` at each value of `\(z\)`
+
+--
+
+For categorical `\(z\)`, this may be represented with a regression line for each level of `\(z\)`
+
+.pull-left[
+
+```r
+ggplot(metro_2021 , 
+    aes(x     = pop_den, 
+        y     = violence, 
+        color = deprivation)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+]
+.pull-right[
+![](slides_linear-models-iv_files/figure-html/int-plot-1.svg)
+]
+
+--
+
+`pop_den` has a negative slope only for "medium" `deprivation` boroughs
+
+* *Crime is lower when population density is higher in boroughs with moderate deprivation*
+* *Crime is higher when population density is higher in boroughs with low and high deprivation*
+
+---
+
+# Moderation Formula
+
+We can fit a model with moderation by *multiplying variables* in the formula
+
+
+```r
+lm_int &lt;- lm(violence ~ deprivation*pop_den, data = metro_2021)
+lm_int |&gt; tidy() |&gt; select(term, estimate, statistic)
+```
+
+```
+## # A tibble: 6 × 3
+##   term                      estimate statistic
+##   &lt;chr&gt;                        &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)                 632.      15.0  
+## 2 deprivationLow             -205.      -3.87 
+## 3 deprivationMedium           318.       5.83 
+## 4 pop_den                       6.38     1.80 
+## 5 deprivationLow:pop_den        3.96     0.546
+## 6 deprivationMedium:pop_den   -37.5     -7.16
+```
+
+--
+
+By default, it will obey **hierarchy** and include the first-order terms
+
+---
+
+# Interpretation
+
+Interactions need to be interpreted using (partial) derivatives like polynomials
+
+Our equation:
+
+`$$y = 632 -205*depLow + 318*depMed + 6.4*popDen + \\
+4.0*depLow*popDen - 37*depMed*popDen$$`
+
+--
+
+The estimated effect of `pop_den` is the *partial derivative*:
+
+`$$\beta_{dpopDen} = \frac{dviolence}{dpopDen} = 6.4 + 4*depLow + -37*depMed$$`
+
+--
+
+We can calculate the effect of `pop_den` when `deprivation` is... 
+
+`\begin{align}
+\text{Low: } &amp; \beta_{dpopDen} = 6.4 + 4*1 + -37*0 =\hphantom{-} 10.4\\
+\text{Moderate: } &amp; \beta_{dpopDen} = 6.4 + 4*0 + -37*1 = -30.6\\
+\text{High: } &amp; \beta_{dpopDen} = 6.4 + 4*0 + -37*0 =\hphantom{-} 6.4
+\end{align}`
+
+---
+
+# Moderation Notes
+
+You can test if an interaction is warranted, because the interaction model is nested in the **additive** model:
+
+.text-85[
+
+```r
+lm_noint &lt;- lm(violence ~ deprivation + pop_den, data = metro_2021)
+anova(lm_int, lm_noint)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Model 1: violence ~ deprivation * pop_den
+## Model 2: violence ~ deprivation + pop_den
+##   Res.Df     RSS Df Sum of Sq      F    Pr(&gt;F)    
+## 1    378 8227307                                  
+## 2    380 9551609 -2  -1324301 30.422 5.614e-13 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+]
+
+
+
+---
+class: inverse
+
+# Wrap-Up
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/cam_macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "tomorrow-night-bright",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
