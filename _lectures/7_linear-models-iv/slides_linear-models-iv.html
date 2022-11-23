@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 23 Nov 2022<br>Updated: 22 Nov 2022
+### 23 Nov 2022<br>Updated: 23 Nov 2022
 ]
 
 ---
@@ -160,24 +160,161 @@ dim(borough_deprivation)
 
 ---
 
-# Setup
+# Joining Concepts
 
-Let's pick up where we left off last week with `metro_2021`
+We can **join** data frames using functions from `{dplyr}` (part of `{tidyverse}`)
+
+--
+
+Before we use them, we need to think about how we want to join the data frames:
+
+--
+
+* Which rows are we keeping from each data frame?
+
+--
+
+* Which columns are we keeping from each data frame?
+
+--
+
+* Which variables determine whether rows match?
+
+---
+
+# Types of Join
+
+Given two dataframes, `df_a` and `df_b`, there are *many* ways to join them
+
+--
+
+The most commonly used:
+
+* **Left Join**: `df_a |&gt; left_join(df_b)`
+
+   * Keep all columns and rows from `df_a`
+   * Keep all columns but only rows that match from `df_b`
+
+--
+
+* **Inner Join**: `df_a |&gt; inner_join(df_b)`
+
+   * Keep all columns but only rows that match from `df_a`
+   * Keep all columns but only rows that match from `df_b`
+
+--
+
+* **Full Join**: `df_a |&gt; full_join(df_b)`
+
+   * Keep all columns and rows from `df_a`
+   * Keep all columns and rows from `df_b`
+
+--
+
+`NA` values will be created when joined columns have no data for a given row (e.g., in full or left joins)
+
+---
+
+# Same Names
+
+If the joined data frames share some column names, they will automatically match on those columns
 
 
 ```r
-metro_2021 &lt;- read_csv(
-  "https://clanfear.github.io/ioc_iqa/_data/metro_2021_full.csv") |&gt;
+metro_2021_crime |&gt;
+  left_join(london_subregion) |&gt; 
+  glimpse()
+```
+
+```
+## Rows: 384
+## Columns: 7
+## $ borough                      &lt;chr&gt; "Barking and Dagenham", "Bark…
+## $ month                        &lt;date&gt; 2021-01-01, 2021-02-01, 2021…
+## $ antisocial_behaviour         &lt;dbl&gt; 688, 585, 600, 531, 469, 507,…
+## $ burglary                     &lt;dbl&gt; 87, 105, 81, 85, 106, 90, 75,…
+## $ robbery                      &lt;dbl&gt; 30, 50, 49, 40, 47, 46, 42, 3…
+## $ violence_and_sexual_offences &lt;dbl&gt; 469, 449, 561, 564, 589, 617,…
+## $ subregion                    &lt;chr&gt; "East", "East", "East", "East…
+```
+
+---
+
+# Differing Names
+
+`borough_pop_density` has a different naming style (title case)
+
+If matching variable names differ, you can specify what left side variable (`"borough"`) matches the right side variable (`"Borough"`)
+
+
+```r
+metro_2021_crime |&gt;
+  left_join(borough_pop_density, by = c("borough"="Borough")) |&gt;
+  glimpse()
+```
+
+```
+## Rows: 384
+## Columns: 8
+## $ borough                      &lt;chr&gt; "Barking and Dagenham", "Bark…
+## $ month                        &lt;date&gt; 2021-01-01, 2021-02-01, 2021…
+## $ antisocial_behaviour         &lt;dbl&gt; 688, 585, 600, 531, 469, 507,…
+## $ burglary                     &lt;dbl&gt; 87, 105, 81, 85, 106, 90, 75,…
+## $ robbery                      &lt;dbl&gt; 30, 50, 49, 40, 47, 46, 42, 3…
+## $ violence_and_sexual_offences &lt;dbl&gt; 469, 449, 561, 564, 589, 617,…
+## $ Pop                          &lt;dbl&gt; 221495, 221495, 221495, 22149…
+## $ Area                         &lt;dbl&gt; 36.1, 36.1, 36.1, 36.1, 36.1,…
+```
+
+---
+
+# Many Joins, Handle It
+
+We can chain many joins in order—and here we`clean_names()` to fix the capitalized names ahead of time
+
+
+```r
+metro_2021 &lt;- metro_2021_crime |&gt;
+  left_join(london_subregion) |&gt;
+  left_join(borough_deprivation) |&gt;
+  left_join(borough_pop_density |&gt; 
+              clean_names())
+head(metro_2021, 3)
+```
+
+```
+## # A tibble: 3 × 11
+##   borough month      antis…¹ burgl…² robbery viole…³ subre…⁴ depri…⁵
+##   &lt;chr&gt;   &lt;date&gt;       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;  
+## 1 Barkin… 2021-01-01     688      87      30     469 East    High   
+## 2 Barkin… 2021-02-01     585     105      50     449 East    High   
+## 3 Barkin… 2021-03-01     600      81      49     561 East    High   
+## # … with 3 more variables: dep_score &lt;dbl&gt;, pop &lt;dbl&gt;, area &lt;dbl&gt;,
+## #   and abbreviated variable names ¹​antisocial_behaviour,
+## #   ²​burglary, ³​violence_and_sexual_offences, ⁴​subregion,
+## #   ⁵​deprivation
+```
+
+
+---
+
+# Some Clean-Up
+
+Let's do a little bit of data management while we're at it
+
+
+```r
+metro_2021 &lt;- metro_2021 |&gt;
   rename(violence = violence_and_sexual_offences,
          asb      = antisocial_behaviour) |&gt;
-  mutate(month    = lubridate::month(month),
+* mutate(month    = lubridate::month(month),
          pop_den = (pop/area)/1000)
 ```
 
 Things done:
 
-* Shorten a couple names
-* Convert `month` to an integer
+* Shorten a couple names for ease of use
+* Convert `month` to an integer using `{lubridate}`
 * Create a population density (`pop_den`) in thousands per `\(km^2\)`
 
 ---
@@ -190,7 +327,8 @@ We created a curve with a **quadratic** functional form of `month`
 .text-85[
 
 ```r
-lm_sq &lt;- lm(violence ~ month + I(month^2), 
+lm_sq &lt;- 
+  lm(violence ~ month + I(month^2), 
    data = metro_2021) 
 lm_sq |&gt; tidy() |&gt; 
   select(term, estimate, std.error)
@@ -207,7 +345,7 @@ lm_sq |&gt; tidy() |&gt;
 ]
 ]
 .pull-right[
-![](slides_linear-models-iv_files/figure-html/unnamed-chunk-10-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-13-1.svg)&lt;!-- --&gt;
 ]
 
 --
@@ -217,6 +355,11 @@ This fits our data well, but has drawbacks:
 * Uses two parameters
 * Complicated interpretation
 
+--
+
+.text-center[
+*There are simpler—more restrictive—curves we can fit*
+]
 
 
 ---
@@ -252,7 +395,7 @@ lm_log |&gt; tidy() |&gt;
 ]
 ]
 .pull-right[
-![](slides_linear-models-iv_files/figure-html/unnamed-chunk-12-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-15-1.svg)&lt;!-- --&gt;
 ]
 
 --
@@ -325,7 +468,7 @@ exp(1:3)
 curve(exp(x), from = 1, to = 3)
 ```
 
-![](slides_linear-models-iv_files/figure-html/unnamed-chunk-13-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-16-1.svg)&lt;!-- --&gt;
 ]
 
 --
@@ -345,14 +488,14 @@ log(1:3)
 curve(log(x), from = 1, to = 3)
 ```
 
-![](slides_linear-models-iv_files/figure-html/unnamed-chunk-14-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-17-1.svg)&lt;!-- --&gt;
 ]
 
 --
 
 These are useful because they produce *curves* with simple derivatives:
 
-`$$\frac{d}{dx}e^x = e^x, \frac{d}{dx}log_e(x) = \frac{1}{x}$$`
+`$$\frac{d}{dx}e^x = e^x\quad\quad\quad\quad \frac{d}{dx}log_e(x) = \frac{1}{x}$$`
 
 ---
 
@@ -368,11 +511,11 @@ lm_log |&gt; coef()
 ##   513.19271    64.31455
 ```
 
-Natural logs allow for a special interpretation called an *elasticity* or *partial elasticity*
+Natural logs allow for a special interpretation called an **elasticity** or **partial elasticity**
 
 --
 
-When only an independent variable is logged:
+When only an independent variable is logged, we call it a **level-log** (*partial elasticity*) model:
 
 * Divide the `\(x\)` coefficient by 100 and it is the amount `\(y\)` differs due to a `\(1\%\)` difference in `\(x\)`
 
@@ -397,9 +540,9 @@ You can also log the *outcome*
 
 --
 
-When only the dependent variable is logged:
+When only the dependent variable is logged, we call it a **log-level** (*partial elasticity*) model:
 
-* Multiply an `\(x\)` by 100 and it is the percent `\(y\)` differs due to a difference in `\(x\)`
+* Multiply `\(x\)` coefficient by 100 and it is the percent `\(y\)` differs due to a difference in `\(x\)`
 
 * An increase of 1 in `month` is associated with `\(1.7\%\)` higher `violence`
 
@@ -418,7 +561,7 @@ lm(log(violence) ~ log(month),
 ##   6.1909002   0.1111105
 ```
 
-If we log both `\(x\)` and `\(y\)` we get a *log-log* or *elasticity* model
+If we log both `\(x\)` and `\(y\)` we get a **log-log** (*elasticity*) model
 
 --
 
@@ -436,7 +579,14 @@ When both `\(x\)` and `\(y\)` are logged:
 By compressing higher values, they reduce *skew*
 
 * This tends to reduce **heteroskedasticity**
+   * **Heteroskedasticity** is variance that differs across model predictions
+   * It only impacts standard errors in standard linear models&lt;sup&gt;1&lt;/sup&gt;
+   * Correct with robust errors, functional form, or alternate estimators
 * Makes some models easier to estimate
+
+.footnote[
+[1] It causes serious problems in many other types of models
+]
 
 --
 
@@ -622,6 +772,17 @@ class: inverse
 
 # Wrap-Up
 
+## Assignments
+
+* Working on them ASAP!
+
+## Strike!
+
+* No class next week if strike goes forward
+
+## Last assignment
+
+* Sent out by next Friday
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

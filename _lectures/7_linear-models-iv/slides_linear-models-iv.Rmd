@@ -99,30 +99,120 @@ options(width = 68)
 
 ---
 
-# Joining Data
+# Joining Concepts
 
+We can **join** data frames using functions from `{dplyr}` (part of `{tidyverse}`)
+
+--
+
+Before we use them, we need to think about how we want to join the data frames:
+
+--
+
+* Which rows are we keeping from each data frame?
+
+--
+
+* Which columns are we keeping from each data frame?
+
+--
+
+* Which variables determine whether rows match?
+
+---
+
+# Types of Join
+
+Given two dataframes, `df_a` and `df_b`, there are *many* ways to join them
+
+--
+
+The most commonly used:
+
+* **Left Join**: `df_a |> left_join(df_b)`
+
+   * Keep all columns and rows from `df_a`
+   * Keep all columns but only rows that match from `df_b`
+
+--
+
+* **Inner Join**: `df_a |> inner_join(df_b)`
+
+   * Keep all columns but only rows that match from `df_a`
+   * Keep all columns but only rows that match from `df_b`
+
+--
+
+* **Full Join**: `df_a |> full_join(df_b)`
+
+   * Keep all columns and rows from `df_a`
+   * Keep all columns and rows from `df_b`
+
+--
+
+`NA` values will be created when joined columns have no data for a given row (e.g., in full or left joins)
+
+---
+
+# Same Names
+
+If the joined data frames share some column names, they will automatically match on those columns
+
+```{r}
+metro_2021_crime |>
+  left_join(london_subregion) |> 
+  glimpse()
+```
+
+---
+
+# Differing Names
+
+`borough_pop_density` has a different naming style (title case)
+
+If matching variable names differ, you can specify what left side variable (`"borough"`) matches the right side variable (`"Borough"`)
+
+```{r}
+metro_2021_crime |>
+  left_join(borough_pop_density, by = c("borough"="Borough")) |>
+  glimpse()
+```
+
+---
+
+# Many Joins, Handle It
+
+We can chain many joins in order—and here we`clean_names()` to fix the capitalized names ahead of time
+
+```{r}
+metro_2021 <- metro_2021_crime |>
+  left_join(london_subregion) |>
+  left_join(borough_deprivation) |>
+  left_join(borough_pop_density |> 
+              clean_names())
+head(metro_2021, 3)
+```
 
 
 ---
 
-# Some Setup
+# Some Clean-Up
 
-Let's pick up where we left off last week with `metro_2021`
+Let's do a little bit of data management while we're at it
 
 ```{r, message = FALSE, warning = FALSE}
 
-metro_2021 <- read_csv(
-  "https://clanfear.github.io/ioc_iqa/_data/metro_2021_full.csv") |>
+metro_2021 <- metro_2021 |>
   rename(violence = violence_and_sexual_offences,
          asb      = antisocial_behaviour) |>
-  mutate(month    = lubridate::month(month),
+  mutate(month    = lubridate::month(month), #<<
          pop_den = (pop/area)/1000)
 ```
 
 Things done:
 
-* Shorten a couple names
-* Convert `month` to an integer
+* Shorten a couple names for ease of use
+* Convert `month` to an integer using `{lubridate}`
 * Create a population density (`pop_den`) in thousands per $km^2$
 
 ---
@@ -134,7 +224,8 @@ We created a curve with a **quadratic** functional form of `month`
 .pull-left[
 .text-85[
 ```{r}
-lm_sq <- lm(violence ~ month + I(month^2), 
+lm_sq <- 
+  lm(violence ~ month + I(month^2), 
    data = metro_2021) 
 lm_sq |> tidy() |> 
   select(term, estimate, std.error)
@@ -158,6 +249,11 @@ This fits our data well, but has drawbacks:
 * Uses two parameters
 * Complicated interpretation
 
+--
+
+.text-center[
+*There are simpler—more restrictive—curves we can fit*
+]
 
 
 ---
@@ -270,7 +366,7 @@ curve(log(x), from = 1, to = 3)
 
 These are useful because they produce *curves* with simple derivatives:
 
-$$\frac{d}{dx}e^x = e^x, \frac{d}{dx}log_e(x) = \frac{1}{x}$$
+$$\frac{d}{dx}e^x = e^x\quad\quad\quad\quad \frac{d}{dx}log_e(x) = \frac{1}{x}$$
 
 ---
 
@@ -280,11 +376,11 @@ $$\frac{d}{dx}e^x = e^x, \frac{d}{dx}log_e(x) = \frac{1}{x}$$
 lm_log |> coef()
 ```
 
-Natural logs allow for a special interpretation called an *elasticity* or *partial elasticity*
+Natural logs allow for a special interpretation called an **elasticity** or **partial elasticity**
 
 --
 
-When only an independent variable is logged:
+When only an independent variable is logged, we call it a **level-log** (*partial elasticity*) model:
 
 * Divide the $x$ coefficient by 100 and it is the amount $y$ differs due to a $1\%$ difference in $x$
 
@@ -303,9 +399,9 @@ You can also log the *outcome*
 
 --
 
-When only the dependent variable is logged:
+When only the dependent variable is logged, we call it a **log-level** (*partial elasticity*) model:
 
-* Multiply an $x$ by 100 and it is the percent $y$ differs due to a difference in $x$
+* Multiply $x$ coefficient by 100 and it is the percent $y$ differs due to a difference in $x$
 
 * An increase of 1 in `month` is associated with $1.7\%$ higher `violence`
 
@@ -318,7 +414,7 @@ lm(log(violence) ~ log(month),
    data = metro_2021) |> coef()
 ```
 
-If we log both $x$ and $y$ we get a *log-log* or *elasticity* model
+If we log both $x$ and $y$ we get a **log-log** (*elasticity*) model
 
 --
 
@@ -336,7 +432,14 @@ When both $x$ and $y$ are logged:
 By compressing higher values, they reduce *skew*
 
 * This tends to reduce **heteroskedasticity**
+   * **Heteroskedasticity** is variance that differs across model predictions
+   * It only impacts standard errors in standard linear models<sup>1</sup>
+   * Correct with robust errors, functional form, or alternate estimators
 * Makes some models easier to estimate
+
+.footnote[
+[1] It causes serious problems in many other types of models
+]
 
 --
 
@@ -524,3 +627,14 @@ class: inverse
 
 # Wrap-Up
 
+## Assignments
+
+* Working on them ASAP!
+
+## Strike!
+
+* No class next week if strike goes forward
+
+## Last assignment
+
+* Sent out by next Friday

@@ -26,15 +26,30 @@ dim(borough_deprivation)
 
 
 
+metro_2021_crime |>
+  left_join(london_subregion) |> 
+  glimpse()
 
-metro_2021 <- read_csv(
-  "https://clanfear.github.io/ioc_iqa/_data/metro_2021_full.csv") |>
+metro_2021_crime |>
+  left_join(borough_pop_density, by = c("borough"="Borough")) |>
+  glimpse()
+
+metro_2021 <- metro_2021_crime |>
+  left_join(london_subregion) |>
+  left_join(borough_deprivation) |>
+  left_join(borough_pop_density |> 
+              clean_names())
+head(metro_2021, 3)
+
+
+metro_2021 <- metro_2021 |>
   rename(violence = violence_and_sexual_offences,
          asb      = antisocial_behaviour) |>
-  mutate(month    = lubridate::month(month),
+  mutate(month    = lubridate::month(month), #<<
          pop_den = (pop/area)/1000)
 
-lm_sq <- lm(violence ~ month + I(month^2), 
+lm_sq <- 
+  lm(violence ~ month + I(month^2), 
    data = metro_2021) 
 lm_sq |> tidy() |> 
   select(term, estimate, std.error)
