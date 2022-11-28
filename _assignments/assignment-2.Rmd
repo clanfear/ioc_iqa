@@ -1,0 +1,114 @@
+---
+title: "Assignment 1"
+author: "Your name"
+output: 
+  word_document:
+    reference_docx: airbnb_crime.docx
+date: "Date"
+---
+
+
+You will be asked to perform some basic data manipulation and analysis tasks. You will likely want to use some functions from the `tidyverse` and `janitor` packages that we've focused on in the course. The data you'll be working with are available at this URL:
+
+[`https://clanfear.github.io/ioc_iqa/_data/neighb_crime.csv`]()
+
+You'll want to load them into R (perhaps call the object `neighb_crime`) as we've done before in class. You'll probably want to take a quick look at them to get an idea for what is there. These data describe 343 neighborhoods in a major city observed over a 10 year period. It contains the following measures:
+
+-   `robbery`: A count of the number of robberies occurring in the neighborhood within the 10 year study period. Units are individual robbery incidents.
+
+-   `disadvantage`: An index of concentrated disadvantage (e.g., unemployment, poverty). Units are standard deviations and higher values indicate higher disadvantage. e.g., a neighborhood with disadvantage equal to 1 is 1 standard deviation higher in disadvantage than a neighborhood with disadvantage equal to 0.
+
+-   `instability`: An index of residential instability (e.g., home ownership, recent moves). Units are standard deviations and higher values indicate higher instability.
+
+-   `heterogeneity`: An index of ethnic heterogeneity (e.g., percent foreign-born, ethnic diversity). Units are standard deviations and higher values indicate higher heterogeneity
+
+-   `control`: An index of informal social control capacity. Units are standard deviations and higher values indicate higher social control.
+
+-   `opportunity`: A three-level ordinal variable capturing the density of features of the built environment that provide criminal opportunities (e.g., abandoned buildings, liquor stores, commercial destinations).
+
+You may write answers as normal text in this Word doc below each question. Alternatively, if you'd prefer to make a second document with only your answers (or an RMarkdown / Quarto doc for advanced students), go ahead. You will upload this to the assignment on Moodle. For questions that ask for some output from R, like a table or plot, you can insert them into this document however works best for you. Copy-pasting output from the console is fine, so long as it is passably formatted: format pasted code (but not written text) with a fixed-width/monospace font like Courier or Monaco. Cropped screenshots are fine for console output or plots. Written answers should be brief and to the point!
+
+Also include any code used to solve these problems in a separate R script file (a .R file, like what we use in class time) or in chunks in your Quarto/RMarkdown doc. Divide this code into sections using comments. You can get started with [this template here](https://clanfear.github.io/ioc_iqa/\_assignments/assignment-2.R) if you would like some guidance. Avoid writing a lot of code if possible---most problems can be solved with just a few lines of code using what we've learned in lecture---but any amount of code that solves the problem you have is good enough!
+
+```{r}
+library(tidyverse)
+read_csv()
+```
+
+
+# Fundamentals
+
+```{tikz dag, fig.width = 6, fig.height=4, cache = TRUE, purl = FALSE, echo = FALSE, fig.ext = "png", out.width = "50%", out.height = "50%"}
+\usetikzlibrary{positioning}
+\definecolor{black}{HTML}{000000}
+\tikzset{
+    > = stealth,
+    every node/.append style = {
+        draw = none,
+        scale = 1
+    },
+    every path/.append style = {
+        arrows = ->,
+        draw = black,
+        fill = none,
+        scale = 1,
+        line width = .5mm
+    },
+    hidden/.style = {
+        draw = black,
+        shape = circle,
+        inner sep = 1pt
+    }
+}
+\tikz{
+  \node (C) at (2, 3) {$Control$};
+  \node (D) at (0, 3) {$Disadvantage$};
+  \node (H) at (0, 2) {$Heterogeneity$};
+  \node (I) at (0, 1) {$Instability$};
+  \node (O) at (2, 1) {$Opportunity$};
+  \node (R) at (3, 2) {$Robbery$};
+  \path (D) edge (C);
+  \path (D) edge (O);
+  \path (D) edge (R);
+  \path (H) edge (C);
+  \path (H) edge (R);
+  \path (I) edge (C);
+  \path (I) edge (R);
+  \path (C) edge (O);
+  \path (C) edge (R);
+  \path (O) edge (R);
+  }
+```
+
+## Linear Model
+
+# Moderate Problems
+
+## DAG to model
+
+## Model Comparison I
+
+## Model Comparison II
+
+## Log-level Model
+
+## Interaction plot
+
+
+
+## Quadratic Model
+
+## Interaction Model
+
+# Harder Problems
+
+
+Quadratic Interpretation
+
+Interaction Interpretation
+
+Log Interpretation
+
+# How's it goin?
+
+> In anything from one word to a paragraph, let me know how you're feeling now that the course has come to an end. Were you overwhelmed? Did it get better or worse over the term? No problem at all? Are there topics that leave you confused? Let me know if there are things that might make the course work better for others in the future. Also let me know if there are topics you would like to cover in the future, in case I can set up some workshops.
