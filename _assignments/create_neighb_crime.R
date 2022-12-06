@@ -27,10 +27,11 @@ neighb_crime <-
            0.5*(opportunity=="medium") + 1.25*(opportunity=="high") +
            -0.5*control*(opportunity=="low") -0.15*control*(opportunity=="medium") +
              rnorm(sample_size, 2, 0.5)), 0)
-         )
+         ) |>
+  select(-opportunity_index)
 write_csv(neighb_crime, file = "./_data/neighb_crime.csv")
 
 lm_true <- lm(log(robbery) ~ control*opportunity + disadvantage + I(disadvantage^2) + instability + heterogeneity, data = neighb_crime)
 summary(lm_true)
-lm_simple <-lm(robbery ~ control + opportunity + disadvantage + instability + heterogeneity, data = neighb_crime)
+lm_simple <-lm(robbery ~ control * opportunity + disadvantage + instability + heterogeneity, data = neighb_crime)
 summary(lm_simple)
