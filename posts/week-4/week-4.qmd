@@ -2,7 +2,7 @@
 title: "Week 4: Linear Models I"
 description: "Most common quantitative questions are nails and the linear model is an excellent hammer"
 author: "Charles Lanfear"
-date: "2022-11-02"
+date: "2022-11-01"
 draft: false
 ---
 

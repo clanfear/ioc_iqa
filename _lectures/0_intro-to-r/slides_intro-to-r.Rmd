@@ -2,7 +2,7 @@
 title: "Introduction to R"
 subtitle: "IQA Lecture 0"
 author: "Charles Lanfear"
-date: "6 Oct 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%e %b %Y'))`"
+date: "5 Oct 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%e %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -156,18 +156,18 @@ but you get used to it
 
 Location: Computer Lab, Wed, 14:00-16:00
 
-Jing's email: [ss2826@cam.ac.uk]()
+Michael's email: [wl429@cam.ac.uk]()
 
 * Your first point of contact for troubleshooting!
 
 My email: [cl948@cam.ac.uk]()
 
-* For non-troubleshooting questions---or *really* broken stuff
+* For non-troubleshooting questions—or *really* broken stuff
 
 My drop-in times:
 
 * 3.9, Tue, 14:00-15:00
-* 3.9, Wed, 11:00-12:00
+* 3.9, Wed, 12:00-13:00
 
 ---
 
@@ -221,6 +221,10 @@ class: inverse
 
 # R and RStudio
 
+<br>
+
+![:width 50%](img/Rlogo.svg)
+
 ---
 
 # Why R?
@@ -231,7 +235,7 @@ If one already knows Excel, SPSS, or Stata, why use R?
 
 --
 
-* R is *free*, so you don't need a terminal server or license.
+* R is *free*.
 
 --
 
@@ -253,8 +257,12 @@ If one already knows Excel, SPSS, or Stata, why use R?
 
 --
 
-* R is similar to other programming languages.
+* R is similar to other common programming languages, e.g.:
 
+   * Python
+   * Javascript
+   * Julia
+   * SQL
 
 ---
 
@@ -573,6 +581,12 @@ class: inverse
 
 # Data Frames
 
+## AKA flat files or spreadsheets
+
+<br>
+
+![:width 60%](img/flat-sassy.PNG)
+
 ---
 
 # What's Up with `USArrests`?
@@ -623,177 +637,6 @@ summary(USArrests)
 ]
 
 .footnote[[1] Note R `summary()` provides different information for different types of objects!]
-
----
-class: inverse
-# Indexing and Subsetting
-## Base R
-
----
-
-# Indices and Dimensions
-
-In base R, there are two main ways to access object elements: square brackets (`[]` or `[[]]`) and `$`. How you access an object depends on its *dimensions*.
-
---
-
-Dataframes have *2* dimensions: **rows** and **columns**. Square brackets allow us to numerically **subset** in the format of `object[row, column]`. Leaving the row or column place empty selects *all* elements of that dimension.
-
-.small[
-```{r}
-USArrests[1,] # First row
-```
-]
---
-.small[
-```{r}
-USArrests[1:3, 3:4] # First three rows, third and fourth column #<<
-```
-]
-
-.pull-right[
-.footnote[
-The **colon operator** (`:`) generates a vector using the sequence of integers from its first argument to its second. `1:3` is equivalent to `c(1,2,3)`.
-]
-]
----
-
-# Dataframes and Names
-
-Columns in dataframes can also be accessed using their names with the `$` extract operator. This will return the column as a vector:
-
-```{r}
-USArrests$UrbanPop[1:10]
-```
-
---
-
-Note here I *also* used brackets to select just the first 10 elements of that column.
-
-You can mix subsetting formats! In this case I provided only a single value (no column index) because **vectors** have *only one dimension* (length).
-
-If you try to subset something and get a warning about "incorrect number of dimensions", check your subsetting!
-
-
----
-
-# Indexing by Expression
-
-We can also index using expressions—logical *tests*.
-
-```{r}
-USArrests[USArrests$Murder > 15, ]
-```
-
----
-
-# How Expressions Work
-
-What does `USArrests$Murder > 15` actually do? 
-
---
-
-```{r}
-USArrests$Murder > 15
-```
-
---
-
-It returns a vector of `TRUE` or `FALSE` values.
-
-When used with the subset operator (`[]`), elements for which a `TRUE` is given are returned while those corresponding to `FALSE` are dropped.
-
----
-
-# Logical Operators
-
-We used `>` for testing "greater than": `USArrests$Murder > 15`.
-
---
-
-There are many other [logical operators](http://www.statmethods.net/management/operators.html):
-
---
-* `==`: equal to
-
---
-* `!=`: not equal to
-
---
-* `>`, `>=`, `<`, `<=`: less than, less than or equal to, etc.
-
---
-* `%in%`: used with checking equal to one of several values
-
---
-
-Or we can combine multiple logical conditions:
-
-* `&`: both conditions need to hold (AND)
---
-
-* `|`: at least one condition needs to hold (OR)
---
-
-* `!`: inverts a logical condition (`TRUE` becomes `FALSE`, `FALSE` becomes `TRUE`)
-
---
-
-Logical operators are one of the foundations of programming. You should experiment with these to become familiar with how they work!
-
----
-
-# Sidenote: Missing Values
-
-Missing values are coded as `NA` entries without quotes:
-
-```{r}
-vector_w_missing <- c(1, 2, NA, 4, 5, 6, NA)
-```
-
-Even one `NA` "poisons the well": You'll get `NA` out of your calculations unless you remove them manually or use the extra argument `na.rm = TRUE` in some functions:
-
-```{r}
-mean(vector_w_missing)
-```
-
---
-
-We can take missings (`NA`) and remove (`rm`) them:
-
-```{r}
-mean(vector_w_missing, na.rm=TRUE)
-```
-
----
-# Finding Missing Values
-
-**WARNING:** You can't test for missing values by seeing if they "equal" (`==`) `NA`:
-
-```{r}
-vector_w_missing == NA
-```
-
---
-
-But you can use the `is.na()` function:
-
-```{r}
-is.na(vector_w_missing)
-```
-
---
-
-We can use subsetting to get the equivalent of `na.rm=TRUE`:
-
-```{r}
-mean(vector_w_missing[!is.na(vector_w_missing)]) #<<
-```
-
-
-.footnote[
-`!` *reverses* a logical condition. Read the above as "subset to *not* `NA`"
-]
 
 ---
 class: inverse

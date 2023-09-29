@@ -155,7 +155,7 @@ Also include any code used to solve these problems in a separate R script file (
 
 ## Interaction Model
 
-> Based on the plots from 2.4, we might expect there is an **interaction** between `control` and `opportunity`. That is, we think the effect of `control` on `robbery` might be different at different levels of `opportunity`. Take your linear model from 2.3—with the logged outcome and quadratic disadvantage—and add an interaction between `control` and `opportunity`.
+> Based on the plots from 3.1, we might expect there is an **interaction** between `control` and `opportunity`. That is, we think the effect of `control` on `robbery` might be different at different levels of `opportunity`. Take your linear model from 2.3—with the logged outcome and quadratic disadvantage—and add an interaction between `control` and `opportunity`.
 
 
 > Does the model with the interaction term fit better than the one without? Use a statistical test to compare them and interpret the results of the test.

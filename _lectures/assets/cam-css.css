@@ -99,11 +99,29 @@ img {
   opacity: 1;
   font-size: 0.9em;
 }
-strong{
+h1 strong, h2 strong, h3 strong {
+  font-weight: 800;
+}
+
+strong {
   color: var(--secondary);
 }
 .inverse strong {
   color: #64A70B;
+}
+em {
+  filter: brightness(60%);
+}
+body em {
+  color: var(--primary);
+}
+.inverse em {
+  color: var(--white);
+  filter: brightness(80%);
+}
+h1 em, h2 em, h3 em {
+  color: var(--secondary);
+  filter: brightness(60%); /* Apply the brightness filter to italic text inside headers */
 }
 a, a > code {
   color: var(--secondary);
