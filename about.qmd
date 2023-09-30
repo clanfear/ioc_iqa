@@ -8,18 +8,19 @@ title-block-banner: true
 
 ::: {.grid style="text-align: left"}
 
-::: {.g-col-4}
-Wednesday 14:00 - 16:00<br>Computer Lab
+::: {.g-col-5}
+Wednesday, 14:00–16:00<br>Computer Lab
 :::
 
-::: {.g-col-4}
+::: {.g-col-3}
 &nbsp;
 :::
 
 ::: {.g-col-4}
 Charles C. Lanfear<br> [cl948\@cam.ac.uk](cl948@cam.ac.uk "Email")<br>Office 3.9, drop-in times:<br>
--- Tuesday, 14:00-15:00<br>
--- Wednesday, 12:00-13:00
+-- Tuesday, 14:00–15:00<br>
+-- Wednesday, 12:00–13:00
+[Schedule a meeting](https://calendar.app.google/KEYJzwgrBiASKzwH6)
 :::
 
 :::
