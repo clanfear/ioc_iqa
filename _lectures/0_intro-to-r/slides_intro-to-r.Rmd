@@ -87,7 +87,10 @@ class: inverse
 ]
 
 ---
-# Data *analysis* is mostly data *wrangling*
+
+.text-center[
+# Data *analysis*<br>is mostly<br>data *wrangling*
+]
 
 .footnote[Credit: Kieran Healy]
 
@@ -95,7 +98,9 @@ class: inverse
 
 &nbsp;
 
+.text-center[
 ## Data wrangling is **frustrating**
+]
 
 ---
 class: inverse
@@ -140,14 +145,14 @@ class: inverse
 
 --
 
-.pull-left[
-The frustration is *always* present...
+.text-center[
+## The frustration is *always* present
 ]
 
 --
 
-.pull-right[
-but you get used to it
+.text-center[
+## but you get used to it
 ]
 
 ---
@@ -211,8 +216,6 @@ Code chunks are *actual embedded R code*.
 # Sometimes important stuff is highlighted! #<<
 7 * 49
 ```
-
---
 
 `##` indicates the output from running the code chunk.
 
@@ -304,25 +307,19 @@ It can also...
 
 Open up RStudio now and choose *File \> New File \> R Script*.
 
-Then, let's get oriented with the interface:
-
 --
+
+Then, let's get oriented with the interface:
 
 * *Top Left*: Code **editor** pane, data viewer (browse with tabs)
 
---
 
 * *Bottom Left*: **Console** for running code (`>` prompt)
 
---
-
 * *Top Right*: List of objects in **environment**, code **history** tab.
-
---
 
 * *Bottom Right*: Tabs for browsing files, viewing plots, managing packages, and viewing help files.
 
---
 
 You can change the layout in *Preferences \> Pane Layout*
 
@@ -430,16 +427,6 @@ new.object <- 144
 
 We do math with operators, e.g., `x + y`. `+` is the addition operator!
 
----
-
-# Calling Objects
-
-You can display or "call" an object simply by using its name.
-
-```{r Objects 2}
-new.object
-```
-
 --
 
 Object names can contain `_` and `.` in them, but cannot *begin* with numbers. Try to be consistent in naming objects.
@@ -448,13 +435,19 @@ Object names can contain `_` and `.` in them, but cannot *begin* with numbers. T
 
 Auto-complete means *long names are better than vague ones*!
 
-*Good names*<sup>1</sup> save confusion later.
-
-.footnote[[1] *"There are only two hard things in Computer Science: cache invalidation and naming things." - Phil Karlton*]
+*Good names* save confusion later.
 
 ---
 
 # Using Objects
+
+You can display or "call" an object simply by using its name.
+
+```{r Objects 2}
+new.object
+```
+
+--
 
 You can treat the object's **name** as if it were the values stored inside.
 
@@ -645,8 +638,9 @@ class: inverse
 
 &nbsp;
 
+&nbsp;
 
-![](img/swirl_new_large_final.png)
+![:width 80%](img/swirl_new_large_final.png)
 
 ---
 
@@ -664,7 +658,7 @@ In the console, type `install.packages("swirl")`.
 
 --
 
-* Once you install a package, you don't need to re-install it until you update R. *Consequently, you should not include* `install.packages()` *in a R script!*
+* Once you install a package, you don't need to re-install it until you update R. *Consequently, you should not include* `install.packages()` *in an R script!*
 
 --
 
@@ -673,6 +667,8 @@ We can load packages like `swirl` using the `library()` function.
 ```{r, eval=FALSE}
 library(swirl)
 ```
+
+You could then use `swirl()` to start tutorials.
 
 ---
 class: inverse
