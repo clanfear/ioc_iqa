@@ -45,26 +45,4 @@ str(USArrests) # str[ucture]
 
 summary(USArrests)
 
-USArrests[1,] # First row
-
-USArrests[1:3, 3:4] # First three rows, third and fourth column #<<
-
-USArrests$UrbanPop[1:10]
-
-USArrests[USArrests$Murder > 15, ]
-
-USArrests$Murder > 15
-
-vector_w_missing <- c(1, 2, NA, 4, 5, 6, NA)
-
-mean(vector_w_missing)
-
-mean(vector_w_missing, na.rm=TRUE)
-
-vector_w_missing == NA
-
-is.na(vector_w_missing)
-
-mean(vector_w_missing[!is.na(vector_w_missing)]) #<<
-
 ## library(swirl)

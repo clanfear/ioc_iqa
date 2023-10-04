@@ -2,7 +2,7 @@
 title: "Week 8: Further Complications"
 description: "Time, space, death, and other sources of ~~existential~~ statistical dread."
 author: "Charles Lanfear"
-date: "2022-11-29"
+date: "2023-11-29"
 draft: false
 ---
 

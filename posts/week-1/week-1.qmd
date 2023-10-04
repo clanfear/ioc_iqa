@@ -2,7 +2,7 @@
 title: "Week 1: Fundamentals"
 description: "Review of maths and introduction to subsetting"
 author: "Charles Lanfear"
-date: "2022-10-11"
+date: "2023-10-11"
 draft: false
 ---
 
