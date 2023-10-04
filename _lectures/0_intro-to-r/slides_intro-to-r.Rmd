@@ -82,7 +82,7 @@ Pratt (2015):
 ---
 class: inverse
 
-.text-align-center[
+.text-center[
 # Okay, but programming?
 ]
 
@@ -109,6 +109,13 @@ class: inverse
 
 ---
 
+&nbsp;
+
+&nbsp;
+
+&nbsp;
+
+&nbsp;
 
 .text-big-center[
 **NO**
@@ -120,6 +127,10 @@ class: inverse
 # Can we at least make it not frustrating?
 
 ---
+
+&nbsp;
+
+&nbsp;
 
 .text-big-center[
 **ALSO<br>NO**
