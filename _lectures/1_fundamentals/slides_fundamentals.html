@@ -4,7 +4,7 @@
     <title>Fundamentals</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 12 Oct 2022<br>Updated: 11 Oct 2022
+### 11 Oct 2023<br>Updated: 10 Oct 2023
 ]
 
 ---
@@ -223,7 +223,7 @@ class: inverse
 
 &amp;nbsp;
 
-![](img/mediocre-mad-max.gif)
+![:width 50%](img/average.gif)
 
 ---
 
@@ -385,15 +385,24 @@ class: inverse
 
 ## How spread out something is
 
-&amp;nbsp;
+.pull-left[
 
-![:width 60%](img/dsotm.png)
+High Dispersion
+
+![:width 100%](img/woe.jpg)
+]
+.pull-right[
+
+Low Dispersion
+
+![:width 100%](img/sphere.jpg)
+]
 
 ---
 
 ## Variance
 
-The variance measures how dispersed data are around the mean. Typically we use the *sample* variance:
+The variance ( `\(s^2\)` ) measures how dispersed data are around the mean. Typically we use the *sample* variance:
 
 $$
 s^2 = \frac{\sum (x_i - \bar{x})^2}{n - 1}
@@ -422,7 +431,7 @@ var(x)
 
 --
 
-If every value is the same, the variance is *zero*.
+If every value is the same, the variance is *zero*—the data would be *invariant*.
 
 ---
 
@@ -454,6 +463,8 @@ sd(x)
 ```
 ## [1] 7.266361
 ```
+
+*Values are about 7.3 away from the mean on average*
 
 ---
 class: inverse

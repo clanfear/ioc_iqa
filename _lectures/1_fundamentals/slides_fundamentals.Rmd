@@ -2,7 +2,7 @@
 title: "Fundamentals"
 subtitle: "IQA Lecture 1"
 author: "Charles Lanfear"
-date: "12 Oct 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "11 Oct 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -177,7 +177,7 @@ class: inverse
 
 &nbsp;
 
-![](img/mediocre-mad-max.gif)
+![:width 50%](img/average.gif)
 
 ---
 
@@ -296,15 +296,24 @@ class: inverse
 
 ## How spread out something is
 
-&nbsp;
+.pull-left[
 
-![:width 60%](img/dsotm.png)
+High Dispersion
+
+![:width 100%](img/woe.jpg)
+]
+.pull-right[
+
+Low Dispersion
+
+![:width 100%](img/sphere.jpg)
+]
 
 ---
 
 ## Variance
 
-The variance measures how dispersed data are around the mean. Typically we use the *sample* variance:
+The variance ( $s^2$ ) measures how dispersed data are around the mean. Typically we use the *sample* variance:
 
 $$
 s^2 = \frac{\sum (x_i - \bar{x})^2}{n - 1}
@@ -321,7 +330,7 @@ var(x)
 
 --
 
-If every value is the same, the variance is *zero*.
+If every value is the same, the variance is *zero*—the data would be *invariant*.
 
 ---
 
@@ -341,6 +350,8 @@ You can interpret it as the "typical" distance of values in the data from the me
 sqrt(var(x))
 sd(x)
 ```
+
+*Values are about `r round(sd(x), 1)` away from the mean on average*
 
 ---
 class: inverse
