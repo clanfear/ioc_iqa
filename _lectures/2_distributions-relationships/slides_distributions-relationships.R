@@ -1,27 +1,3 @@
-USArrests[c("California", "Arkansas"), 2:3]
-
-USArrests[USArrests$Murder > 15, ]
-
-USArrests$Murder > 15
-
-c(1,2,3,4)[c(TRUE, FALSE, TRUE, FALSE)]
-
-USArrests[USArrests$Murder > 15 & USArrests$Assault > 300, ]
-
-USArrests[USArrests$Murder > 15 | USArrests$Assault > 300, ]
-
-vector_w_missing <- c(1, 2, NA, 4, 5, 6, NA)
-
-mean(vector_w_missing)
-
-mean(vector_w_missing, na.rm=TRUE)
-
-vector_w_missing == NA
-
-is.na(vector_w_missing)
-
-mean(vector_w_missing[!is.na(vector_w_missing)]) #<<
-
 library(readr)
 library(ggplot2)
 library(dplyr)
@@ -37,6 +13,31 @@ proportions(table(communities$disadvantage))
 
 communities |> pull(disadvantage) |> table() |> proportions()
 
+communities |> filter(incarceration == "High") |> head()
+
+## communities |>
+##   filter(disadvantage == "Low" &
+##          crime_rate > 40)
+
+## communities |>
+##   filter(disadvantage == "Low" |
+##          crime_rate > 40)
+
+communities |>
+  filter(disadvantage %in% c("High", "Low")) |>
+  tail()
+
+communities |>
+  arrange(disadvantage, desc(crime_rate)) |> head()
+
+communities |> select(area, pop_density, crime_rate) |> head()
+
+communities |> select(-area, -pop_density, -crime_rate) |> head()
+
+communities |> select(Area = area) |> head()
+
+communities |> rename(Area = area) |> head()
+
 communities |>
   mutate(high_crime = crime_rate > mean(crime_rate)) |>
   head(4)
@@ -51,16 +52,6 @@ communities <- communities |> #<<
 communities |> pull(disadvantage) |> table()
 
 communities |> pull(incarceration) |> table()
-
-communities |> filter(incarceration == "High") |> head()
-
-## communities |>
-##   filter(disadvantage == "Low" &
-##          crime_rate > 40)
-
-## communities |>
-##   filter(disadvantage == "Low" |
-##          crime_rate > 40)
 
 communities |> count(incarceration)
 
@@ -144,3 +135,7 @@ communities |> summarize(R = cor(pop_density, crime_rate))
 communities |>
   group_by(disadvantage) |>
   summarize(R = cor(pop_density, crime_rate))
+
+anscombe |> # Anscombe's quarter from yesterday!
+  select(x1, y1, y2, y3, y4) |> 
+  cor()

@@ -2,7 +2,7 @@
 title: "Distributions and Relationships"
 subtitle: "IQA Lecture 2"
 author: "Charles Lanfear"
-date: "19 Oct 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "18 Oct 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -28,201 +28,21 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
 * News items:
    * Two assessments
       * *Light* data analysis and interpretation
-      * One week to complete
-   * [Jing's Office Hours](https://us05web.zoom.us/j/84826817691?pwd=cjFnQjBJY1BkOUxvRnBrQy9KbExNQT09): Friday, 12:30-13:30
+      * Due Friday 11:59 PM the following week
+   * Michael's Office Hours: Thurs 13:00-14:00
       * Also by appointment
-   * Reschedule Nov 16th to Monday Nov 14th
-     * Tentative: 4 PM
+   * Reschedule Nov 15th to Monday, Nov 13th at 2 PM
+      * Email immediately if this is a problem
 
 * Topics for today:
-   
-   * Subsetting with logical expressions
+
    * Pipes 
+   * Subsetting with `{dplyr}`
    * Creating and modifying variables
    * Distributions
       * Tabulations and Cross-Tabulations
       * Summarizing data
       * Correlations
-
----
-class: inverse
-
-# Logical Expressions
-
-&nbsp;
-
-&nbsp;
-
-![:width 50%](img/spock.gif)
-
----
-
-# Indexing
-
-Last week we subset or indexed data like so:
-
-```{r}
-USArrests[c("California", "Arkansas"), 2:3]
-```
-
-This is indexing by **name** or **position**
-
----
-
-# Indexing by Expression
-
-We can also index using expressions—logical *tests*.
-
-```{r}
-USArrests[USArrests$Murder > 15, ]
-```
-
---
-
-What does this give us?
-
-
----
-
-# How Expressions Work
-
-What does `USArrests$Murder > 15` actually do? 
-
---
-
-```{r}
-USArrests$Murder > 15
-```
-
---
-
-It returns a vector of `TRUE` or `FALSE` values.
-
-When used with the subset operator (`[]`), elements for which a `TRUE` is given are returned while those corresponding to `FALSE` are dropped.
-
---
-
-```{r}
-c(1,2,3,4)[c(TRUE, FALSE, TRUE, FALSE)]
-```
-
-
----
-
-# Logical Operators
-
-We used `>` for testing "greater than": `USArrests$Murder > 15`.
-
---
-
-There are many other [logical operators](http://www.statmethods.net/management/operators.html):
-
---
-* `==`: equal to
-
---
-* `!=`: not equal to
-
---
-* `>`, `>=`, `<`, `<=`: less than, less than or equal to, etc.
-
---
-* `%in%`: used with checking equal to one of several values
-
---
-
-Or we can combine multiple logical conditions:
-
-* `&`: both conditions need to hold (AND)
---
-
-* `|`: at least one condition needs to hold (OR)
---
-
-* `!`: inverts a logical condition (`TRUE` becomes `FALSE`, `FALSE` becomes `TRUE`)
-
---
-
-Logical operators are one of the foundations of programming. You should experiment with these to become familiar with how they work!
-
----
-
-# And: `&`
-
-![:width 50%](img/murder_and_assault.svg)
-
-```{r}
-USArrests[USArrests$Murder > 15 & USArrests$Assault > 300, ]
-```
-
-
-
----
-
-# Or: `|`
-
-![:width 50%](img/murder_or_assault.svg)
-
-```{r}
-USArrests[USArrests$Murder > 15 | USArrests$Assault > 300, ]
-```
-
-
----
-
-# Sidenote: Missing Values
-
-Missing values are coded as `NA` entries without quotes:
-
-```{r}
-vector_w_missing <- c(1, 2, NA, 4, 5, 6, NA)
-```
-
---
-
-Even one `NA` "poisons the well": You'll get `NA` out of your calculations unless you remove them manually or use the extra argument `na.rm = TRUE` in some functions:
-
-```{r}
-mean(vector_w_missing)
-```
-
---
-
-We can take missings (`NA`) and remove (`rm`) them:
-
-```{r}
-mean(vector_w_missing, na.rm=TRUE)
-```
-
----
-# Finding Missing Values
-
-**WARNING:** You can't test for missing values by seeing if they "equal" (`==`) `NA`:
-
-```{r}
-vector_w_missing == NA
-```
-
---
-
-But you can use the `is.na()` function:
-
-```{r}
-is.na(vector_w_missing)
-```
-
---
-
-We can use subsetting to get the equivalent of `na.rm=TRUE`:
-
-```{r}
-mean(vector_w_missing[!is.na(vector_w_missing)]) #<<
-```
-
-
-.footnote[
-`!` *reverses* a logical condition. Read the above as "subset to *not* `NA`"
-]
 
 ---
 class: inverse
@@ -277,11 +97,11 @@ This **message** is just letting you know that.
 
 --
 
-Sometimes you may get a **warning message** when loading packages---usually because you aren't running the latest version of R:
+Sometimes you may get a **warning message** when loading packages—usually because you aren't running the latest version of R:
 
 ```
 Warning message:
-package `dplyr' was built under R version 4.2.2
+package `dplyr' was built under R version 4.3.0
 ```
 
 *Update R* to get rid of these!
@@ -342,6 +162,7 @@ communities <-
 ```
 ]
 
+
 ---
 class: inverse
 
@@ -351,9 +172,10 @@ class: inverse
 
 ![:width 60%](img/dplyr.svg)
 
+
 ---
 
-# Check Out Shootings
+# Check Out `communities`
 
 `{dplyr}` gives us access to the handy `glimpse()` for inspecting dataframes.
 
@@ -365,7 +187,7 @@ glimpse(communities)
 
 ---
 
-# But first, pipes!
+# Pipes!
 
 `{dplyr}` and rest of the Tidyverse are built around using pipe operators (`|>`)
 
@@ -386,70 +208,6 @@ communities |> pull(disadvantage) |> table() |> proportions()
 --
 
 Read this as, "take `communities`, and then pull out the `incarceration` column, and then make a `table()`, and then calculate `proportions()`."
-
-
----
-# Creating Columns
-
-`incarceration` looks like an ordinal variable (`disadvantage` too) but R doesn't know this—it just puts them in alphabetical order
-
---
-
-To fix this, we need to know how to create or modify variables in our data
-
---
-
-`dplyr` uses the `mutate()` function to create or modify variables:
-
-```{r}
-communities |>
-  mutate(high_crime = crime_rate > mean(crime_rate)) |>
-  head(4)
-```
-
-This created a **logical** (`TRUE`/`FALSE`) variable because we used a logical expression
-
----
-# Modifying Columns
-
-In R, we "modify" objects—including columns in our data—by replacing them with new versions
-
---
-
-We saw before that our disadvantage and incarceration variables are ordinal but not being recognized that way
-
---
-
-We can give them a proper order by making them **factors** and specifying their **levels**
-
-```{r}
-communities <- communities |> #<<
-  mutate(disadvantage = 
-           factor(disadvantage, levels = c("Low", "Medium", "High")), #<<
-         incarceration = 
-           factor(incarceration, levels = c("Low", "Medium", "High"))
-         )
-```
-
-To modify the original dataset, we just assign back to it—overwriting it with our changes!
-
----
-# Fixed!
-
-```{r}
-communities |> pull(disadvantage) |> table()
-```
-
-
-```{r}
-communities |> pull(incarceration) |> table()
-```
-
---
-
-.text-center[
-*We'll create and modify variables more another day, but for now let's look at subsetting again*
-]
 
 ---
 
@@ -503,6 +261,127 @@ communities |>
 
 ![:width 100%](img/disadvantage_or_crime.svg)
 ]
+
+---
+# `%in%` Operator
+
+Common use case: Filter rows to things in some set.
+
+We can use `%in%` like `==` but for matching any element in the vector on its right
+
+```{r}
+communities |>
+  filter(disadvantage %in% c("High", "Low")) |>
+  tail()
+```
+
+Read as: "`filter()` to rows where `disadvantage` is `"High"` or `"Low"`"
+
+---
+#Sorting: `arrange()`
+
+Along with filtering the data to see certain rows, we might want to sort it:
+
+```{r}
+communities |>
+  arrange(disadvantage, desc(crime_rate)) |> head()
+```
+
+The data are sorted by ascending `disadvantage` and descending `crime_rate`.
+
+---
+# Keeping Columns: `select()`
+
+Not only can we subset rows, but we can include specific columns (and put them in the order listed) using `select()`
+
+```{r}
+communities |> select(area, pop_density, crime_rate) |> head()
+```
+
+---
+# Dropping Columns: `select()`
+
+We can instead drop only specific columns with select() using - signs:
+
+```{r}
+communities |> select(-area, -pop_density, -crime_rate) |> head()
+```
+
+---
+# Renaming with `select()`
+
+We can rename columns using `select()`, but that drops everything that isn't mentioned:
+
+```{r}
+communities |> select(Area = area) |> head()
+```
+
+---
+# Safer: Rename with `rename()`
+
+`rename()` renames variables using the same syntax as `select()` without dropping unmentioned variables
+
+```{r}
+communities |> rename(Area = area) |> head()
+```
+
+
+---
+# Creating Columns
+
+`disadvantage` looks like an ordinal variable (`incarceration` too) but R doesn't know this—it just puts them in alphabetical order
+
+--
+
+To fix this, we need to know how to create or modify variables in our data
+
+--
+
+`dplyr` uses the `mutate()` function to create or modify variables:
+
+```{r}
+communities |>
+  mutate(high_crime = crime_rate > mean(crime_rate)) |>
+  head(4)
+```
+
+This created a **logical** (`TRUE`/`FALSE`) variable because we used a logical expression
+
+---
+# Modifying Columns
+
+In R, we "modify" objects—including columns in our data—by replacing them with new versions
+
+--
+
+We saw before that our disadvantage and incarceration variables are ordinal but not being recognized that way
+
+--
+
+We can give them a proper order by making them **factors** and specifying their **levels**
+
+```{r}
+communities <- communities |> #<<
+  mutate(disadvantage = 
+           factor(disadvantage, levels = c("Low", "Medium", "High")), #<<
+         incarceration = 
+           factor(incarceration, levels = c("Low", "Medium", "High"))
+         )
+```
+
+To modify the original dataset, we just assign back to it—overwriting it with our changes!
+
+---
+# Fixed!
+
+```{r}
+communities |> pull(disadvantage) |> table()
+```
+
+
+```{r}
+communities |> pull(incarceration) |> table()
+```
 
 ---
 class: inverse
@@ -568,11 +447,11 @@ It comes in *really* handy for **cross-tabs**—we'll see them soon!
 ---
 # `summarize()`
 
-`{dplyr}`'s **`summarize()`** takes your column(s) of data and computes something using **every row**: 
+`{dplyr}`'s **`summarize()`** takes your column(s) of data and computes something using *every row*: 
 
-* Calculate the mean
-* Calculate the standard deviation
-* Obtain a sample size
+* Calculate the mean (`mean()`)
+* Calculate the standard deviation (`sd()`)
+* Obtain a sample size (`n()`)
 --
 
 ```{r}
@@ -812,13 +691,26 @@ communities |>
 In this case, the correlation between `pop_density` and `crime_rate` is similar at all levels of disadvantage
 
 ---
+# Correlation Matrices
+
+`cor()` produces correlation matrices when given multiple continuous variables
+
+```{r}
+anscombe |> # Anscombe's quarter from yesterday!
+  select(x1, y1, y2, y3, y4) |> 
+  cor()
+```
+
+
+
+---
 class: inverse
 
 # Wrap-Up
   
 * Recommended reading for next week
 
-   * Kaplan, chapters 10 is review of today's content
+   * Kaplan, chapter 10 is review of today's content
       * Chapter 14 (graphing) is what we'll get into next week
    * You're pretty busy, so make it low priority!
 
