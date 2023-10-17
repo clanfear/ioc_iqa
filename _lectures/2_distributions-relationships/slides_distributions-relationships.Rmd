@@ -361,7 +361,7 @@ We saw before that our disadvantage and incarceration variables are ordinal but 
 We can give them a proper order by making them **factors** and specifying their **levels**
 
 ```{r}
-communities <- communities |> #<<
+communities <- communities |>  # Assigning back to overwrite! #<<
   mutate(disadvantage = 
            factor(disadvantage, levels = c("Low", "Medium", "High")), #<<
          incarceration = 

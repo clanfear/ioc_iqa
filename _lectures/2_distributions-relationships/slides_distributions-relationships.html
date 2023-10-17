@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 18 Oct 2023<br>Updated: 16 Oct 2023
+### 18 Oct 2023<br>Updated: 17 Oct 2023
 ]
 
 ---
@@ -529,7 +529,7 @@ We can give them a proper order by making them **factors** and specifying their 
 
 
 ```r
-*communities &lt;- communities |&gt;
+*communities &lt;- communities |&gt;  # Assigning back to overwrite!
   mutate(disadvantage = 
 *          factor(disadvantage, levels = c("Low", "Medium", "High")),
          incarceration = 
