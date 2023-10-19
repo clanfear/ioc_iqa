@@ -9,7 +9,13 @@ title-block-banner: true
 ::: {.grid style="text-align: left"}
 
 ::: {.g-col-5}
-Wednesday, 14:00–16:00<br>Computer Lab
+Wednesday, 14:00–16:00<br>
+Computer Lab<br>
+&nbsp;<br>
+TA:<br>
+Michael Li<br>
+[wl429@cam.ac.uk](mailto:wl429@cam.ac.uk)
+
 :::
 
 ::: {.g-col-3}
