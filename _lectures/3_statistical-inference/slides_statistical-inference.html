@@ -4,8 +4,9 @@
     <title>Statistical Inference</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
-    <link href="libs/tabwid-1.1.0/tabwid.css" rel="stylesheet" />
+    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
+    <link href="libs/tabwid-1.1.3/tabwid.css" rel="stylesheet" />
+    <script src="libs/tabwid-1.1.3/tabwid.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -22,7 +23,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 26 Oct 2022<br>Updated: 26 Oct 2022
+### 25 Oct 2023<br>Updated: 24 Oct 2023
 ]
 
 ---
@@ -203,15 +204,14 @@ head(westminster, 4)
 
 ```
 ## # A tibble: 4 × 10
-##   borough month      antis…¹ burgl…² robbery viole…³ subre…⁴ depri…⁵
-##   &lt;chr&gt;   &lt;date&gt;       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;  
-## 1 Westmi… 2021-01-01    1501     150      64     487 Central Medium 
-## 2 Westmi… 2021-02-01    1326     150      51     491 Central Medium 
-## 3 Westmi… 2021-03-01    1474     189      76     658 Central Medium 
-## 4 Westmi… 2021-04-01    1396     155     126     670 Central Medium 
-## # … with 2 more variables: pop &lt;dbl&gt;, area &lt;dbl&gt;, and abbreviated
-## #   variable names ¹​antisocial_behaviour, ²​burglary,
-## #   ³​violence_and_sexual_offences, ⁴​subregion, ⁵​deprivation
+##   borough     month      antisocial_behaviour burglary robbery
+##   &lt;chr&gt;       &lt;date&gt;                    &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+## 1 Westminster 2021-01-01                 1501      150      64
+## 2 Westminster 2021-02-01                 1326      150      51
+## 3 Westminster 2021-03-01                 1474      189      76
+## 4 Westminster 2021-04-01                 1396      155     126
+## # ℹ 5 more variables: violence_and_sexual_offences &lt;dbl&gt;,
+## #   subregion &lt;chr&gt;, deprivation &lt;chr&gt;, pop &lt;dbl&gt;, area &lt;dbl&gt;
 ```
 
 --
@@ -597,7 +597,7 @@ We have a plot we like for Westminster...
        y     = "Robbery",
        title = 
          "Robbery in London") +
-* theme_bw(base_size = 18)
+  theme_bw(base_size = 18)
 ```
 ]
 ]
@@ -622,7 +622,7 @@ We have a plot we like for Westminster...
         aes(x = month, 
             y = robbery)) +
   geom_line(color = "red", 
-*           size  = 3) +
+*           linewidth  = 3) +
   labs(x     = "Month",
        y     = "Robbery",
        title = 
@@ -652,7 +652,7 @@ We have a plot we like for Westminster...
             y = robbery, 
             group = borough)) +
   geom_line(color = "red", 
-*           size  = 3) +
+            linewidth  = 3) + 
   labs(x     = "Month",
        y     = "Robbery",
        title = 
@@ -828,10 +828,23 @@ You can look at the help file `?strptime` to find these `%` codes for date forma
 
 # Enough for now
 
-Don't worry about understanding it all now!
+.pull-left-60[
+Don't worry about understanding it all now—it is complicated!
 
-We'll likely return to `ggplot2` at least for a bit in every future lecture
+... but it is worth learning because it can produce publication ready plots
 
+We'll return to `ggplot2` at least for a bit in every future lecture
+]
+
+.pull-right-40[
+![:width 90%](img/fig-3-model-results.png)
+]
+
+.footnote[
+.pull-left[
+&amp;zwj;Source: [Lanfear et al. (2023) "Inequalities in Exposure to Firearm Violence by Race, Sex, and Birth Cohort From Childhood to Age 40 Years, 1995-2021"](https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2804655)
+]
+]
 
 
 ---
@@ -900,7 +913,7 @@ glimpse(communities)
 
 # Cross-Tab
 
-Say we draw a sample and see this association in the table
+Say we tabulate our data and see this association in our sample:
 
 
 ```r
@@ -966,6 +979,32 @@ If you're curious how p-values are calculated, they come from cumulative probabi
 ]
 
 ---
+## How unlikely is that?
+
+.pull-left[
+.text-85[
+
+```r
+tibble(x = seq(0, 15, 0.1),
+       density = dchisq(x, df = 2)) |&gt; 
+  ggplot(aes(x = x, y = density)) + 
+  geom_line() +
+  coord_cartesian(expand = FALSE) +
+  geom_vline(xintercept = 9.1153, 
+             color = "red")
+```
+
+]
+]
+.pull-right[
+![](slides_statistical-inference_files/figure-html/chisq-1-1.svg)
+]
+
+That is really unlikely to occur by chance:
+
+*If there were no real association in the population, only 1.04% of all possible random samples would have an association this strong*
+
+---
 
 # A Prettier Table
 
@@ -990,11 +1029,15 @@ communities |&gt;
 |Medium       |49    |48    |
 |High         |41    |60    |
 
+.footnote[
+Yours won't have the colored rows—that's from my website theme!
+]
+
 ---
 
 # More Complex
 
-IF you want to make a publication ready table that will work in any output format, such as PDF, Word, or HTML, [your best bet is `{flextable}`](https://ardata-fr.github.io/flextable-book/)
+If you want to make a publication ready table that will work in any output format, such as PDF, Word, or HTML, [your best bet is `{flextable}`](https://ardata-fr.github.io/flextable-book/)
 
 
 ```r
@@ -1006,55 +1049,7 @@ communities |&gt;
   add_header_lines("Table 1. Disadvantage by area")
 ```
 
-&lt;template id="0e33052b-2882-46f2-af2d-bf4c67e66895"&gt;&lt;style&gt;
-.tabwid table{
-  border-spacing:0px !important;
-  border-collapse:collapse;
-  line-height:1;
-  margin-left:auto;
-  margin-right:auto;
-  border-width: 0;
-  display: table;
-  border-color: transparent;
-  caption-side: top;
-}
-.tabwid-caption-bottom table{
-  caption-side: bottom;
-}
-.tabwid_left table{
-  margin-left:0;
-}
-.tabwid_right table{
-  margin-right:0;
-}
-.tabwid td {
-    padding: 0;
-}
-.tabwid a {
-  text-decoration: none;
-}
-.tabwid thead {
-    background-color: transparent;
-}
-.tabwid tfoot {
-    background-color: transparent;
-}
-.tabwid table tr {
-background-color: transparent;
-}
-.katex-display {
-    margin: 0 0 !important;
-}
-&lt;/style&gt;&lt;div class="tabwid"&gt;&lt;style&gt;.cl-51a632f2{}.cl-519ca638{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-519fbabc{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-519fbabd{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-519fcaf2{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-519fcafc{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-519fcafd{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-519fcb06{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-519fcb07{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-519fcb10{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}&lt;/style&gt;&lt;table class='cl-51a632f2'&gt;&lt;thead&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td  colspan="3"class="cl-519fcaf2"&gt;&lt;p class="cl-519fbabc"&gt;&lt;span class="cl-519ca638"&gt;Table 1. Disadvantage by area&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-519fcaf2"&gt;&lt;p class="cl-519fbabc"&gt;&lt;span class="cl-519ca638"&gt;Disadvantage&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcafc"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;Rural&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcafc"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;Urban&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-519fcafd"&gt;&lt;p class="cl-519fbabc"&gt;&lt;span class="cl-519ca638"&gt;Low&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcb06"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;63&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcb06"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;39&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-519fcafd"&gt;&lt;p class="cl-519fbabc"&gt;&lt;span class="cl-519ca638"&gt;Medium&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcb06"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;49&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcb06"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;48&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-519fcb07"&gt;&lt;p class="cl-519fbabc"&gt;&lt;span class="cl-519ca638"&gt;High&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcb10"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;41&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-519fcb10"&gt;&lt;p class="cl-519fbabd"&gt;&lt;span class="cl-519ca638"&gt;60&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;/template&gt;
-&lt;div class="flextable-shadow-host" id="50a21c3e-243f-42bc-9398-7707adb948c4"&gt;&lt;/div&gt;
-&lt;script&gt;
-var dest = document.getElementById("50a21c3e-243f-42bc-9398-7707adb948c4");
-var template = document.getElementById("0e33052b-2882-46f2-af2d-bf4c67e66895");
-var caption = template.content.querySelector("caption");
-var fantome = dest.attachShadow({mode: 'open'});
-var templateContent = template.content;
-fantome.appendChild(templateContent);
-&lt;/script&gt;
+&lt;div class="tabwid"&gt;&lt;style&gt;.cl-6288f642{}.cl-627e575a{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-628249d2{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-628249dc{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-62826412{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-6282641c{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-62826426{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-62826427{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-62826428{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-62826430{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}&lt;/style&gt;&lt;table data-quarto-disable-processing='true' class='cl-6288f642'&gt;&lt;thead&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;th  colspan="3"class="cl-62826412"&gt;&lt;p class="cl-628249d2"&gt;&lt;span class="cl-627e575a"&gt;Table 1. Disadvantage by area&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;th class="cl-62826412"&gt;&lt;p class="cl-628249d2"&gt;&lt;span class="cl-627e575a"&gt;Disadvantage&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-6282641c"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;Rural&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-6282641c"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;Urban&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-62826426"&gt;&lt;p class="cl-628249d2"&gt;&lt;span class="cl-627e575a"&gt;Low&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-62826427"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;63&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-62826427"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;39&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-62826426"&gt;&lt;p class="cl-628249d2"&gt;&lt;span class="cl-627e575a"&gt;Medium&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-62826427"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;49&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-62826427"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;48&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-62826428"&gt;&lt;p class="cl-628249d2"&gt;&lt;span class="cl-627e575a"&gt;High&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-62826430"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;41&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-62826430"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;60&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
 
 It can be complicated, but it can do just about anything...
 
@@ -1072,7 +1067,7 @@ It can be complicated, but it can do just about anything...
 
 ![:width 50%](img/ce-be.png)
 
-.footnote[Source: [Lanfear (2022)](https://doi.org/10.1111/1745-9125.12304)]
+.footnote[Source: [Lanfear (2022) "Collective efficacy and the built environment"](https://doi.org/10.1111/1745-9125.12304)]
 
 ---
 
@@ -1088,6 +1083,9 @@ ggplot(communities,
        aes(x = disadvantage)) + 
   geom_bar()
 ```
+
+`geom_bar()` tabulates counts of values of categorical variables and makes a bar plot
+
 ]
 .pull-right[
 ![](slides_statistical-inference_files/figure-html/barplot-1-1.svg)
