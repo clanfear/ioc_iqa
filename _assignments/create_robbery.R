@@ -1,7 +1,7 @@
 library(tidyverse)
 
-
-sample_size <- 300
+set.seed(101)
+sample_size <- 500
 street_crime <- tibble(
   sex = sample(c("Male", "Female"), sample_size, replace=TRUE),
   sex_num = as.numeric(sex=="Male"),

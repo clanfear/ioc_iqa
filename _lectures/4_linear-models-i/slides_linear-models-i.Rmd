@@ -2,7 +2,7 @@
 title: "Linear Models I"
 subtitle: "IQA Lecture 4"
 author: "Charles Lanfear"
-date: "2 Nov 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "1 Nov 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -293,7 +293,7 @@ communities |>
 ```
 ]
 
-Here our intercept represent the mean when `incarceration` is neither `"Medium"` nor `"High"`. Our **reference category** is `"Low"`
+Here our intercept represents the mean when `incarceration` is neither `"Medium"` nor `"High"`. Our **reference category** is `"Low"`
 
 ---
 
@@ -381,6 +381,14 @@ We include a categorical control $Z$ if we believe some of $X$ and $Y$'s apparen
 
 If we remove group-specific averages of both X and Y, we can get rid of that
 
+.text-85[
+```{r}
+residualized_data <- communities |> group_by(area) |>
+  mutate(pop_density_res =  pop_density - mean(pop_density), #<< # Subtract mean!
+         crime_rate_res  =  crime_rate  - mean(crime_rate)) #<<
+```
+]
+
 --
 
 .pull-left[
@@ -392,30 +400,24 @@ lm(crime_rate ~ pop_density + area,
   select(term, estimate)
 ```
 ]
-
-Note the identical `pop_density` slopes!
 ]
 .pull-right[
 .text-85[
 ```{r}
-residualized_data <- communities |>
-  group_by(area) |>
-  mutate(pop_density_res =  #<<
-      pop_density - mean(pop_density), #<<
-         crime_rate_res  =  #<<
-      crime_rate - mean(crime_rate)) #<<
-lm(crime_rate_res ~ pop_density_res, #<<
+lm(crime_rate_res ~ pop_density_res,
    data = residualized_data)  |> 
-  tidy() |> select(term, estimate)
+  tidy() |> 
+  select(term, estimate)
 ```
 ]
 ]
 
+Note the identical `pop_density` slopes!
 
 
 ---
 
-# Visualising It
+## Visualising It
 
 .pull-left[
 ```{r, message = FALSE}
@@ -469,9 +471,9 @@ ggplot(lm_res,
 .pull-right[
 .text-85[
 ```{r}
-ggplot(lm_res,
-    aes(x = pop_density, 
-        y = .resid)) +  #<<
+ggplot(lm_res,           # augment()
+    aes(x = pop_density, # gives us
+        y = .resid)) +   # residuals! #<< 
   geom_point() + 
   geom_smooth(method = "lm")
 ```
@@ -512,17 +514,17 @@ lm(crime_rate ~ pop_density +
 ```
 ]
 
-These show the regression line *controlling for all other included variables*—and unlike `ggplot2`, `avPlot()` can accept more variables at once
+These show the regression line after *controlling for other variables*—and unlike `ggplot2`, `avPlot()` can accept more than one added variables at once
 
 ---
 
 # Continuous Variables
 
-We include continuous controls if some of X and Y's relationship is because Z makes X and Y higher/lower—sometimes called **spuriousness**
+We include continuous controls if some of $X$ and $Y$'s relationship is because $Z$ makes $X$ and $Y$ higher/lower—sometimes called **spuriousness**
 
 --
 
-If we remove variation in X and Y due to Z, we can fix this
+If we remove variation in $X$ and $Y$ due to $Z$, we can fix this
 
 --
 
@@ -564,7 +566,7 @@ lm(crime_rate_res ~ area_res, #<<
 
 ---
 
-# Visualising It
+## Visualising It
 
 .pull-left[
 
@@ -598,7 +600,7 @@ ggplot(residualized_data,
 --
 
 .text-center[
-*Wait, wat? I thought it was binary?*
+*Wait, wat? I thought `area` was binary?*
 ]
 
 ---
@@ -733,13 +735,13 @@ sim_data <- sim_data |>
 
 --
 
-"Y is equal to 3 plus 0.3 X and 0.3 BD, with about 1 SD of error on average"
+"Y is equal to 3 plus $0.3*X$ plus $0.3*BD$, with about 1 SD of error on average"
 
 --
 
 Note that we generate the variables in causal order of the diagram
 
-* We started with `bd`
+* We started with `bd` (on prior slide)
 * We finished with `coll`
 
 ---
@@ -747,8 +749,6 @@ Note that we generate the variables in causal order of the diagram
 # Estimates with Back Doors
 
 Because we know the **data generating process**—we created it—we know what our estimates should be
-
---
 
 .pull-left[
 ```{r}
@@ -763,14 +763,14 @@ lm(y ~ x + bd, #<<
 
 .pull-right[
 ```{r}
-lm(y ~ x , #<<
+lm(y ~ x , # Leaving out bd  #<<
    data = sim_data) |>
   tidy() |> 
   select(term, estimate)
 ```
 ]
 
-Excluding `bd` makes the effect of `x` larger than it should be—they're **magnified**
+Excluding `bd` makes the effect of `x` larger than it should be—it is **magnified**
 
 --
 
@@ -820,21 +820,20 @@ Let's create the data from CRM yesterday.
 
 
 ```{r, fig.height = 3.5}
-coll_data <- tibble(Skill     = runif(1000, 0, 10), 
-                  Frequency = runif(1000, 0, 10), 
-                  Who =   c(rep("Arrested", 500), 
-                            rep("Everyone", 500))) |>
-  filter(Who == "Everyone" | (10 + (-1*Skill) + Frequency > 10))
-
+coll_data <- tibble(
+  Skill     = runif(500, 0, 10), 
+  Frequency = runif(500, 0, 10), 
+  Arrested  = Frequency > Skill) 
+arrested <- coll_data |> filter(Arrested) |> mutate(Who = "Arrested")
+everyone <- coll_data |> mutate(Who = "Everyone")
 ```
 
 What's going on here?
 
-* It is actually *two* sets of data in one: 
-  * A pool of "everyone" and a pool of only "arrested" people
-* *No relationship* between Skill at crime and Frequency of crime
-* Skilled or infrequent offenders don't get arrested
-  * i.e., we remove arrested people with high Skills or low Frequency
+* *No relationship* between `Skill` at crime and `Frequency` of crime
+  * Just two uniformly distributed variables
+* Anyone who commits more crime than their skill gets arrested
+  * Only these people are in `arrested`
 
 --
 
@@ -848,8 +847,7 @@ If we only see arrested people, we've *selected* on a collider—this is just li
 .pull-left[
 ```{r}
 lm(Frequency ~ Skill, #<<
-   data = coll_data |> 
-     filter(Who=="Everyone")) |>
+   data = everyone) |>
   tidy() |> 
   select(term, estimate)
 ```
@@ -860,8 +858,7 @@ lm(Frequency ~ Skill, #<<
 .pull-right[
 ```{r}
 lm(Frequency ~ Skill, #<<
-   data = coll_data |> 
-     filter(Who=="Arrested")) |>
+   data = arrested) |>
   tidy() |> 
   select(term, estimate)
 ```
@@ -878,17 +875,47 @@ We know there is no real relationship, but because we **selected** data based on
 *The collider is still producing bias without being explicitly in the model!*
 ]
 
+---
+## What about controlling?
+
+.pull-left[
+Controlling for arrest:
+
+```{r}
+lm(Frequency ~ Skill + Arrested, #<<
+   data = everyone) |>
+  tidy() |> 
+  select(term, estimate)
+```
+]
+
+
+.pull-right[
+Only arrested people:
+
+```{r}
+lm(Frequency ~ Skill, #<<
+   data = arrested) |>
+  tidy() |> 
+  select(term, estimate)
+```
+]
+
+.text-center[
+*We get bias either way!*
+]
 
 ---
 
 # Visualizing Collider Bias
 
 ```{r coll-plot, fig.height = 3.5}
-ggplot(coll_data, aes(x = Skill, y = Frequency, color = Who)) + 
-  facet_wrap(~Who) + geom_point() +
-  geom_smooth(method = "lm", color = "black") +
-  labs(x = "Skill at Crime", y = "Frequency of Crime") +
-  theme_minimal(base_size = 16) + theme(legend.position = "none")
+bind_rows(arrested, everyone) |>
+  ggplot(aes(x = Skill, y = Frequency, color = Who)) + 
+    facet_wrap(~Who) + geom_point() +
+    geom_smooth(method = "lm", color = "black") +
+    labs(x = "Skill at Crime", y = "Frequency of Crime") +
+    theme_minimal(base_size = 16) + theme(legend.position = "none")
 ```
 
 ---
@@ -905,12 +932,12 @@ class: inverse
 Let's create example data with actual **potential outcomes**
 
 ```{r}
-sample_size <- 10000
+n <- 10000
 po_data <- tibble(
-  bd = runif(sample_size, 0, 1), # Random uniform variable
-  x  = rbinom(sample_size, 1, bd), # Random binary variable
-  y0 = rnorm(sample_size, 2*bd, 1),
-  y1 = rnorm(sample_size, 2*bd + 1, 1)) |> # Effect size of 1 #<<
+  bd = runif( n, 0,        1), # Random uniform variable
+  x  = rbinom(n, 1,        bd), # Random binary variable
+  y0 = rnorm( n, 2*bd,     1),  # untreated outcome
+  y1 = rnorm( n, 2*bd + 1, 1)) |> # treated outcome #<<
   mutate(y = ifelse(x==1, y1, y0)) # Treatment just selects outcome
 ```
 
@@ -958,7 +985,7 @@ lm(y ~ x, data = po_data) |>
 `sample()` is an easy way to randomly select units
 
 ```{r}
-sample(0:1, 20, replace= TRUE)
+sample(0:1, 20, replace = TRUE) # randomly select 0 or 1 20 times
 ```
 
 ---
@@ -998,20 +1025,107 @@ lm(yt ~ treat, data = po_data) |>
 
 ---
 
+# Randomization DAGs
+
+Randomization breaks back doors—even when we can't observe the responsible variables!
+
+
+.pull-left[
+
+Confounded by an unobservable $BD$
+
+```{tikz bd-dag, fig.width = 2.75, cache = TRUE, purl = FALSE, echo = FALSE}
+\usetikzlibrary{positioning}
+\definecolor{black}{HTML}{000000}
+\tikzset{
+    > = stealth,
+    every node/.append style = {
+        draw = none,
+        scale = 3
+    },
+    every path/.append style = {
+        arrows = ->,
+        draw = black,
+        fill = none,
+        scale = 1,
+        line width = 1.5mm
+    },
+    hidden/.style = {
+        draw = black,
+        shape = circle,
+        inner sep = 1pt
+    }
+}
+\tikz{
+  \node (Y) at (0, 5) {$Y$};
+  \node[hidden] (BD) at (5, 0) {$BD$};
+  \node (X) at (5, 5) {$X$};
+  \path (X) edge (Y);
+  \path (BD) edge (Y);
+  \path (BD) edge (X);
+  }
+```
+]
+
+.pull-right[
+
+$BD$ is irrelevant if we can randomize!
+
+```{tikz ran-dag, fig.width = 2.75, cache = TRUE, purl = FALSE, echo = FALSE}
+\usetikzlibrary{positioning}
+\definecolor{black}{HTML}{000000}
+\tikzset{
+    > = stealth,
+    every node/.append style = {
+        draw = none,
+        scale = 3
+    },
+    every path/.append style = {
+        arrows = ->,
+        draw = black,
+        fill = none,
+        scale = 1,
+        line width = 1.5mm
+    },
+    hidden/.style = {
+        draw = black,
+        shape = circle,
+        inner sep = 1pt
+    }
+}
+\tikz{
+  \node (Y) at (0, 5) {$Y$};
+  \node[hidden] (BD) at (5, 0) {$BD$};
+  \node (T) at (5, 5) {$T$};
+  \path (T) edge (Y);
+  \path (BD) edge (Y);
+  }
+```
+]
+
+--
+
+&nbsp;
+
+If we're interested in the effect of $X$ here, we have to assume $T$ is roughly equivalent to $X$ (it is **consistent** with $X$)
+
+---
+class: inverse
 # Wrap-Up
 
 Assignment:
 
 * Posted tomorrow morning:
   * On website in units (both week 4 and 5)
-  * On Moodle
 * Read instructions carefully
    * No trick questions intended
+   * If you're writing a ton of code, you may be overthinking it
 * Doc types:
   * Word or equivalent + .R script file for code
      * Use comments to indicate question code applies to
   * Quarto / Rmarkdown if you're feeling fancy
-* Due 11:59 PM Friday 11 November
+* Due 11:59 PM Friday 10 November
   * **Do not spend that entire time working on it**
+  * **Do ask questions**
 
 No reading until next week

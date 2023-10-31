@@ -12,7 +12,7 @@ You will be asked to perform some basic data manipulation and analysis tasks. Yo
 
 [`https://clanfear.github.io/ioc_iqa/_data/street_crime.csv`]()
 
-You'll want to load them into R (perhaps call the object `street_crime`) as we've done before in class. You'll probably want to take a quick look at them to get an idea for what is there. These data describe 300 adults and juveniles convicted of particular types of crime and receiving different lengths of sentences. It contains the following measures:
+You'll want to load them into R (perhaps call the object `street_crime`) as we've done before in class. You'll probably want to take a quick look at them to get an idea for what is there. These data describe 500 adults and juveniles convicted of particular types of crime and receiving different lengths of sentences. It contains the following measures:
 
 -   `sex`: Recorded sex of the individual
 

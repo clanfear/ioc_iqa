@@ -4,7 +4,7 @@
     <title>Linear Models I</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 2 Nov 2022<br>Updated: 07 Nov 2022
+### 1 Nov 2023<br>Updated: 31 Oct 2023
 ]
 
 ---
@@ -107,12 +107,12 @@ communities |&gt;
 
 ```
 ## # A tibble: 3 × 5
-##   incarceration crime_rate_mu crime_rate_sd pop_density_mu pop_den…¹
-##   &lt;fct&gt;                 &lt;dbl&gt;         &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;
-## 1 Low                    17.7          16.1           12.8      4.87
-## 2 Medium                 20.9          18.0           14.2      5.40
-## 3 High                   37.0          25.3           17.5      5.75
-## # … with abbreviated variable name ¹​pop_density_sd
+##   incarceration crime_rate_mu crime_rate_sd pop_density_mu
+##   &lt;fct&gt;                 &lt;dbl&gt;         &lt;dbl&gt;          &lt;dbl&gt;
+## 1 Low                    17.7          16.1           12.8
+## 2 Medium                 20.9          18.0           14.2
+## 3 High                   37.0          25.3           17.5
+## # ℹ 1 more variable: pop_density_sd &lt;dbl&gt;
 ```
 
 This calculated a `mean()` and `sd()` each for `crime_rate` and `pop_density` within each level of `incarceration` with very little code!
@@ -397,7 +397,7 @@ communities |&gt;
 ```
 ]
 
-Here our intercept represent the mean when `incarceration` is neither `"Medium"` nor `"High"`. Our **reference category** is `"Low"`
+Here our intercept represents the mean when `incarceration` is neither `"Medium"` nor `"High"`. Our **reference category** is `"Low"`
 
 ---
 
@@ -523,6 +523,15 @@ We include a categorical control `\(Z\)` if we believe some of `\(X\)` and `\(Y\
 
 If we remove group-specific averages of both X and Y, we can get rid of that
 
+.text-85[
+
+```r
+residualized_data &lt;- communities |&gt; group_by(area) |&gt;
+  mutate(pop_density_res =  pop_density - mean(pop_density), #&lt;&lt; # Subtract mean!
+*        crime_rate_res  =  crime_rate  - mean(crime_rate))
+```
+]
+
 --
 
 .pull-left[
@@ -544,22 +553,15 @@ lm(crime_rate ~ pop_density + area,
 ## 3 areaUrban      -3.39
 ```
 ]
-
-Note the identical `pop_density` slopes!
 ]
 .pull-right[
 .text-85[
 
 ```r
-residualized_data &lt;- communities |&gt;
-  group_by(area) |&gt;
-* mutate(pop_density_res =
-*     pop_density - mean(pop_density),
-*        crime_rate_res  =
-*     crime_rate - mean(crime_rate))
-*lm(crime_rate_res ~ pop_density_res,
+lm(crime_rate_res ~ pop_density_res,
    data = residualized_data)  |&gt; 
-  tidy() |&gt; select(term, estimate)
+  tidy() |&gt; 
+  select(term, estimate)
 ```
 
 ```
@@ -572,11 +574,12 @@ residualized_data &lt;- communities |&gt;
 ]
 ]
 
+Note the identical `pop_density` slopes!
 
 
 ---
 
-# Visualising It
+## Visualising It
 
 .pull-left[
 
@@ -590,7 +593,7 @@ ggplot(communities,
               color = "black") 
 ```
 
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-21-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-22-1.svg)&lt;!-- --&gt;
 
 ]
 .pull-right[
@@ -605,7 +608,7 @@ ggplot(residualized_data,
               color = "black")
 ```
 
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-22-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-23-1.svg)&lt;!-- --&gt;
 ]
 
 Rural and urban data points now occupy a similar area due to subtracting their average `\(X\)` and `\(Y\)` values—this gives us their **residuals**
@@ -634,21 +637,21 @@ ggplot(lm_res,
   geom_smooth(method = "lm")
 ```
 
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-24-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-25-1.svg)&lt;!-- --&gt;
 ]
 ]
 .pull-right[
 .text-85[
 
 ```r
-ggplot(lm_res,
-    aes(x = pop_density, 
-*       y = .resid)) +
+ggplot(lm_res,           # augment()
+    aes(x = pop_density, # gives us
+*       y = .resid)) +   # residuals!
   geom_point() + 
   geom_smooth(method = "lm")
 ```
 
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-25-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-26-1.svg)&lt;!-- --&gt;
 ]
 ]
 
@@ -674,7 +677,7 @@ ggplot(residualized_data,
   geom_smooth(method = "lm")
 ```
 
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-26-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-27-1.svg)&lt;!-- --&gt;
 ]
 
 --
@@ -689,20 +692,20 @@ lm(crime_rate ~ pop_density +
     variable = "pop_density")
 ```
 
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-27-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-28-1.svg)&lt;!-- --&gt;
 ]
 
-These show the regression line *controlling for all other included variables*—and unlike `ggplot2`, `avPlot()` can accept more variables at once
+These show the regression line after *controlling for other variables*—and unlike `ggplot2`, `avPlot()` can accept more than one added variables at once
 
 ---
 
 # Continuous Variables
 
-We include continuous controls if some of X and Y's relationship is because Z makes X and Y higher/lower—sometimes called **spuriousness**
+We include continuous controls if some of `\(X\)` and `\(Y\)`'s relationship is because `\(Z\)` makes `\(X\)` and `\(Y\)` higher/lower—sometimes called **spuriousness**
 
 --
 
-If we remove variation in X and Y due to Z, we can fix this
+If we remove variation in `\(X\)` and `\(Y\)` due to `\(Z\)`, we can fix this
 
 --
 
@@ -754,7 +757,7 @@ lm(crime_rate ~ pop_density + area,
 ## # A tibble: 2 × 2
 ##   term         estimate
 ##   &lt;chr&gt;           &lt;dbl&gt;
-## 1 (Intercept)  2.61e-16
+## 1 (Intercept)  7.77e-17
 ## 2 area_res    -3.39e+ 0
 ```
 
@@ -764,7 +767,7 @@ lm(crime_rate ~ pop_density + area,
 
 ---
 
-# Visualising It
+## Visualising It
 
 .pull-left[
 
@@ -781,7 +784,7 @@ ggplot(residualized_data,
               color = "black") 
 ```
 
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-31-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-32-1.svg)&lt;!-- --&gt;
 
 ]
 .pull-right[
@@ -798,13 +801,13 @@ ggplot(residualized_data,
               color = "black")
 ```
 
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-32-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-33-1.svg)&lt;!-- --&gt;
 ]
 
 --
 
 .text-center[
-*Wait, wat? I thought it was binary?*
+*Wait, wat? I thought `area` was binary?*
 ]
 
 ---
@@ -825,7 +828,7 @@ ggplot(residualized_data,
               color = "black")
 ```
 
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-33-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-34-1.svg)&lt;!-- --&gt;
 ]
 
 .pull-right[
@@ -838,7 +841,7 @@ lm(crime_rate ~ pop_density +
         variable = "areaUrban")
 ```
 
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-34-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-35-1.svg)&lt;!-- --&gt;
 
 ]
 
@@ -880,7 +883,7 @@ sim_data |&gt;
 ## # A tibble: 1 × 2
 ##   bd_mean bd_sd
 ##     &lt;dbl&gt; &lt;dbl&gt;
-## 1    3.00  1.02
+## 1    3.00  1.00
 ```
 ]
 
@@ -894,7 +897,7 @@ ggplot(sim_data,
   geom_density()
 ```
 
-![](slides_linear-models-i_files/figure-html/unnamed-chunk-36-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-i_files/figure-html/unnamed-chunk-37-1.svg)&lt;!-- --&gt;
 ]
 
 ---
@@ -924,13 +927,13 @@ sim_data &lt;- sim_data |&gt;
 
 --
 
-"Y is equal to 3 plus 0.3 X and 0.3 BD, with about 1 SD of error on average"
+"Y is equal to 3 plus `\(0.3*X\)` plus `\(0.3*BD\)`, with about 1 SD of error on average"
 
 --
 
 Note that we generate the variables in causal order of the diagram
 
-* We started with `bd`
+* We started with `bd` (on prior slide)
 * We finished with `coll`
 
 ---
@@ -938,8 +941,6 @@ Note that we generate the variables in causal order of the diagram
 # Estimates with Back Doors
 
 Because we know the **data generating process**—we created it—we know what our estimates should be
-
---
 
 .pull-left[
 
@@ -954,9 +955,9 @@ Because we know the **data generating process**—we created it—we know what o
 ## # A tibble: 3 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    3.01 
-## 2 x              0.308
-## 3 bd             0.300
+## 1 (Intercept)    2.96 
+## 2 x              0.281
+## 3 bd             0.319
 ```
 ]
 
@@ -965,7 +966,7 @@ Because we know the **data generating process**—we created it—we know what o
 .pull-right[
 
 ```r
-*lm(y ~ x ,
+*lm(y ~ x , # Leaving out bd
    data = sim_data) |&gt;
   tidy() |&gt; 
   select(term, estimate)
@@ -976,11 +977,11 @@ Because we know the **data generating process**—we created it—we know what o
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
 ## 1 (Intercept)    3.83 
-## 2 x              0.393
+## 2 x              0.369
 ```
 ]
 
-Excluding `bd` makes the effect of `x` larger than it should be—they're **magnified**
+Excluding `bd` makes the effect of `x` larger than it should be—it is **magnified**
 
 --
 
@@ -1005,9 +1006,9 @@ Again, we know what effects should be identified and how to identify them. What 
 ## # A tibble: 3 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    3.01 
-## 2 x              0.308
-## 3 bd             0.300
+## 1 (Intercept)    2.96 
+## 2 x              0.281
+## 3 bd             0.319
 ```
 ]
 
@@ -1026,10 +1027,10 @@ Again, we know what effects should be identified and how to identify them. What 
 ## # A tibble: 4 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    2.88 
-## 2 x              0.260
-## 3 bd             0.287
-## 4 coll          -0.203
+## 1 (Intercept)    2.86 
+## 2 x              0.237
+## 3 bd             0.305
+## 4 coll          -0.178
 ```
 ]
 
@@ -1052,20 +1053,20 @@ Let's create the data from CRM yesterday.
 
 
 ```r
-coll_data &lt;- tibble(Skill     = runif(1000, 0, 10), 
-                  Frequency = runif(1000, 0, 10), 
-                  Who =   c(rep("Arrested", 500), 
-                            rep("Everyone", 500))) |&gt;
-  filter(Who == "Everyone" | (10 + (-1*Skill) + Frequency &gt; 10))
+coll_data &lt;- tibble(
+  Skill     = runif(500, 0, 10), 
+  Frequency = runif(500, 0, 10), 
+  Arrested  = Frequency &gt; Skill) 
+arrested &lt;- coll_data |&gt; filter(Arrested) |&gt; mutate(Who = "Arrested")
+everyone &lt;- coll_data |&gt; mutate(Who = "Everyone")
 ```
 
 What's going on here?
 
-* It is actually *two* sets of data in one: 
-  * A pool of "everyone" and a pool of only "arrested" people
-* *No relationship* between Skill at crime and Frequency of crime
-* Skilled or infrequent offenders don't get arrested
-  * i.e., we remove arrested people with high Skills or low Frequency
+* *No relationship* between `Skill` at crime and `Frequency` of crime
+  * Just two uniformly distributed variables
+* Anyone who commits more crime than their skill gets arrested
+  * Only these people are in `arrested`
 
 --
 
@@ -1080,8 +1081,7 @@ If we only see arrested people, we've *selected* on a collider—this is just li
 
 ```r
 *lm(Frequency ~ Skill,
-   data = coll_data |&gt; 
-     filter(Who=="Everyone")) |&gt;
+   data = everyone) |&gt;
   tidy() |&gt; 
   select(term, estimate)
 ```
@@ -1090,8 +1090,8 @@ If we only see arrested people, we've *selected* on a collider—this is just li
 ## # A tibble: 2 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)   4.97  
-## 2 Skill        -0.0153
+## 1 (Intercept)   5.07  
+## 2 Skill        -0.0217
 ```
 ]
 
@@ -1101,8 +1101,7 @@ If we only see arrested people, we've *selected* on a collider—this is just li
 
 ```r
 *lm(Frequency ~ Skill,
-   data = coll_data |&gt; 
-     filter(Who=="Arrested")) |&gt;
+   data = arrested) |&gt;
   tidy() |&gt; 
   select(term, estimate)
 ```
@@ -1111,8 +1110,8 @@ If we only see arrested people, we've *selected* on a collider—this is just li
 ## # A tibble: 2 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    5.05 
-## 2 Skill          0.512
+## 1 (Intercept)    4.93 
+## 2 Skill          0.522
 ```
 ]
 
@@ -1127,6 +1126,54 @@ We know there is no real relationship, but because we **selected** data based on
 *The collider is still producing bias without being explicitly in the model!*
 ]
 
+---
+## What about controlling?
+
+.pull-left[
+Controlling for arrest:
+
+
+```r
+*lm(Frequency ~ Skill + Arrested,
+   data = everyone) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 3 × 2
+##   term         estimate
+##   &lt;chr&gt;           &lt;dbl&gt;
+## 1 (Intercept)    0.0326
+## 2 Skill          0.490 
+## 3 ArrestedTRUE   5.00
+```
+]
+
+
+.pull-right[
+Only arrested people:
+
+
+```r
+*lm(Frequency ~ Skill,
+   data = arrested) |&gt;
+  tidy() |&gt; 
+  select(term, estimate)
+```
+
+```
+## # A tibble: 2 × 2
+##   term        estimate
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 (Intercept)    4.93 
+## 2 Skill          0.522
+```
+]
+
+.text-center[
+*We get bias either way!*
+]
 
 ---
 
@@ -1134,11 +1181,12 @@ We know there is no real relationship, but because we **selected** data based on
 
 
 ```r
-ggplot(coll_data, aes(x = Skill, y = Frequency, color = Who)) + 
-  facet_wrap(~Who) + geom_point() +
-  geom_smooth(method = "lm", color = "black") +
-  labs(x = "Skill at Crime", y = "Frequency of Crime") +
-  theme_minimal(base_size = 16) + theme(legend.position = "none")
+bind_rows(arrested, everyone) |&gt;
+  ggplot(aes(x = Skill, y = Frequency, color = Who)) + 
+    facet_wrap(~Who) + geom_point() +
+    geom_smooth(method = "lm", color = "black") +
+    labs(x = "Skill at Crime", y = "Frequency of Crime") +
+    theme_minimal(base_size = 16) + theme(legend.position = "none")
 ```
 
 ![](slides_linear-models-i_files/figure-html/coll-plot-1.svg)&lt;!-- --&gt;
@@ -1158,12 +1206,12 @@ Let's create example data with actual **potential outcomes**
 
 
 ```r
-sample_size &lt;- 10000
+n &lt;- 10000
 po_data &lt;- tibble(
-  bd = runif(sample_size, 0, 1), # Random uniform variable
-  x  = rbinom(sample_size, 1, bd), # Random binary variable
-  y0 = rnorm(sample_size, 2*bd, 1),
-* y1 = rnorm(sample_size, 2*bd + 1, 1)) |&gt; # Effect size of 1
+  bd = runif( n, 0,        1), # Random uniform variable
+  x  = rbinom(n, 1,        bd), # Random binary variable
+  y0 = rnorm( n, 2*bd,     1),  # untreated outcome
+* y1 = rnorm( n, 2*bd + 1, 1)) |&gt; # treated outcome
   mutate(y = ifelse(x==1, y1, y0)) # Treatment just selects outcome
 ```
 
@@ -1197,9 +1245,9 @@ lm(y ~ x + bd, data = po_data) |&gt;
 ## # A tibble: 3 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)  0.00525
-## 2 x            0.989  
-## 3 bd           2.03
+## 1 (Intercept)   0.0252
+## 2 x             0.990 
+## 3 bd            2.00
 ```
 ]
 .pull-right[
@@ -1214,8 +1262,8 @@ lm(y ~ x, data = po_data) |&gt;
 ## # A tibble: 2 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    0.683
-## 2 x              1.67
+## 1 (Intercept)    0.694
+## 2 x              1.66
 ```
 ]
 
@@ -1231,11 +1279,11 @@ lm(y ~ x, data = po_data) |&gt;
 
 
 ```r
-sample(0:1, 20, replace= TRUE)
+sample(0:1, 20, replace = TRUE) # randomly select 0 or 1 20 times
 ```
 
 ```
-##  [1] 0 0 0 1 0 0 0 1 0 1 0 1 1 1 0 1 1 0 1 0
+##  [1] 1 1 1 1 0 0 0 0 1 1 0 1 0 1 0 1 0 1 1 1
 ```
 
 ---
@@ -1267,9 +1315,9 @@ lm(y ~ x + bd, data = po_data) |&gt;
 ## # A tibble: 3 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)  0.00525
-## 2 x            0.989  
-## 3 bd           2.03
+## 1 (Intercept)   0.0252
+## 2 x             0.990 
+## 3 bd            2.00
 ```
 ]
 .pull-right[
@@ -1284,8 +1332,8 @@ lm(yt ~ treat, data = po_data) |&gt;
 ## # A tibble: 2 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)     1.02
-## 2 treat           1.02
+## 1 (Intercept)    1.04 
+## 2 treat          0.999
 ```
 ]
 
@@ -1295,21 +1343,49 @@ lm(yt ~ treat, data = po_data) |&gt;
 
 ---
 
+# Randomization DAGs
+
+Randomization breaks back doors—even when we can't observe the responsible variables!
+
+
+.pull-left[
+
+Confounded by an unobservable `\(BD\)`
+
+![](slides_linear-models-i_files/figure-html/bd-dag-1.svg)&lt;!-- --&gt;
+]
+
+.pull-right[
+
+`\(BD\)` is irrelevant if we can randomize!
+
+![](slides_linear-models-i_files/figure-html/ran-dag-1.svg)&lt;!-- --&gt;
+]
+
+--
+
+&amp;nbsp;
+
+If we're interested in the effect of `\(X\)` here, we have to assume `\(T\)` is roughly equivalent to `\(X\)` (it is **consistent** with `\(X\)`)
+
+---
+class: inverse
 # Wrap-Up
 
 Assignment:
 
 * Posted tomorrow morning:
   * On website in units (both week 4 and 5)
-  * On Moodle
 * Read instructions carefully
    * No trick questions intended
+   * If you're writing a ton of code, you may be overthinking it
 * Doc types:
   * Word or equivalent + .R script file for code
      * Use comments to indicate question code applies to
   * Quarto / Rmarkdown if you're feeling fancy
-* Due 11:59 PM Friday 11 November
+* Due 11:59 PM Friday 10 November
   * **Do not spend that entire time working on it**
+  * **Do ask questions**
 
 No reading until next week
     </textarea>
