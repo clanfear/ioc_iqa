@@ -1113,7 +1113,9 @@ If we're interested in the effect of $X$ here, we have to assume $T$ is roughly 
 class: inverse
 # Wrap-Up
 
-Assignment:
+&zwj;Reminder: Class on 15th **rescheduled** to Monday the 13th
+
+&zwj;Assignment:
 
 * Posted tomorrow morning:
   * On website in units (both week 4 and 5)
