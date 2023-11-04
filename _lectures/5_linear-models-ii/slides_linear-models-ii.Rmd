@@ -2,7 +2,7 @@
 title: "Linear Models II"
 subtitle: "IQA Lecture 5"
 author: "Charles Lanfear"
-date: "9 Nov 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "8 Nov 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -24,8 +24,6 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, dev = 
 
 
 # Today
-
-## Randomization (from last week)
 
 ## Making Predictions
 
@@ -49,204 +47,6 @@ communities <-
 ]
 
 Again, we'll use `tidyverse` and `broom` today.
-
----
-class: inverse
-
-# Randomization
-
-&nbsp;
-
-```{r,echo = FALSE}
-x <- round(runif(612, -0.49, 9.49),0)
-cat(x, fill = TRUE)
-
-```
-
-
----
-
-# Non-Randomized Treatment
-
-Let's create example data with actual **potential outcomes**
-
-```{r}
-s_n <- 10000
-po_data <- tibble(
-  bd = runif(s_n, 0, 1), # Random uniform variable
-  x  = rbinom(s_n, 1, bd), # Random binary variable
-  y0 = rnorm(s_n, 2*bd, 1),
-  y1 = rnorm(s_n, 2*bd + 1, 1)) |> # Effect size of 1 #<<
-  mutate(y = ifelse(x==1, y1, y0)) # Treatment just selects outcome
-```
-
-
-* `x` is a binary **treatment** with effect size of **1**
-* `y0` is the outcome if the unit is **untreated**
-* `y1` is the outcome if the unit is **treated**
-* `bd` is a backdoor predicting treatment *and* `y`
-   * `bd` improves both potential outcomes *the same* amount
-   * `bd` also makes treatment more likely
-
-.text-center[
-*Units that get treated tend to have higher potential outcomes*
-]
-
----
-
-# Estimation
-
-Like usual, if we can *see* the back door, we can identify the effect of $X$ on $Y$
-
-.pull-left[
-```{r}
-lm(y ~ x + bd, data = po_data) |>
-  tidy() |> 
-  select(term, estimate)
-```
-]
-.pull-right[
-```{r}
-lm(y ~ x, data = po_data) |>
-  tidy() |> 
-  select(term, estimate)
-```
-]
-
---
-
-.text-center[
-*But even if we can't, we can randomize it away*
-]
-
---
-
-`sample()` is an easy way to randomly select units
-
-```{r}
-sample(0:1, 20, replace= TRUE)
-```
-
----
-
-# Random Assignment
-
-Let's select random units to receive the treatment
-
-```{r}
-po_data <- po_data |>
-  mutate(treat = sample(0:1, n(), replace=TRUE),
-         yt = ifelse(treat==1, y1, y0))
-```
-
-All the treatment does is determine which potential outcome we see
-
---
-
-.pull-left[
-```{r}
-lm(y ~ x + bd, data = po_data) |>
-  tidy() |> 
-  select(term, estimate)
-```
-]
-.pull-right[
-```{r}
-lm(yt ~ treat, data = po_data) |>
-  tidy() |> 
-  select(term, estimate)
-```
-]
-
-.text-center[
-*Randomization closes back doors without adjustment!*
-]
-
----
-
-# Randomization DAGs
-
-Randomization breaks back doors—even when we can't observe the responsible variables!
-
-
-.pull-left[
-
-Confounded by an unobservable $BD$
-
-```{tikz bd-dag, fig.width = 2.75, cache = TRUE, purl = FALSE, echo = FALSE}
-\usetikzlibrary{positioning}
-\definecolor{black}{HTML}{000000}
-\tikzset{
-    > = stealth,
-    every node/.append style = {
-        draw = none,
-        scale = 3
-    },
-    every path/.append style = {
-        arrows = ->,
-        draw = black,
-        fill = none,
-        scale = 1,
-        line width = 1.5mm
-    },
-    hidden/.style = {
-        draw = black,
-        shape = circle,
-        inner sep = 1pt
-    }
-}
-\tikz{
-  \node (Y) at (0, 5) {$Y$};
-  \node[hidden] (BD) at (5, 0) {$BD$};
-  \node (X) at (5, 5) {$X$};
-  \path (X) edge (Y);
-  \path (BD) edge (Y);
-  \path (BD) edge (X);
-  }
-```
-]
-
-.pull-right[
-
-$BD$ is irrelevant if we can randomize!
-
-```{tikz ran-dag, fig.width = 2.75, cache = TRUE, purl = FALSE, echo = FALSE}
-\usetikzlibrary{positioning}
-\definecolor{black}{HTML}{000000}
-\tikzset{
-    > = stealth,
-    every node/.append style = {
-        draw = none,
-        scale = 3
-    },
-    every path/.append style = {
-        arrows = ->,
-        draw = black,
-        fill = none,
-        scale = 1,
-        line width = 1.5mm
-    },
-    hidden/.style = {
-        draw = black,
-        shape = circle,
-        inner sep = 1pt
-    }
-}
-\tikz{
-  \node (Y) at (0, 5) {$Y$};
-  \node[hidden] (BD) at (5, 0) {$BD$};
-  \node (T) at (5, 5) {$T$};
-  \path (T) edge (Y);
-  \path (BD) edge (Y);
-  }
-```
-]
-
---
-
-&nbsp;
-
-If we're interested in the effect of $X$ here, we have to assume $T$ is roughly equivalent to $X$ (it is **consistent** with $X$)
 
 ---
 class: inverse
@@ -381,8 +181,8 @@ These are the $Y$ values on the regression line given each unit's predictors
 ```{r}
 lm(crime_rate ~ pop_density,
    data = communities) |>
-  augment() |> #<<
-  slice(1) |> #<<
+  augment() |> # add .fitted #<<
+  slice(1) |> # first row #<<
   select(.fitted, pop_density)
 ```
 ]
@@ -447,12 +247,12 @@ fitted(ex_lm)[1]
 
 Our regression formula:
 
-$$\hat{y} = -22.1 + 3.02*PopDen + 1.44*DisMed + 5.52*DisHigh$$
+$$\hat{y} = -22.1 + \color{#003C71}{3.02*PopDen} + \color{#8A1538}{1.44*DisMed} + \color{#880088}{5.52*DisHigh}$$
 --
 
 Multiplying through:
 
-$$32.87 = -22.1 + 3.02*18.2 + 1.44*0 + 5.52*0$$
+$$32.87 = -22.1 + \color{#003C71}{3.02*18.2} + \color{#8A1538}{1.44*0} + \color{#880088}{5.52*0}$$
 
 ---
 
@@ -464,7 +264,7 @@ Sometimes we want to make a prediction using a set of **counterfactual** values�
 
 We can do this using the equation:
 
-$$\hat{y} = -22.1 + 3.02*PopDen + 1.44*DisMed + 5.52*DisHigh$$
+$$\hat{y} = -22.1 + \color{#003C71}{3.02*PopDen} + \color{#8A1538}{1.44*DisMed} + \color{#880088}{5.52*DisHigh}$$
 --
 
 What is our prediction for the average crime rate in a high disadvantage place with 10 population density?
@@ -473,7 +273,7 @@ What is our prediction for the average crime rate in a high disadvantage place w
 
 Plug in, multiply through:
 
-$$13.62 = -22.1 + 3.02*10 + 1.44*0 + 5.52*1$$
+$$13.62 = -22.1 + \color{#003C71}{3.02*10} + \color{#8A1538}{1.44*0} + \color{#880088}{5.52*1}$$
 --
 
 We can do this with `predict()` and the `newdata =` argument:
@@ -509,7 +309,7 @@ predict(ex_lm, newdata = data.frame(pop_density = 0,
 
 The intercept alone is often not a useful parameter to interpret
 
-A location with 0 population density likely has a lot *lower* crime
+Crime rates can't be *negative*!
 
 --
 
@@ -551,7 +351,7 @@ It includes:
 
 * The functional forms of those variables
 
-   * DAGs don't help us with this
+   * DAGs don't help us with this (but theory can)
    * We'll mess with functional forms *next week*
 
 --
@@ -595,6 +395,8 @@ lm_1 <- lm(crime_rate ~ disadvantage, data = communities)
 glance(lm_1)
 ```
 
+`disadvantage` alone is only explaining 6.2% of the variation
+
 ---
 # Comparing $R^2$
 
@@ -612,7 +414,7 @@ rbind(glance(lm_1), # rbind() stacks output as rows #<<
 Adding `pop_density` explained a ton of the variation—but `area` didn't add much to that.
 
 * We went from 6.2%, to 66.2%, to 66.3% explained variation
-* This suggest `pop_density` is a strong predictor!
+* This suggests `pop_density` is a strong predictor!
 
 ---
 
@@ -776,7 +578,7 @@ They can be used to test if...
 &nbsp;
 
 .text-center[
-*We'll do all of these things by the end of the term, but for now, let's focus on *comparing models**
+*We'll do all of these things by the end of the term, but for now, let's focus on **comparing models** *
 ]
 
 ---
@@ -790,7 +592,7 @@ anova(lm_2, lm_3)
 ```
 
 
-This produces a chi-square test of whether a given specification significantly reduces the sum of squares—that is, whether it fits better
+This produces a chi-square test of whether a given specification significantly explains more variance (sum of squares)—that is, if it *fits better*
 
 --
 
@@ -875,11 +677,11 @@ class: inverse
 
 Next week:
 
-* **Rescheduled to Monday at 4 PM**
+* **Rescheduled to Monday at 2 PM**
 
 Assignment:
 
-* Due 11:59 PM Friday 11 November
+* Due 11:59 PM Friday 10 November
 
 Reading:
 

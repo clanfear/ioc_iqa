@@ -5,44 +5,6 @@ communities <-
   mutate(across(c(incarceration, disadvantage), 
                 ~ factor(., levels = c("Low", "Medium", "High"))))
 
-x <- round(runif(612, -0.49, 9.49),0)
-cat(x, fill = TRUE)
-
-
-s_n <- 10000
-po_data <- tibble(
-  bd = runif(s_n, 0, 1), # Random uniform variable
-  x  = rbinom(s_n, 1, bd), # Random binary variable
-  y0 = rnorm(s_n, 2*bd, 1),
-  y1 = rnorm(s_n, 2*bd + 1, 1)) |> # Effect size of 1 #<<
-  mutate(y = ifelse(x==1, y1, y0)) # Treatment just selects outcome
-
-lm(y ~ x + bd, data = po_data) |>
-  tidy() |> 
-  select(term, estimate)
-
-lm(y ~ x, data = po_data) |>
-  tidy() |> 
-  select(term, estimate)
-
-sample(0:1, 20, replace= TRUE)
-
-po_data <- po_data |>
-  mutate(treat = sample(0:1, n(), replace=TRUE),
-         yt = ifelse(treat==1, y1, y0))
-
-lm(y ~ x + bd, data = po_data) |>
-  tidy() |> 
-  select(term, estimate)
-
-lm(yt ~ treat, data = po_data) |>
-  tidy() |> 
-  select(term, estimate)
-
-
-
-
-
 ## ?tidy
 
 ## ?tidy.lm # tidy() method for lm objects
@@ -53,8 +15,8 @@ lm(yt ~ treat, data = po_data) |>
 
 lm(crime_rate ~ pop_density,
    data = communities) |>
-  augment() |> #<<
-  slice(1) |> #<<
+  augment() |> # add .fitted #<<
+  slice(1) |> # first row #<<
   select(.fitted, pop_density)
 
 ggplot(communities,

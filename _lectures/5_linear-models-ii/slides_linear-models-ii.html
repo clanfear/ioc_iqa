@@ -4,7 +4,7 @@
     <title>Linear Models II</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 9 Nov 2022<br>Updated: 09 Nov 2022
+### 8 Nov 2023<br>Updated: 04 Nov 2023
 ]
 
 ---
@@ -31,8 +31,6 @@ class: center, top, title-slide
 
 
 # Today
-
-## Randomization (from last week)
 
 ## Making Predictions
 
@@ -57,206 +55,6 @@ communities &lt;-
 ]
 
 Again, we'll use `tidyverse` and `broom` today.
-
----
-class: inverse
-
-# Randomization
-
-&amp;nbsp;
-
-
-```
-## 9 3 1 0 2 7 3 9 1 4 1 2 7 0 4 0 5 0 9 3 6 2 9 9 9 0 6 4 9 3 6 2 1 1 
-## 3 8 4 7 8 4 7 3 7 4 9 3 0 8 8 9 5 7 7 6 7 3 1 1 3 2 1 5 7 6 5 6 4 4 
-## 3 4 2 6 8 6 1 5 4 4 6 9 8 8 2 7 3 0 0 7 3 4 3 0 9 1 7 5 5 3 8 1 3 4 
-## 4 3 6 3 9 0 7 2 6 3 0 7 6 6 5 7 1 8 5 4 5 2 7 3 7 1 6 1 8 7 7 5 8 6 
-## 8 8 7 8 6 5 1 5 2 7 1 9 0 9 0 9 1 2 2 7 4 7 9 8 6 8 5 6 5 5 3 8 2 4 
-## 3 7 3 7 3 7 0 4 7 9 9 2 2 9 7 7 5 0 8 2 2 7 8 7 0 4 3 9 4 3 6 8 7 4 
-## 4 8 1 0 6 4 0 3 8 5 8 3 7 7 5 2 3 6 6 7 7 2 7 2 1 9 9 9 1 3 8 3 8 0 
-## 6 5 0 1 9 7 7 4 4 7 7 2 9 0 6 7 5 3 0 6 8 4 2 1 7 2 8 3 6 5 8 5 2 7 
-## 6 3 8 9 6 4 8 3 0 8 1 4 5 0 5 1 6 2 4 4 1 3 6 7 6 0 1 5 3 6 8 3 1 1 
-## 4 2 7 5 2 8 0 8 8 8 8 4 4 8 6 9 5 1 5 9 7 6 8 3 3 9 6 6 7 3 6 2 0 3 
-## 0 4 6 1 8 4 0 3 7 6 6 3 7 0 9 3 5 4 2 1 9 9 9 5 8 7 4 4 6 1 2 1 8 0 
-## 6 3 0 1 2 4 0 6 8 8 3 3 1 3 4 8 6 4 1 5 4 1 2 1 7 4 9 6 8 9 4 0 7 0 
-## 8 3 1 8 2 9 6 1 0 4 8 7 5 8 0 7 2 9 2 7 1 9 9 1 4 3 5 0 1 3 3 1 4 0 
-## 1 4 8 2 6 5 2 1 8 1 4 2 2 4 3 0 0 6 8 9 3 4 5 0 3 4 9 7 0 2 4 5 5 1 
-## 4 3 3 0 3 4 5 1 1 2 9 8 3 9 9 2 2 0 4 2 0 2 7 2 0 4 0 2 0 6 3 4 3 1 
-## 2 9 2 9 9 1 4 2 5 7 2 9 0 2 9 3 8 7 8 8 6 2 2 7 5 6 1 6 9 6 7 4 6 4 
-## 4 7 1 1 5 5 9 3 8 8 7 2 9 1 8 1 9 4 7 8 0 1 2 7 5 4 3 7 5 8 6 5 4 2 
-## 8 8 2 4 9 4 1 8 4 6 0 6 5 5 4 4 1 8 0 8 2 4 6 1 3 7 5 5 3 5 3 9 1 4
-```
-
-
----
-
-# Non-Randomized Treatment
-
-Let's create example data with actual **potential outcomes**
-
-
-```r
-s_n &lt;- 10000
-po_data &lt;- tibble(
-  bd = runif(s_n, 0, 1), # Random uniform variable
-  x  = rbinom(s_n, 1, bd), # Random binary variable
-  y0 = rnorm(s_n, 2*bd, 1),
-* y1 = rnorm(s_n, 2*bd + 1, 1)) |&gt; # Effect size of 1
-  mutate(y = ifelse(x==1, y1, y0)) # Treatment just selects outcome
-```
-
-
-* `x` is a binary **treatment** with effect size of **1**
-* `y0` is the outcome if the unit is **untreated**
-* `y1` is the outcome if the unit is **treated**
-* `bd` is a backdoor predicting treatment *and* `y`
-   * `bd` improves both potential outcomes *the same* amount
-   * `bd` also makes treatment more likely
-
-.text-center[
-*Units that get treated tend to have higher potential outcomes*
-]
-
----
-
-# Estimation
-
-Like usual, if we can *see* the back door, we can identify the effect of `\(X\)` on `\(Y\)`
-
-.pull-left[
-
-```r
-lm(y ~ x + bd, data = po_data) |&gt;
-  tidy() |&gt; 
-  select(term, estimate)
-```
-
-```
-## # A tibble: 3 × 2
-##   term        estimate
-##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)  -0.0224
-## 2 x             0.994 
-## 3 bd            2.04
-```
-]
-.pull-right[
-
-```r
-lm(y ~ x, data = po_data) |&gt;
-  tidy() |&gt; 
-  select(term, estimate)
-```
-
-```
-## # A tibble: 2 × 2
-##   term        estimate
-##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    0.661
-## 2 x              1.67
-```
-]
-
---
-
-.text-center[
-*But even if we can't, we can randomize it away*
-]
-
---
-
-`sample()` is an easy way to randomly select units
-
-
-```r
-sample(0:1, 20, replace= TRUE)
-```
-
-```
-##  [1] 0 0 0 1 1 1 1 1 0 1 0 1 0 0 1 0 1 1 0 0
-```
-
----
-
-# Random Assignment
-
-Let's select random units to receive the treatment
-
-
-```r
-po_data &lt;- po_data |&gt;
-  mutate(treat = sample(0:1, n(), replace=TRUE),
-         yt = ifelse(treat==1, y1, y0))
-```
-
-All the treatment does is determine which potential outcome we see
-
---
-
-.pull-left[
-
-```r
-lm(y ~ x + bd, data = po_data) |&gt;
-  tidy() |&gt; 
-  select(term, estimate)
-```
-
-```
-## # A tibble: 3 × 2
-##   term        estimate
-##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)  -0.0224
-## 2 x             0.994 
-## 3 bd            2.04
-```
-]
-.pull-right[
-
-```r
-lm(yt ~ treat, data = po_data) |&gt;
-  tidy() |&gt; 
-  select(term, estimate)
-```
-
-```
-## # A tibble: 2 × 2
-##   term        estimate
-##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    0.994
-## 2 treat          1.04
-```
-]
-
-.text-center[
-*Randomization closes back doors without adjustment!*
-]
-
----
-
-# Randomization DAGs
-
-Randomization breaks back doors—even when we can't observe the responsible variables!
-
-
-.pull-left[
-
-Confounded by an unobservable `\(BD\)`
-
-![](slides_linear-models-ii_files/figure-html/bd-dag-1.svg)&lt;!-- --&gt;
-]
-
-.pull-right[
-
-`\(BD\)` is irrelevant if we can randomize!
-
-![](slides_linear-models-ii_files/figure-html/ran-dag-1.svg)&lt;!-- --&gt;
-]
-
---
-
-&amp;nbsp;
-
-If we're interested in the effect of `\(X\)` here, we have to assume `\(T\)` is roughly equivalent to `\(X\)` (it is **consistent** with `\(X\)`)
 
 ---
 class: inverse
@@ -361,8 +159,8 @@ These are the `\(Y\)` values on the regression line given each unit's predictors
 ```r
 lm(crime_rate ~ pop_density,
    data = communities) |&gt;
-* augment() |&gt;
-* slice(1) |&gt;
+* augment() |&gt; # add .fitted
+* slice(1) |&gt; # first row
   select(.fitted, pop_density)
 ```
 
@@ -374,7 +172,7 @@ lm(crime_rate ~ pop_density,
 ```
 ]
 .pull-right[
-![](slides_linear-models-ii_files/figure-html/unnamed-chunk-14-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-ii_files/figure-html/unnamed-chunk-6-1.svg)&lt;!-- --&gt;
 ]
 
 Two tricks here:
@@ -410,14 +208,13 @@ augment(ex_lm) |&gt; head(4) # Returns them added to original data
 
 ```
 ## # A tibble: 4 × 9
-##   crime_rate pop_dens…¹ disad…² .fitted .resid   .hat .sigma .cooksd
-##        &lt;dbl&gt;      &lt;dbl&gt; &lt;fct&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
-## 1       28.6       18.2 Low       32.9   -4.24 0.0122   12.8 3.46e-4
-## 2       58.6       21.4 Medium    44.0   14.6  0.0145   12.7 4.93e-3
-## 3       14.2       10.0 Low        8.25   5.95 0.0111   12.7 6.18e-4
-## 4       22.3       14.9 Medium    24.5   -2.22 0.0103   12.8 8.01e-5
-## # … with 1 more variable: .std.resid &lt;dbl&gt;, and abbreviated
-## #   variable names ¹​pop_density, ²​disadvantage
+##   crime_rate pop_density disadvantage .fitted .resid   .hat .sigma
+##        &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1       28.6        18.2 Low            32.9   -4.24 0.0122   12.8
+## 2       58.6        21.4 Medium         44.0   14.6  0.0145   12.7
+## 3       14.2        10.0 Low             8.25   5.95 0.0111   12.7
+## 4       22.3        14.9 Medium         24.5   -2.22 0.0103   12.8
+## # ℹ 2 more variables: .cooksd &lt;dbl&gt;, .std.resid &lt;dbl&gt;
 ```
 
 
@@ -471,12 +268,12 @@ fitted(ex_lm)[1]
 
 Our regression formula:
 
-`$$\hat{y} = -22.1 + 3.02*PopDen + 1.44*DisMed + 5.52*DisHigh$$`
+`$$\hat{y} = -22.1 + \color{#003C71}{3.02*PopDen} + \color{#8A1538}{1.44*DisMed} + \color{#880088}{5.52*DisHigh}$$`
 --
 
 Multiplying through:
 
-`$$32.87 = -22.1 + 3.02*18.2 + 1.44*0 + 5.52*0$$`
+`$$32.87 = -22.1 + \color{#003C71}{3.02*18.2} + \color{#8A1538}{1.44*0} + \color{#880088}{5.52*0}$$`
 
 ---
 
@@ -488,7 +285,7 @@ Sometimes we want to make a prediction using a set of **counterfactual** values�
 
 We can do this using the equation:
 
-`$$\hat{y} = -22.1 + 3.02*PopDen + 1.44*DisMed + 5.52*DisHigh$$`
+`$$\hat{y} = -22.1 + \color{#003C71}{3.02*PopDen} + \color{#8A1538}{1.44*DisMed} + \color{#880088}{5.52*DisHigh}$$`
 --
 
 What is our prediction for the average crime rate in a high disadvantage place with 10 population density?
@@ -497,7 +294,7 @@ What is our prediction for the average crime rate in a high disadvantage place w
 
 Plug in, multiply through:
 
-`$$13.62 = -22.1 + 3.02*10 + 1.44*0 + 5.52*1$$`
+`$$13.62 = -22.1 + \color{#003C71}{3.02*10} + \color{#8A1538}{1.44*0} + \color{#880088}{5.52*1}$$`
 --
 
 We can do this with `predict()` and the `newdata =` argument:
@@ -545,7 +342,7 @@ predict(ex_lm, newdata = data.frame(pop_density = 0,
 
 The intercept alone is often not a useful parameter to interpret
 
-A location with 0 population density likely has a lot *lower* crime
+Crime rates can't be *negative*!
 
 --
 
@@ -592,7 +389,7 @@ It includes:
 
 * The functional forms of those variables
 
-   * DAGs don't help us with this
+   * DAGs don't help us with this (but theory can)
    * We'll mess with functional forms *next week*
 
 --
@@ -639,13 +436,14 @@ glance(lm_1)
 
 ```
 ## # A tibble: 1 × 12
-##   r.squared adj.r.s…¹ sigma stati…² p.value    df logLik   AIC   BIC
-##       &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1    0.0619    0.0555  21.2    9.79 7.61e-5     2 -1340. 2688. 2703.
-## # … with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;,
-## #   nobs &lt;int&gt;, and abbreviated variable names ¹​adj.r.squared,
-## #   ²​statistic
+##   r.squared adj.r.squared sigma statistic p.value    df logLik   AIC
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1    0.0619        0.0555  21.2      9.79 7.61e-5     2 -1340. 2688.
+## # ℹ 4 more variables: BIC &lt;dbl&gt;, deviance &lt;dbl&gt;, df.residual &lt;int&gt;,
+## #   nobs &lt;int&gt;
 ```
+
+`disadvantage` alone is only explaining 6.2% of the variation
 
 ---
 # Comparing `\(R^2\)`
@@ -674,7 +472,7 @@ lm_3 &lt;- lm(crime_rate ~ disadvantage + pop_density + area,
 Adding `pop_density` explained a ton of the variation—but `area` didn't add much to that.
 
 * We went from 6.2%, to 66.2%, to 66.3% explained variation
-* This suggest `pop_density` is a strong predictor!
+* This suggests `pop_density` is a strong predictor!
 
 ---
 
@@ -866,7 +664,7 @@ They can be used to test if...
 &amp;nbsp;
 
 .text-center[
-*We'll do all of these things by the end of the term, but for now, let's focus on *comparing models**
+*We'll do all of these things by the end of the term, but for now, let's focus on **comparing models** *
 ]
 
 ---
@@ -891,7 +689,7 @@ anova(lm_2, lm_3)
 ```
 
 
-This produces a chi-square test of whether a given specification significantly reduces the sum of squares—that is, whether it fits better
+This produces a chi-square test of whether a given specification significantly explains more variance (sum of squares)—that is, if it *fits better*
 
 --
 
@@ -1004,11 +802,11 @@ class: inverse
 
 Next week:
 
-* **Rescheduled to Monday at 4 PM**
+* **Rescheduled to Monday at 2 PM**
 
 Assignment:
 
-* Due 11:59 PM Friday 11 November
+* Due 11:59 PM Friday 10 November
 
 Reading:
 
