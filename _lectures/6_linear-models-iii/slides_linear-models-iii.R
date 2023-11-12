@@ -1,28 +1,7 @@
 library(tidyverse)
 library(broom) 
-communities <- 
-  read_csv(
-    "https://clanfear.github.io/ioc_iqa/_data/communities.csv"
-    ) |>
-  mutate(across(c(incarceration, disadvantage), 
-                ~ factor(., levels = c("Low", "Medium", "High"))))
-
-lm_1 <- lm(crime_rate ~ disadvantage, 
-           data = communities)
-lm_2 <- lm(crime_rate ~ disadvantage + pop_density, 
-           data = communities)
-lm_3 <- lm(crime_rate ~ disadvantage + pop_density + area, 
-           data = communities)
-
-anova(lm_2, lm_3)
-
-anova(lm_1, lm_2, lm_3)
-
-lm_4 <- lm(crime_rate ~ disadvantage + incarceration, data = communities)
-anova(lm_1, lm_4)
-
 metro_wide <- read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021_violence_wide.csv")
-head(metro_wide)
+head(metro_wide, 4)
 
 dim(metro_wide) # Few rows, more columns
 names(metro_wide) # A column for each month!
@@ -53,8 +32,8 @@ lm_viol |>
   ggplot(aes(x = month, 
              y = .resid)) + 
   geom_point() +
-  geom_hline(yintercept = 0, 
-             color = "red")
+  geom_hline(yintercept = 0,
+             color = "red") 
 
 lm_viol |> 
   augment() |>
@@ -93,6 +72,12 @@ lm_viol_3 <- lm(violence ~ month + I(month^2) + I(month^3),
                 data = metro_long)
 rbind(glance(lm_viol), glance(lm_viol_2), glance(lm_viol_3)) |> 
   select(r.squared, adj.r.squared)
+
+## rbind(glance(lm_viol), glance(lm_viol_2), glance(lm_viol_3))
+
+list(lm_viol, lm_viol_2, lm_viol_3) |> # combine models into a list
+  map(glance) |> # run glance() on each element #<<
+  list_rbind() # bind results into rows
 
 anova(lm_viol, lm_viol_2, lm_viol_3)
 

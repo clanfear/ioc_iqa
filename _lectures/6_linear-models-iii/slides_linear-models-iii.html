@@ -4,7 +4,7 @@
     <title>Linear Models III</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 14 Nov 2022<br>Updated: 22 Nov 2022
+### 13 Nov 2023<br>Updated: 12 Nov 2023
 ]
 
 ---
@@ -32,203 +32,12 @@ class: center, top, title-slide
 
 # Today
 
-### Comparing Models
-
 ### Pivoting Data
 
 ### Polynomials
 
 ### Residual Plots
 
-
----
-
-# Setup
-
-Let's pick up where we left off last week with `communities` and a few different linear models to compare
-
-
-```r
-library(tidyverse)
-library(broom) 
-communities &lt;- 
-  read_csv(
-    "https://clanfear.github.io/ioc_iqa/_data/communities.csv"
-    ) |&gt;
-  mutate(across(c(incarceration, disadvantage), 
-                ~ factor(., levels = c("Low", "Medium", "High"))))
-
-lm_1 &lt;- lm(crime_rate ~ disadvantage, 
-           data = communities)
-lm_2 &lt;- lm(crime_rate ~ disadvantage + pop_density, 
-           data = communities)
-lm_3 &lt;- lm(crime_rate ~ disadvantage + pop_density + area, 
-           data = communities)
-```
-
----
-
-# Specification Tests
-
-**Specification tests** are hypothesis tests for evaluating how well a model fits
-
---
-
-Importantly, they provide a hard **decision rule** about which one to use
-
---
-
-They can be used to test if...
-
-* One model fits better than another
-
---
-
-* Coefficients are equal to a value (e.g., 0) or to each other
-
-   * The t-test in regression output is doing this!
-   * Useful if you're considering *combining* two variables
-
---
-
-* Many other assumptions are violated
-
-   * *We'll see some of these another day*
-
---
-
-&amp;nbsp;
-
-.text-center[
-*We'll do all of these things by the end of the term, but for now, let's focus on **comparing models***
-]
-
----
-
-# `anova()` for Comparisons
-
-The `anova()` function can be used to compare linear models
-
-
-```r
-anova(lm_2, lm_3)
-```
-
-```
-## Analysis of Variance Table
-## 
-## Model 1: crime_rate ~ disadvantage + pop_density
-## Model 2: crime_rate ~ disadvantage + pop_density + area
-##   Res.Df   RSS Df Sum of Sq      F Pr(&gt;F)
-## 1    296 47986                           
-## 2    295 47748  1    238.59 1.4741 0.2257
-```
-
-
-This produces a chi-square test of whether a given specification significantly reduces the sum of squares—that is, whether it fits better
-
---
-
-Here `area` does *not* statistically significantly improve the model
-
---
-
-This statistical test requires one model be **nested** in the other
-
----
-
-# Nested Models
-
-Models are nested if every variable in the *less complex* model is included in the *more complex model*
-
---
-
-When models are nested, we say...
-
-* The less complex one is the **restricted model**
-* The more complex one is the **unrestricted model**
-
---
-
-*What exactly is **restricted**?*
-
---
-
-Excluding a variable from a model is equivalent to settings its *coefficient to zero*
-
-* i.e., we *restrict the coefficient to zero* when we omit that variable
-
---
-
-When we exclude a path from a DAG, we *assume a coefficient of zero for that path*
-
-* We can test this assumption using `anova()` and other specification tests
-* e.g., if our DAG indicated no direct effect of `area` on `crime_rate`, the prior test would support that assumption
-
----
-
-# Another Example
-
-
-```r
-anova(lm_1, lm_2, lm_3)
-```
-
-```
-## Analysis of Variance Table
-## 
-## Model 1: crime_rate ~ disadvantage
-## Model 2: crime_rate ~ disadvantage + pop_density
-## Model 3: crime_rate ~ disadvantage + pop_density + area
-##   Res.Df    RSS Df Sum of Sq        F Pr(&gt;F)    
-## 1    297 133081                                 
-## 2    296  47986  1     85095 525.7421 &lt;2e-16 ***
-## 3    295  47748  1       239   1.4741 0.2257    
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
-
-We can give `anova()` any number of models
-
-* Best to start with the *least complex* or *most restricted*
-* Each model is compared to the one directly above it
-
----
-
-# Warning
-
-Adding a collider to a model will almost always improve fit
-
-* `anova()` only tests if the model fits better
-* `anova()` doesn't know about your DAG
-
---
-
-.text-85[
-
-```r
-lm_4 &lt;- lm(crime_rate ~ disadvantage + incarceration, data = communities)
-anova(lm_1, lm_4)
-```
-
-```
-## Analysis of Variance Table
-## 
-## Model 1: crime_rate ~ disadvantage
-## Model 2: crime_rate ~ disadvantage + incarceration
-##   Res.Df    RSS Df Sum of Sq      F    Pr(&gt;F)    
-## 1    297 133081                                  
-## 2    295 117321  2     15760 19.814 8.427e-09 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
-]
-
---
-
-**Theory** is your first guide for what to include or not
-
-This test is mainly to see if it is okay to exclude *potential confounders*... or to prefer another **functional form** (we'll get there shortly!)
 
 ---
 class: inverse
@@ -243,28 +52,25 @@ class: inverse
 
 Let's return to the (real!) 2021 crime data from London boroughs...
 
---
-
 
 ```r
+library(tidyverse)
+library(broom) 
 metro_wide &lt;- read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021_violence_wide.csv")
-head(metro_wide)
+head(metro_wide, 4)
 ```
 
 ```
-## # A tibble: 6 × 17
-##   borough       depri…¹ subre…²    pop  area month_1 month_2 month_3
-##   &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
-## 1 Barking and … High    East    221495  36.1     469     449     561
-## 2 Barnet        Medium  North   411275  86.7     530     580     772
-## 3 Bexley        Low     East    256845  60.6     370     343     507
-## 4 Brent         Medium  West    346437  43.2     643     669     792
-## 5 Bromley       Low     South   339466 150.      447     455     544
-## 6 Camden        Medium  Central 259344  21.8     401     391     522
-## # … with 9 more variables: month_4 &lt;dbl&gt;, month_5 &lt;dbl&gt;,
-## #   month_6 &lt;dbl&gt;, month_7 &lt;dbl&gt;, month_8 &lt;dbl&gt;, month_9 &lt;dbl&gt;,
-## #   month_10 &lt;dbl&gt;, month_11 &lt;dbl&gt;, month_12 &lt;dbl&gt;, and abbreviated
-## #   variable names ¹​deprivation, ²​subregion
+## # A tibble: 4 × 17
+##   borough deprivation subregion    pop  area month_1 month_2 month_3
+##   &lt;chr&gt;   &lt;chr&gt;       &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1 Barkin… High        East      221495  36.1     469     449     561
+## 2 Barnet  Medium      North     411275  86.7     530     580     772
+## 3 Bexley  Low         East      256845  60.6     370     343     507
+## 4 Brent   Medium      West      346437  43.2     643     669     792
+## # ℹ 9 more variables: month_4 &lt;dbl&gt;, month_5 &lt;dbl&gt;, month_6 &lt;dbl&gt;,
+## #   month_7 &lt;dbl&gt;, month_8 &lt;dbl&gt;, month_9 &lt;dbl&gt;, month_10 &lt;dbl&gt;,
+## #   month_11 &lt;dbl&gt;, month_12 &lt;dbl&gt;
 ```
 
 But in **wide** format this time
@@ -399,16 +205,14 @@ head(metro_long)
 
 ```
 ## # A tibble: 6 × 7
-##   borough              deprivat…¹ subre…²    pop  area month viole…³
-##   &lt;chr&gt;                &lt;chr&gt;      &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
-## 1 Barking and Dagenham High       East    221495  36.1     1     469
-## 2 Barking and Dagenham High       East    221495  36.1     2     449
-## 3 Barking and Dagenham High       East    221495  36.1     3     561
-## 4 Barking and Dagenham High       East    221495  36.1     4     564
-## 5 Barking and Dagenham High       East    221495  36.1     5     589
-## 6 Barking and Dagenham High       East    221495  36.1     6     617
-## # … with abbreviated variable names ¹​deprivation, ²​subregion,
-## #   ³​violence
+##   borough          deprivation subregion    pop  area month violence
+##   &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+## 1 Barking and Dag… High        East      221495  36.1     1      469
+## 2 Barking and Dag… High        East      221495  36.1     2      449
+## 3 Barking and Dag… High        East      221495  36.1     3      561
+## 4 Barking and Dag… High        East      221495  36.1     4      564
+## 5 Barking and Dag… High        East      221495  36.1     5      589
+## 6 Barking and Dag… High        East      221495  36.1     6      617
 ```
 
 --
@@ -432,15 +236,14 @@ metro_wide_again |&gt;  head(3)
 
 ```
 ## # A tibble: 3 × 17
-##   borough       depri…¹ subre…²    pop  area month_1 month_2 month_3
-##   &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
-## 1 Barking and … High    East    221495  36.1     469     449     561
-## 2 Barnet        Medium  North   411275  86.7     530     580     772
-## 3 Bexley        Low     East    256845  60.6     370     343     507
-## # … with 9 more variables: month_4 &lt;dbl&gt;, month_5 &lt;dbl&gt;,
-## #   month_6 &lt;dbl&gt;, month_7 &lt;dbl&gt;, month_8 &lt;dbl&gt;, month_9 &lt;dbl&gt;,
-## #   month_10 &lt;dbl&gt;, month_11 &lt;dbl&gt;, month_12 &lt;dbl&gt;, and abbreviated
-## #   variable names ¹​deprivation, ²​subregion
+##   borough deprivation subregion    pop  area month_1 month_2 month_3
+##   &lt;chr&gt;   &lt;chr&gt;       &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1 Barkin… High        East      221495  36.1     469     449     561
+## 2 Barnet  Medium      North     411275  86.7     530     580     772
+## 3 Bexley  Low         East      256845  60.6     370     343     507
+## # ℹ 9 more variables: month_4 &lt;dbl&gt;, month_5 &lt;dbl&gt;, month_6 &lt;dbl&gt;,
+## #   month_7 &lt;dbl&gt;, month_8 &lt;dbl&gt;, month_9 &lt;dbl&gt;, month_10 &lt;dbl&gt;,
+## #   month_11 &lt;dbl&gt;, month_12 &lt;dbl&gt;
 ```
 
 ---
@@ -497,13 +300,14 @@ lm_viol |&gt;
   ggplot(aes(x = month, 
              y = .resid)) + 
   geom_point() +
-  geom_hline(yintercept = 0, 
-             color = "red")
+  geom_hline(yintercept = 0,
+             color = "red") 
 ```
 ]
 .pull-right[
 ![](slides_linear-models-iii_files/figure-html/viol-resid-1-1.svg)
 ]
+
 
 --
 
@@ -567,7 +371,7 @@ Recall that a *squared* term (e.g. `\(x^2\)`) in an equation creates a *parabola
 curve(2 + 0.5*x + 0.25*x^2, from = -3, to = 1, ylab = "y")
 ```
 
-&lt;img src="slides_linear-models-iii_files/figure-html/unnamed-chunk-12-1.svg" style="display: block; margin: auto auto auto 0;" /&gt;
+&lt;img src="slides_linear-models-iii_files/figure-html/unnamed-chunk-8-1.svg" style="display: block; margin: auto auto auto 0;" /&gt;
 
 --
 
@@ -655,6 +459,7 @@ lm_viol_2 |&gt;
 .pull-right[
 ![](slides_linear-models-iii_files/figure-html/viol-resid-3-1.svg)
 ]
+
 
 --
 
@@ -766,6 +571,43 @@ How do they compare?
 --
 
 Looks like the cubic model isn't helping much!
+
+---
+
+# Quick aside: `map()`
+
+You may find yourself running the same function repeatedly:
+
+
+```r
+rbind(glance(lm_viol), glance(lm_viol_2), glance(lm_viol_3))
+```
+
+--
+
+`map()` or `lapply()` can iterate across elements of any object:
+
+
+```r
+list(lm_viol, lm_viol_2, lm_viol_3) |&gt; # combine models into a list
+* map(glance) |&gt; # run glance() on each element
+  list_rbind() # bind results into rows
+```
+
+```
+## # A tibble: 3 × 12
+##   r.squared adj.r.squared sigma statistic p.value    df logLik   AIC
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1    0.0352        0.0326  188.      13.9 2.20e-4     1 -2555. 5117.
+## 2    0.0840        0.0792  184.      17.5 5.51e-8     2 -2545. 5099.
+## 3    0.0845        0.0773  184.      11.7 2.40e-7     3 -2545. 5100.
+## # ℹ 4 more variables: BIC &lt;dbl&gt;, deviance &lt;dbl&gt;, df.residual &lt;int&gt;,
+## #   nobs &lt;int&gt;
+```
+
+--
+
+We won't use this much, but it is *very* useful!
 
 ---
 

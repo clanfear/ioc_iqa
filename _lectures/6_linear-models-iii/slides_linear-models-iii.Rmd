@@ -2,7 +2,7 @@
 title: "Linear Models III"
 subtitle: "IQA Lecture 6"
 author: "Charles Lanfear"
-date: "14 Nov 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "13 Nov 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -25,163 +25,12 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, dev = 
 
 # Today
 
-### Comparing Models
-
 ### Pivoting Data
 
 ### Polynomials
 
 ### Residual Plots
 
-
----
-
-# Setup
-
-Let's pick up where we left off last week with `communities` and a few different linear models to compare
-
-```{r, message = FALSE, warning = FALSE}
-library(tidyverse)
-library(broom) 
-communities <- 
-  read_csv(
-    "https://clanfear.github.io/ioc_iqa/_data/communities.csv"
-    ) |>
-  mutate(across(c(incarceration, disadvantage), 
-                ~ factor(., levels = c("Low", "Medium", "High"))))
-
-lm_1 <- lm(crime_rate ~ disadvantage, 
-           data = communities)
-lm_2 <- lm(crime_rate ~ disadvantage + pop_density, 
-           data = communities)
-lm_3 <- lm(crime_rate ~ disadvantage + pop_density + area, 
-           data = communities)
-```
-
----
-
-# Specification Tests
-
-**Specification tests** are hypothesis tests for evaluating how well a model fits
-
---
-
-Importantly, they provide a hard **decision rule** about which one to use
-
---
-
-They can be used to test if...
-
-* One model fits better than another
-
---
-
-* Coefficients are equal to a value (e.g., 0) or to each other
-
-   * The t-test in regression output is doing this!
-   * Useful if you're considering *combining* two variables
-
---
-
-* Many other assumptions are violated
-
-   * *We'll see some of these another day*
-
---
-
-&nbsp;
-
-.text-center[
-*We'll do all of these things by the end of the term, but for now, let's focus on **comparing models***
-]
-
----
-
-# `anova()` for Comparisons
-
-The `anova()` function can be used to compare linear models
-
-```{r}
-anova(lm_2, lm_3)
-```
-
-
-This produces a chi-square test of whether a given specification significantly reduces the sum of squares—that is, whether it fits better
-
---
-
-Here `area` does *not* statistically significantly improve the model
-
---
-
-This statistical test requires one model be **nested** in the other
-
----
-
-# Nested Models
-
-Models are nested if every variable in the *less complex* model is included in the *more complex model*
-
---
-
-When models are nested, we say...
-
-* The less complex one is the **restricted model**
-* The more complex one is the **unrestricted model**
-
---
-
-*What exactly is **restricted**?*
-
---
-
-Excluding a variable from a model is equivalent to settings its *coefficient to zero*
-
-* i.e., we *restrict the coefficient to zero* when we omit that variable
-
---
-
-When we exclude a path from a DAG, we *assume a coefficient of zero for that path*
-
-* We can test this assumption using `anova()` and other specification tests
-* e.g., if our DAG indicated no direct effect of `area` on `crime_rate`, the prior test would support that assumption
-
----
-
-# Another Example
-
-```{r}
-anova(lm_1, lm_2, lm_3)
-```
-
-We can give `anova()` any number of models
-
-* Best to start with the *least complex* or *most restricted*
-* Each model is compared to the one directly above it
-
----
-
-# Warning
-
-Adding a collider to a model will almost always improve fit
-
-* `anova()` only tests if the model fits better
-* `anova()` doesn't know about your DAG
-
---
-
-.text-85[
-```{r}
-lm_4 <- lm(crime_rate ~ disadvantage + incarceration, data = communities)
-anova(lm_1, lm_4)
-```
-]
-
---
-
-**Theory** is your first guide for what to include or not
-
-This test is mainly to see if it is okay to exclude *potential confounders*... or to prefer another **functional form** (we'll get there shortly!)
 
 ---
 class: inverse
@@ -196,11 +45,11 @@ class: inverse
 
 Let's return to the (real!) 2021 crime data from London boroughs...
 
---
-
 ```{r}
+library(tidyverse)
+library(broom) 
 metro_wide <- read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021_violence_wide.csv")
-head(metro_wide)
+head(metro_wide, 4)
 ```
 
 But in **wide** format this time
@@ -363,13 +212,14 @@ lm_viol |>
   ggplot(aes(x = month, 
              y = .resid)) + 
   geom_point() +
-  geom_hline(yintercept = 0, 
-             color = "red")
+  geom_hline(yintercept = 0,
+             color = "red") 
 ```
 ]
 .pull-right[
 ![](`r knitr::fig_chunk("viol-resid-1", "svg")`)
 ]
+
 
 --
 
@@ -509,6 +359,7 @@ lm_viol_2 |>
 ![](`r knitr::fig_chunk("viol-resid-3", "svg")`)
 ]
 
+
 --
 
 Looks like the quadratic term fixed the problem!
@@ -599,6 +450,30 @@ How do they compare?
 --
 
 Looks like the cubic model isn't helping much!
+
+---
+
+# Quick aside: `map()`
+
+You may find yourself running the same function repeatedly:
+
+```{r, eval = FALSE}
+rbind(glance(lm_viol), glance(lm_viol_2), glance(lm_viol_3))
+```
+
+--
+
+`map()` or `lapply()` can iterate across elements of any object:
+
+```{r}
+list(lm_viol, lm_viol_2, lm_viol_3) |> # combine models into a list
+  map(glance) |> # run glance() on each element #<<
+  list_rbind() # bind results into rows
+```
+
+--
+
+We won't use this much, but it is *very* useful!
 
 ---
 
