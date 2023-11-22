@@ -4,7 +4,7 @@
     <title>Linear Models IV</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.17/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 23 Nov 2022<br>Updated: 23 Nov 2022
+### 22 Nov 2023<br>Updated: 22 Nov 2023
 ]
 
 ---
@@ -270,29 +270,27 @@ metro_2021_crime |&gt;
 
 # Many Joins, Handle It
 
-We can chain many joins in order—and here we`clean_names()` to fix the capitalized names ahead of time
+We can chain many joins in order—and here we `clean_names()` to fix the capitalized names ahead of time
 
 
 ```r
 metro_2021 &lt;- metro_2021_crime |&gt;
   left_join(london_subregion) |&gt;
   left_join(borough_deprivation) |&gt;
-  left_join(borough_pop_density |&gt; 
-              clean_names())
+  left_join(borough_pop_density |&gt; clean_names())
 head(metro_2021, 3)
 ```
 
 ```
 ## # A tibble: 3 × 11
-##   borough month      antis…¹ burgl…² robbery viole…³ subre…⁴ depri…⁵
-##   &lt;chr&gt;   &lt;date&gt;       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;  
-## 1 Barkin… 2021-01-01     688      87      30     469 East    High   
-## 2 Barkin… 2021-02-01     585     105      50     449 East    High   
-## 3 Barkin… 2021-03-01     600      81      49     561 East    High   
-## # … with 3 more variables: dep_score &lt;dbl&gt;, pop &lt;dbl&gt;, area &lt;dbl&gt;,
-## #   and abbreviated variable names ¹​antisocial_behaviour,
-## #   ²​burglary, ³​violence_and_sexual_offences, ⁴​subregion,
-## #   ⁵​deprivation
+##   borough           month      antisocial_behaviour burglary robbery
+##   &lt;chr&gt;             &lt;date&gt;                    &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+## 1 Barking and Dage… 2021-01-01                  688       87      30
+## 2 Barking and Dage… 2021-02-01                  585      105      50
+## 3 Barking and Dage… 2021-03-01                  600       81      49
+## # ℹ 6 more variables: violence_and_sexual_offences &lt;dbl&gt;,
+## #   subregion &lt;chr&gt;, deprivation &lt;chr&gt;, dep_score &lt;dbl&gt;, pop &lt;dbl&gt;,
+## #   area &lt;dbl&gt;
 ```
 
 
@@ -316,6 +314,36 @@ Things done:
 * Shorten a couple names for ease of use
 * Convert `month` to an integer using `{lubridate}`
 * Create a population density (`pop_den`) in thousands per `\(km^2\)`
+
+---
+## Aside: Scientific notation
+
+When a number is very close to zero, R will display it in scientific notation:
+
+
+```r
+0.0000000032
+```
+
+```
+## [1] 3.2e-09
+```
+This is because it is much more compact!
+
+--
+
+You can adjust it using `scipen` in **options()**
+
+
+```r
+options(scipen = 10)
+0.0000000032
+```
+
+```
+## [1] 0.0000000032
+```
+R will "prefer" to display standard notation until the output exceeds the width of the `scipen` value
 
 ---
 
@@ -345,7 +373,7 @@ lm_sq |&gt; tidy() |&gt;
 ]
 ]
 .pull-right[
-![](slides_linear-models-iv_files/figure-html/unnamed-chunk-13-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-15-1.svg)&lt;!-- --&gt;
 ]
 
 --
@@ -395,7 +423,7 @@ lm_log |&gt; tidy() |&gt;
 ]
 ]
 .pull-right[
-![](slides_linear-models-iv_files/figure-html/unnamed-chunk-15-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-17-1.svg)&lt;!-- --&gt;
 ]
 
 --
@@ -423,7 +451,7 @@ Exponentiation, `\(b^{n} = x\)`, multiplies a number (the **base**, `\(b\)`) by 
 
 --
 
-Roots, `\(\sqrt[n]{x} = b\)` give the base you'd need to raise to power `\(n\)` to get `\(x\)`:
+Roots, `\(\sqrt[n]{x} = b\)`, give the base you'd need to raise to power `\(n\)` to get `\(x\)`:
 
 `$$\sqrt[2]{25} = 25 / 5 = 5$$`
 
@@ -468,7 +496,7 @@ exp(1:3)
 curve(exp(x), from = 1, to = 3)
 ```
 
-![](slides_linear-models-iv_files/figure-html/unnamed-chunk-16-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-18-1.svg)&lt;!-- --&gt;
 ]
 
 --
@@ -488,7 +516,7 @@ log(1:3)
 curve(log(x), from = 1, to = 3)
 ```
 
-![](slides_linear-models-iv_files/figure-html/unnamed-chunk-17-1.svg)&lt;!-- --&gt;
+![](slides_linear-models-iv_files/figure-html/unnamed-chunk-19-1.svg)&lt;!-- --&gt;
 ]
 
 --
@@ -517,9 +545,13 @@ Natural logs allow for a special interpretation called an **elasticity** or **pa
 
 When only an independent variable is logged, we call it a **level-log** (*partial elasticity*) model:
 
-* Divide the `\(x\)` coefficient by 100 and it is the amount `\(y\)` differs due to a `\(1\%\)` difference in `\(x\)`
+* Divide the `\(x\)` coefficient by 100 and it is the amount `\(y\)` differs due to a `\(1\%\)` difference in `\(x\)`&lt;sup&gt;1&lt;/sup&gt;
 
 * A `\(1%\)` increase in `month` is associated with .64 more `violence`
+
+.footnote[
+[1] More precisely: `\(p\%\)` higher `\(x\)` is associated with `\(b * log(1 + \frac{p}{100})\)` higher `\(y\)`
+]
 
 ---
 
@@ -542,9 +574,13 @@ You can also log the *outcome*
 
 When only the dependent variable is logged, we call it a **log-level** (*partial elasticity*) model:
 
-* Multiply `\(x\)` coefficient by 100 and it is the percent `\(y\)` differs due to a difference in `\(x\)`
+* Multiply `\(x\)` coefficient by 100 and it is the percent `\(y\)` differs due to a difference in `\(x\)`&lt;sup&gt;1&lt;/sup&gt;
 
 * An increase of 1 in `month` is associated with `\(1.7\%\)` higher `violence`
+
+.footnote[
+[1] This is approximate; the exact version is a `\((e^{b}-1)*100\%\)` difference in `\(y\)`
+]
 
 ---
 
@@ -593,9 +629,10 @@ By compressing higher values, they reduce *skew*
 Some warnings: 
 
 * You can only take a log of a positive (non-zero) number!
+   * *Don't just add 1 then log it!*
 * The curve is *inflexible*
 * The percentage interpretation is an *approximation*
-   * Inaccurate for changes in `\(x\)` smaller or greater than `\(1\)`
+   * Inaccurate for changes in `\(x\)` much smaller or greater than `\(1\)`
 
 ---
 class: inverse
@@ -621,7 +658,7 @@ class: inverse
 This implies a **multiplicative** relationship rather than just an **additive** one
 
 * **Additive**: `\(y = b_1x + b_2z\)`
-* **Multiplicative**: `\(y = b_1x + b_2z + b_3xz\)`
+* **Multiplicative**: `\(y = b_1x + b_2z + b_3\color{#003C71}{xz}\)`
 
 --
 
@@ -637,7 +674,7 @@ Note that we obey **hierarchy**: Include `\(x\)` and `\(z\)` alone when using `\
 
 .pull-left[
 
-Note that DAGs moderation is not indicated by DAGs&lt;sup&gt;2&lt;/sup&gt;
+Note that moderation is not indicated by DAGs&lt;sup&gt;2&lt;/sup&gt;
 
 Moderation is a type of *functional form* like polynomials or logarithms
 ]
@@ -681,7 +718,7 @@ ggplot(metro_2021 ,
 `pop_den` has a negative slope only for "medium" `deprivation` boroughs
 
 * *Crime is lower when population density is higher in boroughs with moderate deprivation*
-* *Crime is higher when population density is higher in boroughs with low and high deprivation*
+* *Crime is higher when population density is higher in boroughs with low or high deprivation*
 
 ---
 
@@ -742,7 +779,7 @@ We can calculate the effect of `pop_den` when `deprivation` is...
 
 # Specification Test
 
-You can test if an interaction is warranted, because the interaction model is nested in the **additive** model:
+You can test if an interaction is warranted, because the **additive** model is nested inside the interaction model:
 
 .text-85[
 
@@ -756,9 +793,9 @@ anova(lm_int, lm_noint)
 ## 
 ## Model 1: violence ~ deprivation * pop_den
 ## Model 2: violence ~ deprivation + pop_den
-##   Res.Df     RSS Df Sum of Sq      F    Pr(&gt;F)    
-## 1    378 8227307                                  
-## 2    380 9551609 -2  -1324301 30.422 5.614e-13 ***
+##   Res.Df     RSS Df Sum of Sq      F             Pr(&gt;F)    
+## 1    378 8227307                                           
+## 2    380 9551609 -2  -1324301 30.422 0.0000000000005614 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
@@ -774,15 +811,11 @@ class: inverse
 
 ## Assignments
 
-* Working on them ASAP!
-
-## Strike!
-
-* No class next week if strike goes forward
+* All marked, somehow!
 
 ## Last assignment
 
-* Sent out by next Friday
+* Sent out by Friday
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

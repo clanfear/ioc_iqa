@@ -37,8 +37,7 @@ metro_2021_crime |>
 metro_2021 <- metro_2021_crime |>
   left_join(london_subregion) |>
   left_join(borough_deprivation) |>
-  left_join(borough_pop_density |> 
-              clean_names())
+  left_join(borough_pop_density |> clean_names())
 head(metro_2021, 3)
 
 
@@ -47,6 +46,11 @@ metro_2021 <- metro_2021 |>
          asb      = antisocial_behaviour) |>
   mutate(month    = lubridate::month(month), #<<
          pop_den = (pop/area)/1000)
+
+0.0000000032
+
+options(scipen = 10)
+0.0000000032
 
 lm_sq <- 
   lm(violence ~ month + I(month^2), 

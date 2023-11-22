@@ -2,7 +2,7 @@
 title: "Linear Models IV"
 subtitle: "IQA Lecture 7"
 author: "Charles Lanfear"
-date: "23 Nov 2022<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "22 Nov 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -182,14 +182,13 @@ metro_2021_crime |>
 
 # Many Joins, Handle It
 
-We can chain many joins in order—and here we`clean_names()` to fix the capitalized names ahead of time
+We can chain many joins in order—and here we `clean_names()` to fix the capitalized names ahead of time
 
 ```{r}
 metro_2021 <- metro_2021_crime |>
   left_join(london_subregion) |>
   left_join(borough_deprivation) |>
-  left_join(borough_pop_density |> 
-              clean_names())
+  left_join(borough_pop_density |> clean_names())
 head(metro_2021, 3)
 ```
 
@@ -214,6 +213,26 @@ Things done:
 * Shorten a couple names for ease of use
 * Convert `month` to an integer using `{lubridate}`
 * Create a population density (`pop_den`) in thousands per $km^2$
+
+---
+## Aside: Scientific notation
+
+When a number is very close to zero, R will display it in scientific notation:
+
+```{r}
+0.0000000032
+```
+This is because it is much more compact!
+
+--
+
+You can adjust it using `scipen` in **options()**
+
+```{r}
+options(scipen = 10)
+0.0000000032
+```
+R will "prefer" to display standard notation until the output exceeds the width of the `scipen` value
 
 ---
 
@@ -314,7 +333,7 @@ $$5^2 = 5*5 = 25$$
 
 --
 
-Roots, $\sqrt[n]{x} = b$ give the base you'd need to raise to power $n$ to get $x$:
+Roots, $\sqrt[n]{x} = b$, give the base you'd need to raise to power $n$ to get $x$:
 
 $$\sqrt[2]{25} = 25 / 5 = 5$$
 
@@ -382,9 +401,13 @@ Natural logs allow for a special interpretation called an **elasticity** or **pa
 
 When only an independent variable is logged, we call it a **level-log** (*partial elasticity*) model:
 
-* Divide the $x$ coefficient by 100 and it is the amount $y$ differs due to a $1\%$ difference in $x$
+* Divide the $x$ coefficient by 100 and it is the amount $y$ differs due to a $1\%$ difference in $x$<sup>1</sup>
 
 * A $1%$ increase in `month` is associated with .64 more `violence`
+
+.footnote[
+[1] More precisely: $p\%$ higher $x$ is associated with $b * log(1 + \frac{p}{100})$ higher $y$
+]
 
 ---
 
@@ -401,9 +424,13 @@ You can also log the *outcome*
 
 When only the dependent variable is logged, we call it a **log-level** (*partial elasticity*) model:
 
-* Multiply $x$ coefficient by 100 and it is the percent $y$ differs due to a difference in $x$
+* Multiply $x$ coefficient by 100 and it is the percent $y$ differs due to a difference in $x$<sup>1</sup>
 
 * An increase of 1 in `month` is associated with $1.7\%$ higher `violence`
+
+.footnote[
+[1] This is approximate; the exact version is a $(e^{b}-1)*100\%$ difference in $y$
+]
 
 ---
 
@@ -446,9 +473,10 @@ By compressing higher values, they reduce *skew*
 Some warnings: 
 
 * You can only take a log of a positive (non-zero) number!
+   * *Don't just add 1 then log it!*
 * The curve is *inflexible*
 * The percentage interpretation is an *approximation*
-   * Inaccurate for changes in $x$ smaller or greater than $1$
+   * Inaccurate for changes in $x$ much smaller or greater than $1$
 
 ---
 class: inverse
@@ -474,7 +502,7 @@ class: inverse
 This implies a **multiplicative** relationship rather than just an **additive** one
 
 * **Additive**: $y = b_1x + b_2z$
-* **Multiplicative**: $y = b_1x + b_2z + b_3xz$
+* **Multiplicative**: $y = b_1x + b_2z + b_3\color{#003C71}{xz}$
 
 --
 
@@ -490,7 +518,7 @@ Note that we obey **hierarchy**: Include $x$ and $z$ alone when using $x*z$<sup>
 
 .pull-left[
 
-Note that DAGs moderation is not indicated by DAGs<sup>2</sup>
+Note that moderation is not indicated by DAGs<sup>2</sup>
 
 Moderation is a type of *functional form* like polynomials or logarithms
 ]
@@ -562,7 +590,7 @@ ggplot(metro_2021 ,
 `pop_den` has a negative slope only for "medium" `deprivation` boroughs
 
 * *Crime is lower when population density is higher in boroughs with moderate deprivation*
-* *Crime is higher when population density is higher in boroughs with low and high deprivation*
+* *Crime is higher when population density is higher in boroughs with low or high deprivation*
 
 ---
 
@@ -610,7 +638,7 @@ We can calculate the effect of `pop_den` when `deprivation` is...
 
 # Specification Test
 
-You can test if an interaction is warranted, because the interaction model is nested in the **additive** model:
+You can test if an interaction is warranted, because the **additive** model is nested inside the interaction model:
 
 .text-85[
 ```{r}
@@ -629,12 +657,8 @@ class: inverse
 
 ## Assignments
 
-* Working on them ASAP!
-
-## Strike!
-
-* No class next week if strike goes forward
+* All marked, somehow!
 
 ## Last assignment
 
-* Sent out by next Friday
+* Sent out by Friday
