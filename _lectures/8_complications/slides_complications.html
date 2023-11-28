@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>A Worked Example</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Charles Lanfear" />
+    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
+    <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, top, title-slide
+
+.title[
+# A Worked Example
+]
+.subtitle[
+## IQA Lecture 8
+]
+.author[
+### Charles Lanfear
+]
+.date[
+### 29 Nov 2023<br>Updated: 28 Nov 2023
+]
+
+---
+
+
+
+
+
+# Today
+
+
+* Example project
+
+
+* Further Learning
+
+
+---
+class: inverse
+
+# A Real Example
+
+![:width 70%](img/crim_paper.png)
+
+---
+
+# Loading Data
+
+
+```r
+library(tidyverse)
+library(broom) 
+
+*load(url("https://github.com/clanfear/built_environment_ce/raw/main/data/analytical_data/ccahs_block_analytical_unstd.RData"))
+```
+
+Today we'll be using real replication data from [Lanfear, Charles C. (2022). Collective Efficacy and the Built Environment. *Criminology*, 60(2)](https://github.com/clanfear/built_environment_ce)
+
+These data describe:
+
+* 1641 city blocks in 343 Chicago neighborhoods
+* Crime in 2004–2006
+* Survey data on collective efficacy in 1995 and 2001–2003
+* Built environment from 2001–2003
+* Census data from 2000
+
+
+.footnote[
+[1] `url()` tells `load()` to look online for the file; `read_csv()` does this automatically!
+]
+
+---
+
+.text-72[
+
+```r
+glimpse(ccahs_block_analytical_unstd)
+```
+
+```
+## Rows: 1,641
+## Columns: 27
+## $ CRIME_homicide_2004_2006                     &lt;dbl&gt; 0, 0, 0, 0, 1…
+## $ CRIME_assault_battery_gun_2004_2006          &lt;dbl&gt; 1, 1, 6, 1, 1…
+## $ CRIME_homicide_assault_battery_gun_2004_2006 &lt;dbl&gt; 1, 1, 6, 1, 2…
+## $ CRIME_robbery_2004_2006                      &lt;dbl&gt; 5, 1, 24, 6, …
+## $ CRIME_violent_2004_2006                      &lt;dbl&gt; 6, 3, 45, 8, …
+## $ CRIME_property_2004_2006                     &lt;dbl&gt; 30, 9, 138, 2…
+## $ CE_hlm_1995                                  &lt;dbl&gt; -1.9127906, -…
+## $ CE_hlm_2001                                  &lt;dbl&gt; -0.5537845, -…
+## $ FAC_disadv_2000                              &lt;dbl&gt; 0.2324679, 0.…
+## $ FAC_stability_2000                           &lt;dbl&gt; 0.7335206, 0.…
+## $ FAC_hispimm_2000                             &lt;dbl&gt; -0.2542902, -…
+## $ density_ltdb_nc_2000                         &lt;dbl&gt; 13863.7720, 1…
+## $ BE_pr_commercial_block_2001                  &lt;dbl&gt; 0.1666667, 0.…
+## $ BE_pr_bar_onstreet_block_2001                &lt;dbl&gt; 0, 0, 0, 0, 0…
+## $ BE_pr_liquor_onstreet_block_2001             &lt;dbl&gt; 0.00, 0.00, 0…
+## $ BE_pr_vacant_onstreet_block_2001             &lt;dbl&gt; 0.0000000, 0.…
+## $ BE_pr_abandoned_bld_onstreet_block_2001      &lt;dbl&gt; 0.00, 0.00, 0…
+## $ BE_pr_commer_dest_onstreet_block_2001        &lt;dbl&gt; 0.0000000, 0.…
+## $ BE_pr_recreation_block_2001                  &lt;dbl&gt; 0.5000000, 0.…
+## $ BE_pr_parking_block_2001                     &lt;dbl&gt; 0.1666667, 0.…
+## $ MIXED_LAND_USE_2001                          &lt;dbl&gt; 0.00, 0.25, 0…
+## $ orig_density_block                           &lt;dbl&gt; 13512.130, 10…
+## $ street_class_near                            &lt;dbl&gt; 2, 1, 2, 1, 2…
+## $ ccahs_nc                                     &lt;fct&gt; 1, 1, 1, 1, 1…
+## $ FAC_disadv_2000_2                            &lt;dbl&gt; 0.05404133, 0…
+## $ density_block                                &lt;dbl&gt; 8.651113e-03,…
+## $ density_block_2                              &lt;dbl&gt; -0.0151302783…
+```
+]
+
+---
+
+
+
+
+.text-72[
+
+```r
+ccahs_block_analytical_unstd |&gt; select(where(is.numeric)) |&gt;
+  pivot_longer(everything()) |&gt; group_by(name) |&gt;
+  summarize(across(value, list(mean = mean, sd = sd, min = min, max = max), .names = "{.fn}")) |&gt;
+  mutate(across(-name, ~round(.,2))) |&gt; print(n=26)
+```
+
+```
+## # A tibble: 26 × 5
+##    name                                             mean      sd    min      max
+##    &lt;chr&gt;                                           &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+##  1 BE_pr_abandoned_bld_onstreet_block_2001          0.12    0.21   0        1   
+##  2 BE_pr_bar_onstreet_block_2001                    0.05    0.13   0        1   
+##  3 BE_pr_commer_dest_onstreet_block_2001            0.21    0.26   0        1   
+##  4 BE_pr_commercial_block_2001                      0.26    0.27   0        1   
+##  5 BE_pr_liquor_onstreet_block_2001                 0.03    0.1    0        0.75
+##  6 BE_pr_parking_block_2001                         0.11    0.16   0        1   
+##  7 BE_pr_recreation_block_2001                      0.05    0.09   0        1   
+##  8 BE_pr_vacant_onstreet_block_2001                 0.12    0.21   0        1   
+##  9 CE_hlm_1995                                      0       1     -2.93     3   
+## 10 CE_hlm_2001                                     -0.02    1.01  -3.64     2.81
+## 11 CRIME_assault_battery_gun_2004_2006              1.02    1.75   0       18   
+## 12 CRIME_homicide_2004_2006                         0.1     0.35   0        4   
+## 13 CRIME_homicide_assault_battery_gun_2004_2006     1.11    1.88   0       21   
+## 14 CRIME_property_2004_2006                        20.3    24.6    0      315   
+## 15 CRIME_robbery_2004_2006                          3.18    4.39   0       44   
+## 16 CRIME_violent_2004_2006                          6.42    8.34   0       79   
+## 17 FAC_disadv_2000                                  0       0.47  -1.12     1.68
+## 18 FAC_disadv_2000_2                                0.22    0.3    0        2.82
+## 19 FAC_hispimm_2000                                 0.03    0.51  -0.81     1.19
+## 20 FAC_stability_2000                               0       0.48  -1.16     0.98
+## 21 MIXED_LAND_USE_2001                              0.32    0.32   0        1   
+## 22 density_block                                    0       0.02  -0.04     0.24
+## 23 density_block_2                                  0       0.02  -0.02     0.55
+## 24 density_ltdb_nc_2000                          7196.   4419.   178.   31661.  
+## 25 orig_density_block                           10853.   7590.     0    83420.  
+## 26 street_class_near                                1.83    0.83   1        3
+```
+]
+
+
+
+
+
+---
+## Collective Efficacy
+
+Collective efficacy is a problem-solving capacity that explains why crime is concentrated in certain neighbourhoods: it influences social control
+
+&lt;br&gt;
+
+![:width 80%](img/ce_original.png)
+
+
+---
+## Routine Activity
+
+The built environment explains why crime is concentrated in particular places within neighbourhoods: it influences opportunity
+
+&lt;br&gt;
+
+![:width 80%](img/be_re.png)
+
+---
+## From the paper
+
+My argument: Neighbourhoods with high collective efficacy in the past will have low crime in the present because they prevented and removed criminogenic features of the built environment
+
+&lt;br&gt;
+
+![:width 80%](img/1_basic_model.png)
+
+&lt;br&gt;
+
+.text-center[
+*Collective efficacy impacts crime only through the built environment*
+]
+
+---
+## The real model
+
+The actual model is more complicated:
+
+![:width 70%](img/crime_model.png)
+
+
+---
+## Neighborhood Model
+
+
+```r
+neighb_model &lt;- 
+  lm(CRIME_violent_2004_2006 ~ CE_hlm_2001 + CE_hlm_1995 + 
+       FAC_disadv_2000 + FAC_stability_2000 + FAC_hispimm_2000, 
+     data = ccahs_block_analytical_unstd)
+```
+
+![](slides_complications_files/figure-html/mod-dag-1.svg)&lt;!-- --&gt;
+
+
+My theory says past collective efficacy predicts present crime...
+
+...but only because of effects on the (unobserved) built environment
+
+---
+## Neighborhood Model Results
+
+.text-80[
+
+```r
+summary(neighb_model)
+```
+
+```
+## 
+## Call:
+## lm(formula = CRIME_violent_2004_2006 ~ CE_hlm_2001 + CE_hlm_1995 + 
+##     FAC_disadv_2000 + FAC_stability_2000 + FAC_hispimm_2000, 
+##     data = ccahs_block_analytical_unstd)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -17.397  -3.742  -1.280   1.779  69.743 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)          6.5186     0.1834  35.537  &lt; 2e-16 ***
+## CE_hlm_2001         -0.5159     0.2151  -2.398   0.0166 *  
+## CE_hlm_1995         -0.5639     0.2504  -2.252   0.0244 *  
+## FAC_disadv_2000      3.6753     0.4656   7.894 5.34e-15 ***
+## FAC_stability_2000   3.6532     0.4699   7.775 1.33e-14 ***
+## FAC_hispimm_2000    -3.2297     0.3765  -8.579  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.413 on 1635 degrees of freedom
+## Multiple R-squared:  0.2116,	Adjusted R-squared:  0.2092 
+## F-statistic: 87.77 on 5 and 1635 DF,  p-value: &lt; 2.2e-16
+```
+]
+
+---
+## Neighborhood Model Results
+
+
+```r
+neighb_model |&gt; tidy()
+```
+
+```
+## # A tibble: 6 × 5
+##   term               estimate std.error statistic   p.value
+##   &lt;chr&gt;                 &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)           6.52      0.183     35.5  1.88e-205
+## 2 CE_hlm_2001          -0.516     0.215     -2.40 1.66e-  2
+## 3 CE_hlm_1995          -0.564     0.250     -2.25 2.44e-  2
+## 4 FAC_disadv_2000       3.68      0.466      7.89 5.34e- 15
+## 5 FAC_stability_2000    3.65      0.470      7.77 1.33e- 14
+## 6 FAC_hispimm_2000     -3.23      0.376     -8.58 2.19e- 17
+```
+&amp;zwj;Interpretation:&lt;br&gt;"If a block had been in a neighborhood with 1 unit higher collective efficacy in 2001, we'd expect to have seen about -0.52 fewer crimes there in 2004–2006, holding constant 1995 collective efficacy and year 2000 demographic composition."
+
+
+---
+## Full Model
+
+The full model adds the built environment (opportunity) path:
+
+.text-80[
+
+```r
+full_model &lt;- 
+  lm(CRIME_violent_2004_2006 ~ CE_hlm_2001 + CE_hlm_1995 + 
+       FAC_disadv_2000 + FAC_stability_2000 + FAC_hispimm_2000 + density_ltdb_nc_2000 + 
+       BE_pr_vacant_onstreet_block_2001 + BE_pr_abandoned_bld_onstreet_block_2001 +
+       BE_pr_commer_dest_onstreet_block_2001 + BE_pr_recreation_block_2001 +
+       BE_pr_parking_block_2001  + BE_pr_commercial_block_2001 + 
+       BE_pr_bar_onstreet_block_2001 + BE_pr_liquor_onstreet_block_2001 + 
+       density_block + I(density_block^2) + street_class_near, 
+     data = ccahs_block_analytical_unstd)
+```
+]
+
+![](slides_complications_files/figure-html/mod-dag-2-1.svg)&lt;!-- --&gt;
+
+
+.footnote[
+Note that only arrows going into **Crime** go into the model formula
+]
+
+---
+## Full Model Results
+
+There are many parameters, so `tidy()` it up:
+
+.text-80[
+
+```r
+tidy(full_model) |&gt; mutate(across(-term, ~round(., 3)))
+```
+
+```
+## # A tibble: 18 × 5
+##    term                         estimate std.error statistic p.value
+##    &lt;chr&gt;                           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+##  1 (Intercept)                     1.13      0.605     1.87    0.062
+##  2 CE_hlm_2001                    -0.311     0.205    -1.52    0.129
+##  3 CE_hlm_1995                    -0.096     0.249    -0.384   0.701
+##  4 FAC_disadv_2000                 4.63      0.502     9.21    0    
+##  5 FAC_stability_2000              0.872     0.508     1.72    0.086
+##  6 FAC_hispimm_2000               -3.88      0.4      -9.68    0    
+##  7 density_ltdb_nc_2000            0         0         2.40    0.016
+##  8 BE_pr_vacant_onstreet_block…   -0.5       0.882    -0.566   0.571
+##  9 BE_pr_abandoned_bld_onstree…    3.12      0.962     3.25    0.001
+## 10 BE_pr_commer_dest_onstreet_…    3.84      1.15      3.36    0.001
+## 11 BE_pr_recreation_block_2001     6.48      1.93      3.35    0.001
+## 12 BE_pr_parking_block_2001        1.99      1.19      1.68    0.093
+## 13 BE_pr_commercial_block_2001     0.497     1.09      0.455   0.649
+## 14 BE_pr_bar_onstreet_block_20…   -1.44      1.53     -0.944   0.345
+## 15 BE_pr_liquor_onstreet_block…    3.14      1.98      1.59    0.113
+## 16 density_block                  69.9      12.6       5.54    0    
+## 17 I(density_block^2)           -382.      106.       -3.61    0    
+## 18 street_class_near               1.57      0.24      6.54    0
+```
+]
+
+
+
+---
+
+## Non-Linearity
+
+Note that there was a **quadratic** term on block-level population density. 
+
+Why did I include that?
+
+--
+
+1. I saw a non-linearity in the residuals (will return to this)
+2. It fit quite a bit better:
+
+.text-80[
+
+```r
+full_noquad_model &lt;- 
+  lm(CRIME_violent_2004_2006 ~ CE_hlm_2001 + CE_hlm_1995 + 
+       FAC_disadv_2000 + FAC_stability_2000 + FAC_hispimm_2000 + density_ltdb_nc_2000 + 
+       density_block + street_class_near + 
+       BE_pr_vacant_onstreet_block_2001 + BE_pr_abandoned_bld_onstreet_block_2001 +
+       BE_pr_commer_dest_onstreet_block_2001 + BE_pr_recreation_block_2001 +
+       BE_pr_parking_block_2001  + BE_pr_commercial_block_2001 + 
+       BE_pr_bar_onstreet_block_2001 + BE_pr_liquor_onstreet_block_2001, 
+     data = ccahs_block_analytical_unstd)
+anova(full_noquad_model, full_model) |&gt; tidy() |&gt; mutate(p.value = round(p.value, 3))
+```
+
+```
+## # A tibble: 2 × 7
+##   term              df.residual    rss    df sumsq statistic p.value
+##   &lt;chr&gt;                   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 CRIME_violent_20…        1624 79705.    NA   NA       NA        NA
+## 2 CRIME_violent_20…        1623 79069.     1  636.      13.0       0
+```
+]
+
+
+---
+
+## Quadratic Interpretation
+
+
+
+```r
+full_model |&gt; tidy() |&gt; 
+  filter(str_detect(term, "density_block")) |&gt; 
+  mutate(p.value = round(p.value, 3))
+```
+
+```
+## # A tibble: 2 × 5
+##   term               estimate std.error statistic p.value
+##   &lt;chr&gt;                 &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 density_block          69.9      12.6      5.54       0
+## 2 I(density_block^2)   -382.      106.      -3.61       0
+```
+
+Effect of density: 69.87 -763*`density_block` 
+
+--
+
+
+```r
+ccahs_block_analytical_unstd |&gt; pull(density_block) |&gt; round(3) %&gt;% 
+  {setNames(c(min(.), median(.), max(.)), c("min", "mean", "max"))}
+```
+
+```
+##    min   mean    max 
+## -0.035 -0.006  0.236
+```
+Effect of density at its max: `\(69.87 -763*0.236\)` =  `\(-110.198\)`
+
+---
+
+## Moderation
+
+When you want to know if a an effect differs by...
+
+* Group
+* Context (e.g., neighborhood)
+* Characteristics (e.g., capability)
+
+--
+
+A reviewer asked if disadvantage (a context) **moderated** block-level built environment effects—a common finding in the opportunity literature
+
+* e.g., do some features only produce crime in highly disadvantaged neighborhoods?
+
+I tested this—and we can too!
+
+---
+
+## Moderation test
+
+.text-80[
+
+```r
+full_int_model &lt;- 
+  lm(CRIME_violent_2004_2006 ~ CE_hlm_2001 + CE_hlm_1995 + 
+       FAC_disadv_2000 + FAC_stability_2000 + FAC_hispimm_2000 + density_ltdb_nc_2000 + 
+       density_block + density_block_2 + street_class_near + 
+       FAC_disadv_2000*BE_pr_vacant_onstreet_block_2001 + 
+       FAC_disadv_2000*BE_pr_abandoned_bld_onstreet_block_2001 +
+       FAC_disadv_2000*BE_pr_commer_dest_onstreet_block_2001 + 
+       FAC_disadv_2000*BE_pr_recreation_block_2001 +
+       FAC_disadv_2000*BE_pr_parking_block_2001  + 
+       FAC_disadv_2000*BE_pr_commercial_block_2001 + 
+       FAC_disadv_2000*BE_pr_bar_onstreet_block_2001 + 
+       FAC_disadv_2000*BE_pr_liquor_onstreet_block_2001, 
+     data = ccahs_block_analytical_unstd)
+anova(full_int_model, full_model) |&gt; tidy()
+```
+
+```
+## # A tibble: 2 × 7
+##   term              df.residual    rss    df sumsq statistic p.value
+##   &lt;chr&gt;                   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 CRIME_violent_20…        1615 78354.    NA   NA      NA    NA     
+## 2 CRIME_violent_20…        1623 79069.    -8 -716.      1.84  0.0651
+```
+]
+
+Some evidence for moderation, but not strong enough to warrant inclusion!
+
+I did toss the results in the appendix though
+
+---
+
+## Moderation complications
+
+
+
+What is the effect of abandoned buildings?
+
+
+```r
+full_int_model |&gt; tidy() |&gt; filter(str_detect(term, "abandoned"))
+```
+
+```
+## # A tibble: 2 × 5
+##   term                          estimate std.error statistic p.value
+##   &lt;chr&gt;                            &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 BE_pr_abandoned_bld_onstreet…    2.88       1.21     2.37   0.0178
+## 2 FAC_disadv_2000:BE_pr_abando…    0.644      2.35     0.275  0.784
+```
+
+`\(2.88 + 0.64*Disadvantage\)`
+
+* 2.24 when `\(Disadvantage\)` is -1
+* 2.88 when `\(Disadvantage\)` is 0
+* 3.52 when `\(Disadvantage\)` is 1
+
+--
+
+But wait, what's the effect of Disadvantage?
+
+---
+
+## Moderation complications
+
+Unfortunately, it depends on *every built environment feature*!
+
+
+
+.pull-left[
+.text-80[
+
+```r
+full_int_model |&gt; 
+  tidy() |&gt; 
+  filter(str_detect(term, "disadv")) |&gt;
+  select(term, estimate) |&gt;
+  print(width=40)
+```
+
+```
+## # A tibble: 9 × 2
+##   term                          estimate
+##   &lt;chr&gt;                            &lt;dbl&gt;
+## 1 FAC_disadv_2000                  3.80 
+## 2 FAC_disadv_2000:BE_pr_vacant…    0.692
+## 3 FAC_disadv_2000:BE_pr_abando…    0.644
+## 4 FAC_disadv_2000:BE_pr_commer…    2.03 
+## 5 FAC_disadv_2000:BE_pr_recrea…    4.83 
+## 6 FAC_disadv_2000:BE_pr_parkin…    0.345
+## 7 FAC_disadv_2000:BE_pr_commer…    0.115
+## 8 FAC_disadv_2000:BE_pr_bar_on…   -9.31 
+## 9 FAC_disadv_2000:BE_pr_liquor…    8.03
+```
+
+]
+]
+
+.pull-right[
+
+
+Partial derivative with respect to disadvantage:
+
+`\(\;3.798217\)`&lt;br&gt;
+`\(+ (0.692238 * vacant)\)`&lt;br&gt;
+`\(+ (0.6444968 * abandoned)\)`&lt;br&gt;
+`\(+ (2.0297129 * commer)\)`&lt;br&gt;
+`\(+ (4.8349173 * recreation)\)`&lt;br&gt;
+`\(+ (0.3453893 * parking)\)`&lt;br&gt;
+`\(+ (0.1145244 * commercial)\)`&lt;br&gt;
+`\(+ (-9.3090589 * bar)\)`&lt;br&gt;
+`\(+ (8.0312971 * liquor)\)`&lt;br&gt;
+]
+
+.text-center[
+*Moderation can make interpretation a pain!*
+]
+
+---
+
+# Extensions
+
+---
+
+## Alternate estimators
+
+.pull-left[
+.text-85[
+
+```r
+full_model |&gt;
+  augment() |&gt;
+  ggplot(aes(x = .fitted, 
+             y = .resid)) + 
+  geom_point() + 
+  geom_smooth()
+```
+
+![](slides_complications_files/figure-html/unnamed-chunk-21-1.svg)&lt;!-- --&gt;
+]
+]
+
+.pull-right[
+It doesn't look like our model is doing great
+
+Multiple issues:
+
+* No negative values; a count variable!
+* Zeroes: Can't log!
+* Non-linearity
+* Heteroskedasticity
+]
+
+--
+
+These suggest a *better* model; something in the **Poisson** family&lt;sup&gt;1&lt;/sup&gt;
+
+You can learn about these in SSRMP modules or textbooks
+
+.footnote[
+[1] I used a hierarchical negative binomial model in this paper
+]
+
+---
+
+## Mediation
+
+When you want to know if an effect works through a particular front door
+
+
+---
+
+## Fixed Effects
+
+See Huntington-Klein chapter 16
+
+---
+class: inverse
+
+# Wrap-Up
+
+## Freedom
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../assets/cam_macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "tomorrow-night-bright",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
