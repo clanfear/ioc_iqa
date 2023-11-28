@@ -1,5 +1,5 @@
 ---
-title: "A Worked Example"
+title: "A Real Example"
 subtitle: "IQA Lecture 8"
 author: "Charles Lanfear"
 date: "29 Nov 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
@@ -15,6 +15,8 @@ output:
       titleSlideClass: ["center","top"]
 ---
 
+class: inverse
+
 ```{r setup, purl=FALSE}
 #| include: false
 options(width = 68)
@@ -23,17 +25,7 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, dev = 
 ```
 
 
-# Today
 
-
-* Example project
-
-
-* Further Learning
-
-
----
-class: inverse
 
 # A Real Example
 
@@ -58,6 +50,7 @@ These data describe:
 * Crime in 2004–2006
 * Survey data on collective efficacy in 1995 and 2001–2003
 * Built environment from 2001–2003
+   * Proportions (0 to 1) of surrounding block faces
 * Census data from 2000
 
 
@@ -104,6 +97,11 @@ Collective efficacy is a problem-solving capacity that explains why crime is con
 
 ![:width 80%](img/ce_original.png)
 
+<br>
+
+.text-center[
+*An explanation for crime differences between neighborhoods*
+]
 
 ---
 ## Routine Activity
@@ -114,8 +112,14 @@ The built environment explains why crime is concentrated in particular places wi
 
 ![:width 80%](img/be_re.png)
 
+<br>
+
+.text-center[
+*An explanation for crime differences between locations*
+]
+
 ---
-## From the paper
+# From the paper
 
 My argument: Neighbourhoods with high collective efficacy in the past will have low crime in the present because they prevented and removed criminogenic features of the built environment
 
@@ -126,19 +130,21 @@ My argument: Neighbourhoods with high collective efficacy in the past will have 
 <br>
 
 .text-center[
-*Collective efficacy impacts crime only through the built environment*
+*A link between neighborhood structures and place characteristics*
 ]
-
 ---
 ## The real model
 
-The actual model is more complicated:
+The actual model (set of models, really) is more complicated:
 
 ![:width 70%](img/crime_model.png)
 
+.text-center[
+*We'll focus on total violent crimes*
+]
 
 ---
-## Neighborhood Model
+# Neighborhood Model
 
 ```{r}
 neighb_model <- 
@@ -203,11 +209,13 @@ summary(neighb_model)
 ```{r}
 neighb_model |> tidy()
 ```
-&zwj;Interpretation:<br>"If a block had been in a neighborhood with 1 unit higher collective efficacy in 2001, we'd expect to have seen about `r round(coef(neighb_model)["CE_hlm_2001"], 2)` fewer crimes there in 2004–2006, holding constant 1995 collective efficacy and year 2000 demographic composition."
 
+>If a block had been in a neighborhood with 1 unit higher collective efficacy in 2001, we'd expect to have seen about `r round(coef(neighb_model)["CE_hlm_2001"], 3)` fewer crimes there in 2004–2006, holding constant 1995 collective efficacy and year 2000 demographic composition.
+
+Note 1995 collective efficacy looks at least as strong as 2001
 
 ---
-## Full Model
+# Full Model
 
 The full model adds the built environment (opportunity) path:
 
@@ -282,11 +290,36 @@ tidy(full_model) |> mutate(across(-term, ~round(., 3)))
 ```
 ]
 
+---
+# Comparing models
 
+.text-80[
+```{r}
+anova(neighb_model, full_model) |> tidy()
+```
+]
+
+The model fits quite a bit better; $R^2$ increases from 0.21 to 0.31 too
+
+--
+
+.text-80[
+```{r}
+tidy(full_model) |> mutate(across(-term, ~round(., 3))) |> 
+  filter(str_detect(term, "CE"))
+```
+]
+
+* 2001 collective efficacy dropped from -0.516 to -0.311 (-40%)
+* 1995 collective efficacy dropped from -0.564 to -0.096 (-83%)
+
+.text-center[
+*Built environment features mostly wipe out 1995 CE!*
+]
 
 ---
 
-## Non-Linearity
+# Non-Linearity
 
 Note that there was a **quadratic** term on block-level population density. 
 
@@ -294,8 +327,9 @@ Why did I include that?
 
 --
 
-1. I saw a non-linearity in the residuals (will return to this)
-2. It fit quite a bit better:
+1. There are some theoretical reasons to expect it
+2. It fixed some non-linearity in the residuals
+3. It fit quite a bit better:
 
 .text-80[
 ```{r}
@@ -316,6 +350,7 @@ anova(full_noquad_model, full_model) |> tidy() |> mutate(p.value = round(p.value
 ---
 
 ## Quadratic Interpretation
+
 ```{r, include = FALSE}
 est_vec <- full_model |> tidy() |> 
   filter(str_detect(term, "density_block")) |> 
@@ -342,12 +377,12 @@ Effect of density at its max: $`r est_vec[1]` `r 2*est_vec[2]`*0.236$ =  $`r est
 
 ---
 
-## Moderation
+# Moderation or Interaction
 
-When you want to know if a an effect differs by...
+We introduce **interaction terms** when we want to know if effects differ by...
 
-* Group
-* Context (e.g., neighborhood)
+* Groups
+* Contexts (e.g., neighborhood)
 * Characteristics (e.g., capability)
 
 --
@@ -386,6 +421,16 @@ Some evidence for moderation, but not strong enough to warrant inclusion!
 I did toss the results in the appendix though
 
 ---
+## oh no
+
+.text-60[
+```{r}
+full_int_model |> tidy() |> print(n=26)
+```
+]
+
+
+---
 
 ## Moderation complications
 
@@ -411,7 +456,7 @@ But wait, what's the effect of Disadvantage?
 
 ---
 
-## Moderation complications
+## oh noooo
 
 Unfortunately, it depends on *every built environment feature*!
 
@@ -457,16 +502,20 @@ $+ (`r dis_coefs[9]` * `r dis_names[9]`)$<br>
 ]
 
 .text-center[
-*Moderation can make interpretation a pain!*
+*This would be bad if we were mainly interested in disadvantage!*
 ]
 
 ---
+class: inverse
+# More Advanced Things
 
-# Extensions
+> Any sufficiently advanced technology is indistinguishable from magic 
+
+– Sir Arthur C. Clarke
 
 ---
 
-## Alternate estimators
+## Alternate approaches
 
 .pull-left[
 .text-85[
@@ -504,20 +553,102 @@ You can learn about these in SSRMP modules or textbooks
 
 ---
 
+## Common ones to consider
+
+* **Poisson** regression (and related approaches)
+
+   * Counts and other non-negative outcomes
+   * Multiplicative relationships
+   * Interested in rates
+
+--
+
+* **Binomial**, e.g., logit / logistic regression
+   * Binary (0/1) or fractional outcomes (0–1)
+   * Interested in probabilities
+
+--
+
+* **Event history** or hazard models
+   * Duration outcomes, e.g., time to death
+   * Censored data, e.g., with some alive at last follow-up
+   * Transitions between states, e.g., incarcerated to free (and back)
+
+--
+
+* **Hierarchical models**
+   * Nested data, e.g., blocks in neighborhoods
+   * Repeated observations, e.g., person-years
+      * **Time series** and **panel models** are included here
+
+---
+
 ## Mediation
 
-When you want to know if an effect works through a particular front door
+![:width 80%](img/1_basic_model.png)
 
+<br>
+
+We test for **mediation** when we want to know if an effect works through a *particular* front door, e.g., $X \rightarrow Z \rightarrow Y$
+
+--
+
+Mediation requires strong assumptions (sequential ignorability):
+
+* You've identified the effect of $X \rightarrow Z$
+* You've also identified $Z \rightarrow Y$
+
+This is *very hard* to do, but if you want to do it, read VanderWeele (2015) *Explanation in Causal Inference: Methods for Mediation and Interaction*
 
 ---
 
 ## Fixed Effects
 
-See Huntington-Klein chapter 16
+One problem with my analysis is I don't observe *change* in the built environment—I only had one time point!
+
+* There might be unmeasured differences between neighborhoods or blocks explaining my effects
+* If I'd had at least two measures, I could make a more convincing test by *looking only at changes*
+
+--
+
+**Fixed effects** or **unobserved effects** models are one way to do this:
+
+* Introduce a categorical variable with a level for *every unit* and/or time period
+   * e.g., 31 borough dummies in our `metro_2021` data
+* This "controls" for *mean differences* between the units
+   * i.e., it adjust for anything *stable over time*
+* This is a type of **hierarchical model**
+   * Specifically, one where fixed characteristics of units are a *nuisance*
+
+--
+
+This is *very easy* and *very common*, but see Huntington-Klein chapter 16 for more
+
+---
+# Book Recommendations
+
+* R Programming
+   * Grolemund & Wickham (2024) *R for Data Science*
+   * Bryan et al. (2023) *What They Forgot to Teach You About R*
+   * Healy (2018) *Data Visualization: A Practical Introduction*
+
+* Basic Stats with Programming
+   * Çetinkaya-Rundel & Hardin (2023) *Introduction to Modern Statistics*
+   * Llaudet & Imai (2022) *Data Analysis for Social Science*
+
+* Causal Inference
+   * Morgan & Winship (2014) *Counterfactuals and Causal Inference*
+   * Cunningham (2021) *Causal Inference: The Mixtape*
+   
+
 
 ---
 class: inverse
 
 # Wrap-Up
 
+* Assignment 2 due Sunday 11:59
+
 ## Freedom
+
+![:width 70%](img/shawshank.png)

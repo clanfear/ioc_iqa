@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>A Worked Example</title>
+    <title>A Real Example</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
     <script src="libs/header-attrs-2.23/header-attrs.js"></script>
@@ -12,7 +12,7 @@
 class: center, top, title-slide
 
 .title[
-# A Worked Example
+# A Real Example
 ]
 .subtitle[
 ## IQA Lecture 8
@@ -27,20 +27,12 @@ class: center, top, title-slide
 ---
 
 
-
-
-
-# Today
-
-
-* Example project
-
-
-* Further Learning
-
-
----
 class: inverse
+
+
+
+
+
 
 # A Real Example
 
@@ -66,6 +58,7 @@ These data describe:
 * Crime in 2004–2006
 * Survey data on collective efficacy in 1995 and 2001–2003
 * Built environment from 2001–2003
+   * Proportions (0 to 1) of surrounding block faces
 * Census data from 2000
 
 
@@ -174,6 +167,11 @@ Collective efficacy is a problem-solving capacity that explains why crime is con
 
 ![:width 80%](img/ce_original.png)
 
+&lt;br&gt;
+
+.text-center[
+*An explanation for crime differences between neighborhoods*
+]
 
 ---
 ## Routine Activity
@@ -184,8 +182,14 @@ The built environment explains why crime is concentrated in particular places wi
 
 ![:width 80%](img/be_re.png)
 
+&lt;br&gt;
+
+.text-center[
+*An explanation for crime differences between locations*
+]
+
 ---
-## From the paper
+# From the paper
 
 My argument: Neighbourhoods with high collective efficacy in the past will have low crime in the present because they prevented and removed criminogenic features of the built environment
 
@@ -196,19 +200,21 @@ My argument: Neighbourhoods with high collective efficacy in the past will have 
 &lt;br&gt;
 
 .text-center[
-*Collective efficacy impacts crime only through the built environment*
+*A link between neighborhood structures and place characteristics*
 ]
-
 ---
 ## The real model
 
-The actual model is more complicated:
+The actual model (set of models, really) is more complicated:
 
 ![:width 70%](img/crime_model.png)
 
+.text-center[
+*We'll focus on total violent crimes*
+]
 
 ---
-## Neighborhood Model
+# Neighborhood Model
 
 
 ```r
@@ -281,11 +287,13 @@ neighb_model |&gt; tidy()
 ## 5 FAC_stability_2000    3.65      0.470      7.77 1.33e- 14
 ## 6 FAC_hispimm_2000     -3.23      0.376     -8.58 2.19e- 17
 ```
-&amp;zwj;Interpretation:&lt;br&gt;"If a block had been in a neighborhood with 1 unit higher collective efficacy in 2001, we'd expect to have seen about -0.52 fewer crimes there in 2004–2006, holding constant 1995 collective efficacy and year 2000 demographic composition."
 
+&gt;If a block had been in a neighborhood with 1 unit higher collective efficacy in 2001, we'd expect to have seen about -0.516 fewer crimes there in 2004–2006, holding constant 1995 collective efficacy and year 2000 demographic composition.
+
+Note 1995 collective efficacy looks at least as strong as 2001
 
 ---
-## Full Model
+# Full Model
 
 The full model adds the built environment (opportunity) path:
 
@@ -347,11 +355,54 @@ tidy(full_model) |&gt; mutate(across(-term, ~round(., 3)))
 ```
 ]
 
+---
+# Comparing models
 
+.text-80[
+
+```r
+anova(neighb_model, full_model) |&gt; tidy()
+```
+
+```
+## # A tibble: 2 × 7
+##   term           df.residual    rss    df  sumsq statistic   p.value
+##   &lt;chr&gt;                &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 CRIME_violent…        1635 89849.    NA    NA       NA   NA       
+## 2 CRIME_violent…        1623 79069.    12 10780.      18.4  7.03e-38
+```
+]
+
+The model fits quite a bit better; `\(R^2\)` increases from 0.21 to 0.31 too
+
+--
+
+.text-80[
+
+```r
+tidy(full_model) |&gt; mutate(across(-term, ~round(., 3))) |&gt; 
+  filter(str_detect(term, "CE"))
+```
+
+```
+## # A tibble: 2 × 5
+##   term        estimate std.error statistic p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 CE_hlm_2001   -0.311     0.205    -1.52    0.129
+## 2 CE_hlm_1995   -0.096     0.249    -0.384   0.701
+```
+]
+
+* 2001 collective efficacy dropped from -0.516 to -0.311 (-40%)
+* 1995 collective efficacy dropped from -0.564 to -0.096 (-83%)
+
+.text-center[
+*Built environment features mostly wipe out 1995 CE!*
+]
 
 ---
 
-## Non-Linearity
+# Non-Linearity
 
 Note that there was a **quadratic** term on block-level population density. 
 
@@ -359,8 +410,9 @@ Why did I include that?
 
 --
 
-1. I saw a non-linearity in the residuals (will return to this)
-2. It fit quite a bit better:
+1. There are some theoretical reasons to expect it
+2. It fixed some non-linearity in the residuals
+3. It fit quite a bit better:
 
 .text-80[
 
@@ -390,6 +442,7 @@ anova(full_noquad_model, full_model) |&gt; tidy() |&gt; mutate(p.value = round(p
 ---
 
 ## Quadratic Interpretation
+
 
 
 
@@ -425,12 +478,12 @@ Effect of density at its max: `\(69.87 -763*0.236\)` =  `\(-110.198\)`
 
 ---
 
-## Moderation
+# Moderation or Interaction
 
-When you want to know if a an effect differs by...
+We introduce **interaction terms** when we want to know if effects differ by...
 
-* Group
-* Context (e.g., neighborhood)
+* Groups
+* Contexts (e.g., neighborhood)
 * Characteristics (e.g., capability)
 
 --
@@ -478,6 +531,49 @@ Some evidence for moderation, but not strong enough to warrant inclusion!
 I did toss the results in the appendix though
 
 ---
+## oh no
+
+.text-60[
+
+```r
+full_int_model |&gt; tidy() |&gt; print(n=26)
+```
+
+```
+## # A tibble: 26 × 5
+##    term                        estimate std.error statistic  p.value
+##    &lt;chr&gt;                          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 (Intercept)                  8.42e-1 0.601        1.40   1.61e- 1
+##  2 CE_hlm_2001                 -3.43e-1 0.207       -1.66   9.74e- 2
+##  3 CE_hlm_1995                 -1.43e-1 0.250       -0.572  5.68e- 1
+##  4 FAC_disadv_2000              3.80e+0 0.760        5.00   6.48e- 7
+##  5 FAC_stability_2000           6.86e-1 0.520        1.32   1.88e- 1
+##  6 FAC_hispimm_2000            -3.80e+0 0.414       -9.17   1.41e-19
+##  7 density_ltdb_nc_2000         1.38e-4 0.0000550    2.51   1.21e- 2
+##  8 density_block                4.57e+1 9.11         5.01   5.95e- 7
+##  9 density_block_2             -2.99e+1 7.70        -3.89   1.05e- 4
+## 10 street_class_near            1.56e+0 0.241        6.49   1.17e-10
+## 11 BE_pr_vacant_onstreet_bloc… -6.04e-1 0.906       -0.666  5.05e- 1
+## 12 BE_pr_abandoned_bld_onstre…  2.88e+0 1.21         2.37   1.78e- 2
+## 13 BE_pr_commer_dest_onstreet…  3.75e+0 1.15         3.27   1.10e- 3
+## 14 BE_pr_recreation_block_2001  6.70e+0 1.93         3.47   5.41e- 4
+## 15 BE_pr_parking_block_2001     2.00e+0 1.19         1.68   9.36e- 2
+## 16 BE_pr_commercial_block_2001  6.34e-1 1.10         0.578  5.63e- 1
+## 17 BE_pr_bar_onstreet_block_2… -2.74e+0 1.66        -1.64   1.01e- 1
+## 18 BE_pr_liquor_onstreet_bloc…  2.91e+0 1.99         1.46   1.43e- 1
+## 19 FAC_disadv_2000:BE_pr_vaca…  6.92e-1 1.84         0.377  7.06e- 1
+## 20 FAC_disadv_2000:BE_pr_aban…  6.44e-1 2.35         0.275  7.84e- 1
+## 21 FAC_disadv_2000:BE_pr_comm…  2.03e+0 2.28         0.890  3.74e- 1
+## 22 FAC_disadv_2000:BE_pr_recr…  4.83e+0 3.52         1.37   1.69e- 1
+## 23 FAC_disadv_2000:BE_pr_park…  3.45e-1 2.22         0.156  8.76e- 1
+## 24 FAC_disadv_2000:BE_pr_comm…  1.15e-1 2.16         0.0531 9.58e- 1
+## 25 FAC_disadv_2000:BE_pr_bar_… -9.31e+0 3.43        -2.72   6.65e- 3
+## 26 FAC_disadv_2000:BE_pr_liqu…  8.03e+0 3.87         2.08   3.81e- 2
+```
+]
+
+
+---
 
 ## Moderation complications
 
@@ -510,7 +606,7 @@ But wait, what's the effect of Disadvantage?
 
 ---
 
-## Moderation complications
+## oh noooo
 
 Unfortunately, it depends on *every built environment feature*!
 
@@ -562,16 +658,20 @@ Partial derivative with respect to disadvantage:
 ]
 
 .text-center[
-*Moderation can make interpretation a pain!*
+*This would be bad if we were mainly interested in disadvantage!*
 ]
 
 ---
+class: inverse
+# More Advanced Things
 
-# Extensions
+&gt; Any sufficiently advanced technology is indistinguishable from magic 
+
+– Sir Arthur C. Clarke
 
 ---
 
-## Alternate estimators
+## Alternate approaches
 
 .pull-left[
 .text-85[
@@ -585,7 +685,7 @@ full_model |&gt;
   geom_smooth()
 ```
 
-![](slides_complications_files/figure-html/unnamed-chunk-21-1.svg)&lt;!-- --&gt;
+![](slides_complications_files/figure-html/unnamed-chunk-24-1.svg)&lt;!-- --&gt;
 ]
 ]
 
@@ -612,23 +712,105 @@ You can learn about these in SSRMP modules or textbooks
 
 ---
 
+## Common ones to consider
+
+* **Poisson** regression (and related approaches)
+
+   * Counts and other non-negative outcomes
+   * Multiplicative relationships
+   * Interested in rates
+
+--
+
+* **Binomial**, e.g., logit / logistic regression
+   * Binary (0/1) or fractional outcomes (0–1)
+   * Interested in probabilities
+
+--
+
+* **Event history** or hazard models
+   * Duration outcomes, e.g., time to death
+   * Censored data, e.g., with some alive at last follow-up
+   * Transitions between states, e.g., incarcerated to free (and back)
+
+--
+
+* **Hierarchical models**
+   * Nested data, e.g., blocks in neighborhoods
+   * Repeated observations, e.g., person-years
+      * **Time series** and **panel models** are included here
+
+---
+
 ## Mediation
 
-When you want to know if an effect works through a particular front door
+![:width 80%](img/1_basic_model.png)
 
+&lt;br&gt;
+
+We test for **mediation** when we want to know if an effect works through a *particular* front door, e.g., `\(X \rightarrow Z \rightarrow Y\)`
+
+--
+
+Mediation requires strong assumptions (sequential ignorability):
+
+* You've identified the effect of `\(X \rightarrow Z\)`
+* You've also identified `\(Z \rightarrow Y\)`
+
+This is *very hard* to do, but if you want to do it, read VanderWeele (2015) *Explanation in Causal Inference: Methods for Mediation and Interaction*
 
 ---
 
 ## Fixed Effects
 
-See Huntington-Klein chapter 16
+One problem with my analysis is I don't observe *change* in the built environment—I only had one time point!
+
+* There might be unmeasured differences between neighborhoods or blocks explaining my effects
+* If I'd had at least two measures, I could make a more convincing test by *looking only at changes*
+
+--
+
+**Fixed effects** or **unobserved effects** models are one way to do this:
+
+* Introduce a categorical variable with a level for *every unit* and/or time period
+   * e.g., 31 borough dummies in our `metro_2021` data
+* This "controls" for *mean differences* between the units
+   * i.e., it adjust for anything *stable over time*
+* This is a type of **hierarchical model**
+   * Specifically, one where fixed characteristics of units are a *nuisance*
+
+--
+
+This is *very easy* and *very common*, but see Huntington-Klein chapter 16 for more
+
+---
+# Book Recommendations
+
+* R Programming
+   * Grolemund &amp; Wickham (2024) *R for Data Science*
+   * Bryan et al. (2023) *What They Forgot to Teach You About R*
+   * Healy (2018) *Data Visualization: A Practical Introduction*
+
+* Basic Stats with Programming
+   * Çetinkaya-Rundel &amp; Hardin (2023) *Introduction to Modern Statistics*
+   * Llaudet &amp; Imai (2022) *Data Analysis for Social Science*
+
+* Causal Inference
+   * Morgan &amp; Winship (2014) *Counterfactuals and Causal Inference*
+   * Cunningham (2021) *Causal Inference: The Mixtape*
+   
+
 
 ---
 class: inverse
 
 # Wrap-Up
 
+* Assignment 2 due Sunday 11:59
+
 ## Freedom
+
+![:width 70%](img/shawshank.png)
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
