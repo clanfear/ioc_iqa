@@ -6,8 +6,6 @@ date: "2023-11-29"
 draft: false
 ---
 
-Lecture Slides (forthcoming)
+[Lecture Slides](https://clanfear.github.io/ioc_iqa/_lectures/8_complications/slides_complications.html)
 
-.R script to follow along (forthcoming)
-
-Lecture Recording (forthcoming)
+[.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/8_complications/slides_complications.R)
