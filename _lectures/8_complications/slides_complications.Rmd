@@ -27,66 +27,11 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, dev = 
 
 
 
-# A Real Example
+# Let's replicate a paper!
 
-![:width 70%](img/crim_paper.png)
+<br>
 
----
-
-# Loading Data
-
-```{r}
-library(tidyverse)
-library(broom) 
-
-load(url("https://github.com/clanfear/built_environment_ce/raw/main/data/analytical_data/ccahs_block_analytical_unstd.RData")) #<<
-```
-
-Today we'll be using real replication data from [Lanfear, Charles C. (2022). Collective Efficacy and the Built Environment. *Criminology*, 60(2)](https://github.com/clanfear/built_environment_ce)
-
-These data describe:
-
-* 1641 city blocks in 343 Chicago neighborhoods
-* Crime in 2004–2006
-* Survey data on collective efficacy in 1995 and 2001–2003
-* Built environment from 2001–2003
-   * Proportions (0 to 1) of surrounding block faces
-* Census data from 2000
-
-
-.footnote[
-[1] `url()` tells `load()` to look online for the file; `read_csv()` does this automatically!
-]
-
----
-
-.text-72[
-```{r}
-glimpse(ccahs_block_analytical_unstd)
-```
-]
-
----
-
-```{r, include = FALSE}
-options(width = 90) # Making display a bit wider temporarily
-```
-
-
-.text-72[
-```{r}
-ccahs_block_analytical_unstd |> select(where(is.numeric)) |>
-  pivot_longer(everything()) |> group_by(name) |>
-  summarize(across(value, list(mean = mean, sd = sd, min = min, max = max), .names = "{.fn}")) |>
-  mutate(across(-name, ~round(.,2))) |> print(n=26)
-```
-]
-
-```{r, include = FALSE}
-options(width = 68) # Returning display width to default
-```
-
-
+![:width 65%](img/crim_paper.png)
 
 ---
 ## Collective Efficacy
@@ -132,6 +77,90 @@ My argument: Neighbourhoods with high collective efficacy in the past will have 
 .text-center[
 *A link between neighborhood structures and place characteristics*
 ]
+
+---
+# Chicago Data
+
+
+.pull-left[
+Merged many datasets to test:
+
+* PHDCN Community Survey
+   * 1995 Collective Efficacy
+* Chicago Community Adult Health Study (CCAHS)
+   * 2001-2003 Collective Efficacy
+   * 8 built environment features
+* Chicago Police Department reported crimes
+   * Homicide / Gun Violence
+   * Robbery
+   * All violent crime
+   * All property crime
+* City of Chicago street network
+* Longitudinal Tract DataBase
+   * Demographic composition
+]
+.pull-right[
+![](img/2_boundary_map.png)
+.center[*1641 blocks nested in 343 neighbourhood clusters*]
+]
+
+
+---
+
+# Loading Data
+
+```{r}
+library(tidyverse)
+library(broom) 
+
+load(url("https://github.com/clanfear/built_environment_ce/raw/main/data/analytical_data/ccahs_block_analytical_unstd.RData")) #<<
+```
+
+These are public replication data for [Lanfear, Charles C. (2022). Collective Efficacy and the Built Environment. *Criminology*, 60(2)](https://github.com/clanfear/built_environment_ce)
+
+These data describe:
+
+* 1641 city blocks in 343 Chicago neighborhoods
+* Crime in 2004–2006
+* Survey data on collective efficacy in 1995 and 2001–2003
+* Built environment from 2001–2003
+   * Proportions (0 to 1) of surrounding block faces
+* Census data from 2000
+
+
+.footnote[
+[1] `url()` tells `load()` to look online for the file; `read_csv()` does this automatically!
+]
+
+---
+
+.text-72[
+```{r}
+glimpse(ccahs_block_analytical_unstd)
+```
+]
+
+---
+
+```{r, include = FALSE}
+options(width = 90) # Making display a bit wider temporarily
+```
+
+
+.text-72[
+```{r}
+ccahs_block_analytical_unstd |> select(where(is.numeric)) |>
+  pivot_longer(everything()) |> group_by(name) |>
+  summarize(across(value, list(mean = mean, sd = sd, min = min, max = max), .names = "{.fn}")) |>
+  mutate(across(-name, ~round(.,2))) |> print(n=26)
+```
+]
+
+```{r, include = FALSE}
+options(width = 68) # Returning display width to default
+```
+
+
 ---
 ## The real model
 

@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 29 Nov 2023<br>Updated: 28 Nov 2023
+### 29 Nov 2023<br>Updated: 29 Nov 2023
 ]
 
 ---
@@ -34,9 +34,83 @@ class: inverse
 
 
 
-# A Real Example
+# Let's replicate a paper!
 
-![:width 70%](img/crim_paper.png)
+&lt;br&gt;
+
+![:width 65%](img/crim_paper.png)
+
+---
+## Collective Efficacy
+
+Collective efficacy is a problem-solving capacity that explains why crime is concentrated in certain neighbourhoods: it influences social control
+
+&lt;br&gt;
+
+![:width 80%](img/ce_original.png)
+
+&lt;br&gt;
+
+.text-center[
+*An explanation for crime differences between neighborhoods*
+]
+
+---
+## Routine Activity
+
+The built environment explains why crime is concentrated in particular places within neighbourhoods: it influences opportunity
+
+&lt;br&gt;
+
+![:width 80%](img/be_re.png)
+
+&lt;br&gt;
+
+.text-center[
+*An explanation for crime differences between locations*
+]
+
+---
+# From the paper
+
+My argument: Neighbourhoods with high collective efficacy in the past will have low crime in the present because they prevented and removed criminogenic features of the built environment
+
+&lt;br&gt;
+
+![:width 80%](img/1_basic_model.png)
+
+&lt;br&gt;
+
+.text-center[
+*A link between neighborhood structures and place characteristics*
+]
+
+---
+# Chicago Data
+
+
+.pull-left[
+Merged many datasets to test:
+
+* PHDCN Community Survey
+   * 1995 Collective Efficacy
+* Chicago Community Adult Health Study (CCAHS)
+   * 2001-2003 Collective Efficacy
+   * 8 built environment features
+* Chicago Police Department reported crimes
+   * Homicide / Gun Violence
+   * Robbery
+   * All violent crime
+   * All property crime
+* City of Chicago street network
+* Longitudinal Tract DataBase
+   * Demographic composition
+]
+.pull-right[
+![](img/2_boundary_map.png)
+.center[*1641 blocks nested in 343 neighbourhood clusters*]
+]
+
 
 ---
 
@@ -50,7 +124,7 @@ library(broom)
 *load(url("https://github.com/clanfear/built_environment_ce/raw/main/data/analytical_data/ccahs_block_analytical_unstd.RData"))
 ```
 
-Today we'll be using real replication data from [Lanfear, Charles C. (2022). Collective Efficacy and the Built Environment. *Criminology*, 60(2)](https://github.com/clanfear/built_environment_ce)
+These are public replication data for [Lanfear, Charles C. (2022). Collective Efficacy and the Built Environment. *Criminology*, 60(2)](https://github.com/clanfear/built_environment_ce)
 
 These data describe:
 
@@ -157,51 +231,6 @@ ccahs_block_analytical_unstd |&gt; select(where(is.numeric)) |&gt;
 
 
 
-
----
-## Collective Efficacy
-
-Collective efficacy is a problem-solving capacity that explains why crime is concentrated in certain neighbourhoods: it influences social control
-
-&lt;br&gt;
-
-![:width 80%](img/ce_original.png)
-
-&lt;br&gt;
-
-.text-center[
-*An explanation for crime differences between neighborhoods*
-]
-
----
-## Routine Activity
-
-The built environment explains why crime is concentrated in particular places within neighbourhoods: it influences opportunity
-
-&lt;br&gt;
-
-![:width 80%](img/be_re.png)
-
-&lt;br&gt;
-
-.text-center[
-*An explanation for crime differences between locations*
-]
-
----
-# From the paper
-
-My argument: Neighbourhoods with high collective efficacy in the past will have low crime in the present because they prevented and removed criminogenic features of the built environment
-
-&lt;br&gt;
-
-![:width 80%](img/1_basic_model.png)
-
-&lt;br&gt;
-
-.text-center[
-*A link between neighborhood structures and place characteristics*
-]
 ---
 ## The real model
 
