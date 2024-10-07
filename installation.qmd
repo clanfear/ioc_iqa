@@ -8,7 +8,7 @@ theme: flatly
 
 This document walks you through installing R and RStudio on your personal computer.
 
-In the instructions below, anywhere it says (version), there will be a series of numbers such as `4.2.1`. The specific version does not matter, but we want to always use the most recent one.
+In the instructions below, anywhere it says (version), there will be a series of numbers such as `4.4.1`. The specific version does not matter, but we want to always use the most recent one.
 
 ## Installing R
 
@@ -30,6 +30,7 @@ In the instructions below, anywhere it says (version), there will be a series of
 1. Go to the [MacOS Installers page](https://cran.r-project.org/bin/macosx/).
     * Scroll to "Latest release"
     * Click `R-(version).pkg` to download: Whatever version is listed will be the most current.
+       * If your Mac is less than 5 years old, you want the arm64 version.
    
 2. Run the installer.
     * Follow the on-screen instructions.
@@ -37,18 +38,12 @@ In the instructions below, anywhere it says (version), there will be a series of
    
 3. Once it completes, R is installed!
     * There may now be R icons on your desktop or start menu, but we typically do not use R directly.
-   
-4. Browse to the [XQuartz download page](https://www.xquartz.org/)
-    * Click `XQuartz-(version).dmg` to download.
-   
-5. Run XQuartz installer.
-    * XQuartz is needed to create windows to display many types of R graphics: this used to be included in MacOS until version 10.8 but now must be downloaded separately.
 
 ## Installing RStudio
 
 ### Windows
 
-1. Go to the [Installers page](https://www.rstudio.com/products/rstudio/download/#download).
+1. Go to the [Installers page](https://posit.co/download/rstudio-desktop/#download).
    * Click `Download RStudio for Windows` or, under All Installers, the link next to  `Windows 10/11` to download: Whatever version is listed will be the most current.
 
 2. Run the installer.
@@ -65,8 +60,8 @@ In the instructions below, anywhere it says (version), there will be a series of
 
 ### MacOS
 
-1. Go to the [Installers page](https://www.rstudio.com/products/rstudio/download/#download).
-   * Click `Download RStudio for MacOS` or, under All Installers, the link next to `macOS 10.15+` to download: Whatever version is listed will be the most current.
+1. Go to the [Installers page](https://posit.co/download/rstudio-desktop/#download).
+   * Click `Download RStudio for MacOS` or, under All Installers, the link next to `macOS 12+` to download: Whatever version is listed will be the most current.
 
 2. Run the installer.
    * Follow the on-screen instructions.

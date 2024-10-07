@@ -6,7 +6,7 @@ title-block-banner: true
 theme: flatly
 ---
 
-Statistics is a difficult topic. I recommend learning from multiple sources. My recommendations here lean a bit toward econometrics as I believe their approaches are the most applicable to common problems in our discipline. For studying unobservable properties of individuals (e.g., self-control, differential association, moral anomie), however, you'll want to look to social psychology (i.e., psychometrics) and latent variable models (e.g., structural equation modeling).
+Statistics is a difficult topic. I recommend learning from multiple sources. My recommendations here lean a bit toward econometrics as I believe their approaches are the most applicable to common problems in our discipline. For studying unobservable properties of individuals (e.g., self-control, differential association, moral anomie), however, you'll want to look to sociology and psychology (i.e., psychometrics) and latent variable models (e.g., structural equation modeling).
 
 
 # Recommended Textbooks
@@ -22,6 +22,7 @@ By level of difficulty and complexity of maths:
       * [*Statistical Rethinking*](https://xcelab.net/rm/statistical-rethinking/) by McElreath. A course in bayesian stats that made a big impact on making these methods accessible.
       * [*Counterfactuals and Causal Inference*](https://doi.org/10.1017/CBO9781107587991) by Morgan & Winship. Classic introduction to causal inference for social scientists. Accessible yet one of the best desktop references.
       * *Introductory Econometrics: A Modern Approach* by Wooldridge. One of the most used introductory textbooks in public policy and sociology. Rigorous but accessible.
+      * [*Causal Inference: What If*](https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/) by Hernán & Robins. A modern introduction to causal inference from the perspective of epidemiology and biostatistics that strikes a nice balance between accessibility and technicality.
    * Medium-High:
       * [*Hierarchical Linear Models*](https://us.sagepub.com/en-us/nam/hierarchical-linear-models/book9230) by Raudenbush & Bryk. The canonical reference for hierarchical models.
       * *Econometric Analysis of Cross Section and Panel Data* by Wooldridge. The canonical reference for econometrics. Covers nearly everything and in depth.

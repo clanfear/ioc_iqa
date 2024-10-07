@@ -2,12 +2,10 @@
 title: "Week 3: Statistical Inference"
 description: "`ggplot2` and basic statistical inference"
 author: "Charles Lanfear"
-date: "2023-10-25"
+date: "2024-10-30"
 draft: false
 ---
 
 [Lecture Slides](https://clanfear.github.io/ioc_iqa/_lectures/3_statistical-inference/slides_statistical-inference.html)
 
 [.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/3_statistical-inference/slides_statistical-inference.R)
-
-Lecture Recording (See Moodle)

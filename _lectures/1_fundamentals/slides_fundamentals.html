@@ -4,7 +4,7 @@
     <title>Fundamentals</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.27/header-attrs.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 11 Oct 2023<br>Updated: 10 Oct 2023
+### 11 Oct 2023<br>Updated: 07 Oct 2024
 ]
 
 ---
@@ -83,7 +83,7 @@ class: inverse
 ## Vectors in R
 
 
-```r
+``` r
 x &lt;- c(3, 4, 5) # Create x, a vector of length 3
 x
 ```
@@ -97,7 +97,7 @@ x
 Indexing `\(x_3\)`:
 
 
-```r
+``` r
 x[3] # Get the third element of x
 ```
 
@@ -112,7 +112,7 @@ We can index multiple elements.
 Index `\(x_2\)` and `\(x_3\)`:
 
 
-```r
+``` r
 x[c(2,3)] # Get the second and third elements of x
 ```
 
@@ -146,7 +146,7 @@ Matrices are indexed with subscripts for *rows*, *columns* (e.g., `\(x_{ij}\)`)
 ## Matrices in R
 
 
-```r
+``` r
 (X &lt;- matrix(c(6,1,4,2,9,8,3,5,0), nrow = 3))
 ```
 
@@ -163,7 +163,7 @@ Note R shows indices on the margins to tell you how to subset.
 --
 
 
-```r
+``` r
 X[3,2] # Third row, second column
 ```
 
@@ -176,7 +176,7 @@ X[3,2] # Third row, second column
 We can take multiple elements of a matrix too (and shake up the order):
 
 
-```r
+``` r
 X[3,c(2,1)] # Third row, second and first column
 ```
 
@@ -201,7 +201,7 @@ Given `\(x = [7, 11, 11, 13, 26]\)`:
 --
 
 
-```r
+``` r
 x &lt;- c(7, 11, 11, 13, 26)
 sum(x)
 ```
@@ -244,7 +244,7 @@ Put another way, the positive and negative differences between all values and th
 --
 
 
-```r
+``` r
 (1/length(x)) * sum(x) # Mean formula
 ```
 
@@ -253,7 +253,7 @@ Put another way, the positive and negative differences between all values and th
 ```
 
 
-```r
+``` r
 mean(x) # Mean function is just a shortcut
 ```
 
@@ -282,7 +282,7 @@ The **median** has this heinous formula:
 --
 
 
-```r
+``` r
 sort(x)[(length(x) + 1) / 2]
 ```
 
@@ -292,7 +292,7 @@ sort(x)[(length(x) + 1) / 2]
 
 
 
-```r
+``` r
 median(x)
 ```
 
@@ -318,7 +318,7 @@ There are formulas for the mode, but they aren't very intuitive, despite it bein
 You can use a `table()` to see frequencies of values:
 
 
-```r
+``` r
 table(x)
 ```
 
@@ -333,7 +333,7 @@ table(x)
 And you can find the mode directly (we'll learn this later today!):
 
 
-```r
+``` r
 table(x)[table(x) == max(table(x))] # Subsetting!
 ```
 
@@ -350,7 +350,7 @@ table(x)[table(x) == max(table(x))] # Subsetting!
 The mean is sensitive to extreme values:
 
 
-```r
+``` r
 z &lt;- c(2, 5, 3, 5, 95)
 mean(z)
 ```
@@ -364,7 +364,7 @@ mean(z)
 The median is not:
 
 
-```r
+``` r
 median(z)
 ```
 
@@ -413,7 +413,7 @@ We'll see this in action next week when we look at distributions.
 --
 
 
-```r
+``` r
 (s2 &lt;- sum((x - mean(x))^2) / (length(x) -1))
 ```
 
@@ -421,7 +421,7 @@ We'll see this in action next week when we look at distributions.
 ## [1] 52.8
 ```
 
-```r
+``` r
 var(x)
 ```
 
@@ -448,7 +448,7 @@ You can interpret it as the "typical" distance of values in the data from the me
 --
 
 
-```r
+``` r
 sqrt(var(x))
 ```
 
@@ -456,7 +456,7 @@ sqrt(var(x))
 ## [1] 7.266361
 ```
 
-```r
+``` r
 sd(x)
 ```
 
@@ -524,7 +524,7 @@ We'll restate it this way:
 
 
 
-```r
+``` r
 plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 1, b = 0.5)
 ```
@@ -540,7 +540,7 @@ The line *intercepts* the y-axis at 1.
 `\(y = 3 + 0.5x\)`
 
 
-```r
+``` r
 plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 3, b = 0.5)
 ```
@@ -555,7 +555,7 @@ The line *intercepts* the y-axis at 3.
 `\(y = 2 + 0.5x\)`
 
 
-```r
+``` r
 plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 0.5)
 ```
@@ -570,7 +570,7 @@ The line *intercepts* the y-axis at 2.
 `\(y = 2 + 0.5x\)`
 
 
-```r
+``` r
 plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 0.5)
 ```
@@ -585,7 +585,7 @@ From 2, the line increases by 0.5 for every `\(x\)`.
 `\(y = 2 + 0x\)`
 
 
-```r
+``` r
 plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 0)
 ```
@@ -600,7 +600,7 @@ From 2, the line increases by 0 for every `\(x\)`.
 `\(y = 2 + 2x\)`
 
 
-```r
+``` r
 plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
 abline(a = 2, b = 2)
 ```
@@ -659,7 +659,7 @@ You can define a curve in the same line formula:
 A *squared* or **quadratic** term (e.g. `\(x^2\)`) creates a *parabola*.
 
 
-```r
+``` r
 curve(2 + 0.5*x + 0.25*x^2, from = -2, to = 2, ylab = "y")
 ```
 
@@ -722,7 +722,7 @@ These rules work for polynomials with more terms.
 When `\(x = 2\)` the slope is...
 
 
-```r
+``` r
 x &lt;- 2
 3 + x + 0.75*x^2
 ```
@@ -804,7 +804,7 @@ Dataframes have *2* dimensions: **rows** and **columns**. Brackets **subset** us
 
 .small[
 
-```r
+``` r
 USArrests[1,] # First row
 ```
 
@@ -816,7 +816,7 @@ USArrests[1,] # First row
 --
 .small[
 
-```r
+``` r
 *USArrests[1:3, 3:4] # First three rows, third and fourth column
 ```
 
@@ -841,7 +841,7 @@ The **colon operator** (`:`) generates a vector using the sequence of integers f
 We can also subset using the names of rows or columns:
 
 
-```r
+``` r
 USArrests["California",]
 ```
 
@@ -853,7 +853,7 @@ USArrests["California",]
 --
 
 
-```r
+``` r
 head(USArrests[, c("Murder", "UrbanPop")])
 ```
 
@@ -874,7 +874,7 @@ head(USArrests[, c("Murder", "UrbanPop")])
 If you subset to a single column, it returns it as a vector instead of a dataframe:
 
 
-```r
+``` r
 USArrests[, "Murder"]
 ```
 
@@ -891,7 +891,7 @@ USArrests[, "Murder"]
 *Columns* in dataframes can also be accessed using names with the `$` extract operator:
 
 
-```r
+``` r
 USArrests$Murder
 ```
 
@@ -910,7 +910,7 @@ USArrests$Murder
 You may have noticed `$` before when we used `str()`:
 
 
-```r
+``` r
 str(USArrests)
 ```
 
@@ -929,7 +929,7 @@ Like the matrix subsetting suggestions, it is a hint you can select columns that
 # Mix and Match
 
 
-```r
+``` r
 USArrests$Murder[1:10]
 ```
 
@@ -968,7 +968,7 @@ class: inverse
 We can also index using expressions—logical *tests*.
 
 
-```r
+``` r
 USArrests[USArrests$Murder &gt; 15, ]
 ```
 
@@ -994,7 +994,7 @@ What does `USArrests$Murder &gt; 15` actually do?
 --
 
 
-```r
+``` r
 USArrests$Murder &gt; 15
 ```
 
@@ -1015,7 +1015,7 @@ When used with the subset operator (`[]`), elements for which a `TRUE` is given 
 --
 
 
-```r
+``` r
 c(1,2,3,4)[c(TRUE, FALSE, TRUE, FALSE)]
 ```
 
@@ -1069,7 +1069,7 @@ Logical operators are one of the foundations of programming. You should experime
 ![:width 50%](img/murder_and_assault.svg)
 
 
-```r
+``` r
 USArrests[USArrests$Murder &gt; 15 &amp; USArrests$Assault &gt; 300, ]
 ```
 
@@ -1087,7 +1087,7 @@ USArrests[USArrests$Murder &gt; 15 &amp; USArrests$Assault &gt; 300, ]
 ![:width 50%](img/murder_or_assault.svg)
 
 
-```r
+``` r
 USArrests[USArrests$Murder &gt; 15 | USArrests$Assault &gt; 300, ]
 ```
 
@@ -1108,7 +1108,7 @@ USArrests[USArrests$Murder &gt; 15 | USArrests$Assault &gt; 300, ]
 Missing values are coded as `NA` entries without quotes:
 
 
-```r
+``` r
 vector_w_missing &lt;- c(1, 2, NA, 4, 5, 6, NA)
 ```
 
@@ -1117,7 +1117,7 @@ vector_w_missing &lt;- c(1, 2, NA, 4, 5, 6, NA)
 Even one `NA` "poisons the well": You'll get `NA` out of your calculations unless you remove them manually or use the extra argument `na.rm = TRUE` in some functions:
 
 
-```r
+``` r
 mean(vector_w_missing)
 ```
 
@@ -1130,7 +1130,7 @@ mean(vector_w_missing)
 We can take missings (`NA`) and remove (`rm`) them:
 
 
-```r
+``` r
 mean(vector_w_missing, na.rm=TRUE)
 ```
 
@@ -1144,7 +1144,7 @@ mean(vector_w_missing, na.rm=TRUE)
 **WARNING:** You can't test for missing values by seeing if they "equal" (`==`) `NA`:
 
 
-```r
+``` r
 vector_w_missing == NA
 ```
 
@@ -1157,7 +1157,7 @@ vector_w_missing == NA
 But you can use the `is.na()` function:
 
 
-```r
+``` r
 is.na(vector_w_missing)
 ```
 
@@ -1170,7 +1170,7 @@ is.na(vector_w_missing)
 We can use subsetting to get the equivalent of `na.rm=TRUE`:
 
 
-```r
+``` r
 *mean(vector_w_missing[!is.na(vector_w_missing)])
 ```
 

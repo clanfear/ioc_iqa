@@ -2,15 +2,13 @@
 title: "Week 6: Linear Models III"
 description: "Functional Forms: You thought you'd escaped calculus, but you were wrong"
 author: "Charles Lanfear"
-date: "2023-11-13"
+date: "2024-11-25"
 draft: false
 ---
 
 [Lecture Slides](https://clanfear.github.io/ioc_iqa/_lectures/6_linear-models-iii/slides_linear-models-iii.html)
 
 [.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/6_linear-models-iii/slides_linear-models-iii.R)
-
-Lecture Recording (see Moodle)
 
 Reading:
 

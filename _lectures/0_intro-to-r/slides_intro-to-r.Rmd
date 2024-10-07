@@ -2,7 +2,7 @@
 title: "Introduction to R"
 subtitle: "IQA Lecture 0"
 author: "Charles Lanfear"
-date: "5 Oct 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%e %b %Y'))`"
+date: "10 Oct 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%e %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -172,7 +172,7 @@ class: inverse
 
 Location: Computer Lab, Wed, 14:00-16:00
 
-Michael's email: [wl429@cam.ac.uk]()
+Natalia's email: [nc603@cam.ac.uk]()
 
 * Your first point of contact for troubleshooting!
 
@@ -420,7 +420,7 @@ R stores *everything* as an **object**, including data, functions, models, and o
 
 --
 
-Creating an object can be done using the **assignment operator**: `<-`
+You can give an object a name using the **assignment operator**: `<-`
 
 --
 
@@ -460,7 +460,7 @@ new.object
 
 --
 
-You can treat the object's **name** as if it were the values stored inside.
+You can treat the object's **name** as if it were the values assigned to it.
 
 --
 

@@ -2,15 +2,13 @@
 title: "Week 4: Linear Models I"
 description: "Most common quantitative questions are nails and the linear model is an excellent hammer"
 author: "Charles Lanfear"
-date: "2023-11-01"
+date: "2024-11-06"
 draft: false
 ---
 
 [Lecture Slides](https://clanfear.github.io/ioc_iqa/_lectures/4_linear-models-i/slides_linear-models-i.html)
 
 [.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/4_linear-models-i/slides_linear-models-i.R)
-
-Lecture Recording (See Moodle)
 
 [Download Assignment 1](https://clanfear.github.io/ioc_iqa/_assignments/assignment-1.docx)
 

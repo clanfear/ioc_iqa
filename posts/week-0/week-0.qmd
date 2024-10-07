@@ -2,13 +2,11 @@
 title: "Week 0: Introduction to R"
 description: "Overview of R and RStudio plus some basic R syntax."
 author: "Charles Lanfear"
-date: "2023-10-05"
+date: "2024-10-10"
 draft: false
 ---
 
 [Lecture Slides](https://clanfear.github.io/ioc_iqa/_lectures/0_intro-to-r/slides_intro-to-r.html)
-
-[Lecture Recording](https://youtu.be/J-DMfU9YIuI)
 
 [.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/0_intro-to-r/slides_intro-to-r.R)
 
