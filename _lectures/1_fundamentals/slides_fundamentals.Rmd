@@ -2,7 +2,7 @@
 title: "Fundamentals"
 subtitle: "IQA Lecture 1"
 author: "Charles Lanfear"
-date: "11 Oct 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "16 Oct 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
