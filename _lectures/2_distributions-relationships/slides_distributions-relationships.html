@@ -4,7 +4,7 @@
     <title>Distributions and Relationships</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.27/header-attrs.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 18 Oct 2023<br>Updated: 17 Oct 2023
+### 23 Oct 2024<br>Updated: 22 Oct 2024
 ]
 
 ---
@@ -37,10 +37,9 @@ class: center, top, title-slide
    * Two assessments
       * *Light* data analysis and interpretation
       * Due Friday 11:59 PM the following week
-   * Michael's Office Hours: Thurs 13:00-14:00
-      * Also by appointment
-   * Reschedule Nov 15th to Monday, Nov 13th at 2 PM
-      * Email immediately if this is a problem
+   * Natalia's office hours: 
+      * Mon 12:00-13:00 &amp; Weds 16:00-17:00
+      * Room 1.8
 
 * Topics for today:
 
@@ -88,7 +87,7 @@ This will install a *large* number of R packages we will use throughout the term
 # Loading Packages
 
 
-```r
+``` r
 library(readr)
 library(ggplot2)
 library(dplyr)
@@ -127,7 +126,7 @@ Sometimes you may get a **warning message** when loading packages—usually beca
 
 ```
 Warning message:
-package `dplyr' was built under R version 4.3.0
+package `dplyr' was built under R version 4.4.1
 ```
 
 *Update R* to get rid of these!
@@ -159,6 +158,8 @@ One of the most common ways for data to be stored is in a *delimited* text file,
 103,"Battery","Female",4,
 ```
 
+Values are *comma-separated* and observations are separated by line breaks
+
 ---
 # `{readr}`
 
@@ -181,7 +182,7 @@ Let's use `read_csv()` from `{readr}` to import some community crime data based 
 
 .small[
 
-```r
+``` r
 communities &lt;- 
   read_csv(
     "https://clanfear.github.io/ioc_iqa/_data/communities.csv"
@@ -219,7 +220,7 @@ class: inverse
 
 .text-62[
 
-```r
+``` r
 glimpse(communities)
 ```
 
@@ -243,7 +244,7 @@ glimpse(communities)
 Instead of nesting functions like this:
 
 
-```r
+``` r
 proportions(table(communities$disadvantage))
 ```
 
@@ -258,7 +259,7 @@ proportions(table(communities$disadvantage))
 We can pipe them like this:
 
 
-```r
+``` r
 communities |&gt; pull(disadvantage) |&gt; table() |&gt; proportions()
 ```
 
@@ -277,7 +278,7 @@ Read this as, "take `communities`, and then pull out the `incarceration` column,
 # `filter()` Data Frames
 
 
-```r
+``` r
 communities |&gt; filter(incarceration == "High") |&gt; head()
 ```
 
@@ -313,7 +314,7 @@ It takes *only* logical vectors (the result of **expressions**) as an argument
 ### And: `&amp;`
 
 
-```r
+``` r
 communities |&gt;
   filter(disadvantage == "Low" &amp; 
          crime_rate &gt; 40)
@@ -330,7 +331,7 @@ communities |&gt;
 ### Or: `|`
 
 
-```r
+``` r
 communities |&gt;
   filter(disadvantage == "Low" | 
          crime_rate &gt; 40)
@@ -348,7 +349,7 @@ Common use case: Filter rows to things in some set.
 We can use `%in%` like `==` but for matching any element in the vector on its right
 
 
-```r
+``` r
 communities |&gt;
   filter(disadvantage %in% c("High", "Low")) |&gt;
   tail()
@@ -374,7 +375,7 @@ Read as: "`filter()` to rows where `disadvantage` is `"High"` or `"Low"`"
 Along with filtering the data to see certain rows, we might want to sort it:
 
 
-```r
+``` r
 communities |&gt;
   arrange(disadvantage, desc(crime_rate)) |&gt; head()
 ```
@@ -399,7 +400,7 @@ The data are sorted by ascending `disadvantage` and descending `crime_rate`.
 Not only can we subset rows, but we can include specific columns (and put them in the order listed) using `select()`
 
 
-```r
+``` r
 communities |&gt; select(area, pop_density, crime_rate) |&gt; head()
 ```
 
@@ -421,7 +422,7 @@ communities |&gt; select(area, pop_density, crime_rate) |&gt; head()
 We can instead drop only specific columns with select() using - signs:
 
 
-```r
+``` r
 communities |&gt; select(-area, -pop_density, -crime_rate) |&gt; head()
 ```
 
@@ -443,7 +444,7 @@ communities |&gt; select(-area, -pop_density, -crime_rate) |&gt; head()
 We can rename columns using `select()`, but that drops everything that isn't mentioned:
 
 
-```r
+``` r
 communities |&gt; select(Area = area) |&gt; head()
 ```
 
@@ -465,7 +466,7 @@ communities |&gt; select(Area = area) |&gt; head()
 `rename()` renames variables using the same syntax as `select()` without dropping unmentioned variables
 
 
-```r
+``` r
 communities |&gt; rename(Area = area) |&gt; head()
 ```
 
@@ -496,7 +497,7 @@ To fix this, we need to know how to create or modify variables in our data
 `dplyr` uses the `mutate()` function to create or modify variables:
 
 
-```r
+``` r
 communities |&gt;
   mutate(high_crime = crime_rate &gt; mean(crime_rate)) |&gt;
   head(4)
@@ -528,7 +529,7 @@ We saw before that our disadvantage and incarceration variables are ordinal but 
 We can give them a proper order by making them **factors** and specifying their **levels**
 
 
-```r
+``` r
 *communities &lt;- communities |&gt;  # Assigning back to overwrite!
   mutate(disadvantage = 
 *          factor(disadvantage, levels = c("Low", "Medium", "High")),
@@ -543,7 +544,7 @@ To modify the original dataset, we just assign back to it—overwriting it with 
 # Fixed!
 
 
-```r
+``` r
 communities |&gt; pull(disadvantage) |&gt; table()
 ```
 
@@ -555,7 +556,7 @@ communities |&gt; pull(disadvantage) |&gt; table()
 
 
 
-```r
+``` r
 communities |&gt; pull(incarceration) |&gt; table()
 ```
 
@@ -589,7 +590,7 @@ Let's look at tabulations first. They're useful for summarizing categorical data
 `count()` is a `{dplyr}` function for tabulating one or more columns
 
 
-```r
+``` r
 communities |&gt; count(incarceration)
 ```
 
@@ -605,7 +606,7 @@ communities |&gt; count(incarceration)
 --
 
 
-```r
+``` r
 communities |&gt; count(incarceration) |&gt; mutate(proportion = n/sum(n))
 ```
 
@@ -625,12 +626,12 @@ communities |&gt; count(incarceration) |&gt; mutate(proportion = n/sum(n))
 `{janitor}` is a data cleaning package, but it makes tabulations easier too
 
 
-```r
+``` r
 install.packages("janitor")
 ```
 
 
-```r
+``` r
 library(janitor)
 ```
 
@@ -647,7 +648,7 @@ library(janitor)
 
 
 
-```r
+``` r
 communities |&gt; tabyl(incarceration)
 ```
 
@@ -678,7 +679,7 @@ It comes in *really* handy for **cross-tabs**—we'll see them soon!
 --
 
 
-```r
+``` r
 communities |&gt;
   summarize(mean_crime_rate = mean(crime_rate),
             sd_crime_rate   = sd(crime_rate), 
@@ -719,7 +720,7 @@ This is where `{janitor}`'s `tabyl()` begins to shine:
 --
 
 
-```r
+``` r
 communities |&gt; tabyl(disadvantage, incarceration)
 ```
 
@@ -733,7 +734,7 @@ communities |&gt; tabyl(disadvantage, incarceration)
 --
 
 
-```r
+``` r
 communities |&gt; tabyl(disadvantage, incarceration) |&gt;
 * adorn_percentages() # converts to cell percentages
 ```
@@ -753,7 +754,7 @@ count: false
 We can assemble *fancy* tables bit-by-bit with `{janitor}`
 
 
-```r
+``` r
 communities |&gt; 
   tabyl(disadvantage, incarceration) # make table
 ```
@@ -773,7 +774,7 @@ count: false
 Add row and column totals!
 
 
-```r
+``` r
 communities |&gt; 
   tabyl(disadvantage, incarceration) |&gt; # make table
   adorn_totals(c("row", "col")) # add row/col totals
@@ -795,7 +796,7 @@ count: false
 Turn cells into (row) percentages instead of counts
 
 
-```r
+``` r
 communities |&gt; 
   tabyl(disadvantage, incarceration) |&gt; # make table
   adorn_totals(c("row", "col")) |&gt; # add row/col totals
@@ -818,7 +819,7 @@ count: false
 Round those percentages to two decimal places!
 
 
-```r
+``` r
 communities |&gt; 
   tabyl(disadvantage, incarceration) |&gt; # make table
   adorn_totals(c("row", "col")) |&gt; # add row/col totals
@@ -842,7 +843,7 @@ count: false
 Add counts back in parentheses!
 
 
-```r
+``` r
 communities |&gt; 
   tabyl(disadvantage, incarceration) |&gt; # make table
   adorn_totals(c("row", "col")) |&gt; # add row/col totals
@@ -868,7 +869,7 @@ count: false
 Add column variable name!
 
 
-```r
+``` r
 communities |&gt; 
   tabyl(disadvantage, incarceration) |&gt; # make table
   adorn_totals(c("row", "col")) |&gt; # add row/col totals
@@ -899,7 +900,7 @@ If we wanted to calculated means for different groups, one easy way is to just s
 
 .pull-left[
 
-```r
+``` r
 communities |&gt;
 * filter(disadvantage=="High") |&gt;
   summarize(
@@ -918,7 +919,7 @@ communities |&gt;
 
 .pull-right[
 
-```r
+``` r
 communities |&gt;
 * filter(disadvantage=="Low") |&gt;
   summarize(
@@ -956,7 +957,7 @@ Excel analogue: pivot tables
 # `group_by()` example
 
 
-```r
+``` r
 communities |&gt;
 * group_by(disadvantage) |&gt;
   summarize(mean_crime = mean(crime_rate),
@@ -978,13 +979,38 @@ Because we did `group_by()` with `disadvantage` then used `summarize()`, we get 
 Each value of disadvantage is its own **group**!
 
 ---
+# `.by = ` example
+
+You can also do grouping within `summarize()` or `mutate()` using `.by = `
+
+
+``` r
+communities |&gt;
+  summarize(mean_crime = mean(crime_rate),
+            sd_crime   = sd(crime_rate), 
+            n          = n(),
+*           .by = disadvantage)
+```
+
+```
+## # A tibble: 3 × 4
+##   disadvantage mean_crime sd_crime     n
+##   &lt;fct&gt;             &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
+## 1 Low                18.7     17.4   102
+## 2 Medium             25.2     21.2    97
+## 3 High               31.9     24.4   101
+```
+
+I recommend using this method when possible as it automatically ungroups afterward
+
+---
 
 # Correlations
 
 Correlations are mathematically complicated but simple to code
 
 
-```r
+``` r
 cor(communities$pop_density, communities$crime_rate)
 ```
 
@@ -997,7 +1023,7 @@ cor(communities$pop_density, communities$crime_rate)
 Alternatively, you can use the `with()` command for a bit less typing
 
 
-```r
+``` r
 with(communities, cor(pop_density, crime_rate))
 ```
 
@@ -1010,7 +1036,7 @@ with(communities, cor(pop_density, crime_rate))
 These are a bit easier than `dplyr` if you just want one correlation
 
 
-```r
+``` r
 communities |&gt; summarize(R = cor(pop_density, crime_rate))
 ```
 
@@ -1028,7 +1054,7 @@ communities |&gt; summarize(R = cor(pop_density, crime_rate))
 If you want to do correlations *within groups*, `{dplyr}` is king again
 
 
-```r
+``` r
 communities |&gt;
   group_by(disadvantage) |&gt;
   summarize(R = cor(pop_density, crime_rate))
@@ -1051,8 +1077,8 @@ In this case, the correlation between `pop_density` and `crime_rate` is similar 
 `cor()` produces correlation matrices when given multiple continuous variables
 
 
-```r
-anscombe |&gt; # Anscombe's quarter from yesterday!
+``` r
+anscombe |&gt; # Anscombe's quartet from yesterday!
   select(x1, y1, y2, y3, y4) |&gt; 
   cor()
 ```

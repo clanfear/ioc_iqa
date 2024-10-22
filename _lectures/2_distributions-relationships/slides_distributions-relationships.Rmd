@@ -2,7 +2,7 @@
 title: "Distributions and Relationships"
 subtitle: "IQA Lecture 2"
 author: "Charles Lanfear"
-date: "18 Oct 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "23 Oct 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -29,10 +29,9 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
    * Two assessments
       * *Light* data analysis and interpretation
       * Due Friday 11:59 PM the following week
-   * Michael's Office Hours: Thurs 13:00-14:00
-      * Also by appointment
-   * Reschedule Nov 15th to Monday, Nov 13th at 2 PM
-      * Email immediately if this is a problem
+   * Natalia's office hours: 
+      * Mon 12:00-13:00 & Weds 16:00-17:00
+      * Room 1.8
 
 * Topics for today:
 
@@ -101,7 +100,7 @@ Sometimes you may get a **warning message** when loading packages—usually beca
 
 ```
 Warning message:
-package `dplyr' was built under R version 4.3.0
+package `dplyr' was built under R version 4.4.1
 ```
 
 *Update R* to get rid of these!
@@ -132,6 +131,8 @@ One of the most common ways for data to be stored is in a *delimited* text file,
 103,"Robbery","Female",3,
 103,"Battery","Female",4,
 ```
+
+Values are *comma-separated* and observations are separated by line breaks
 
 ---
 # `{readr}`
@@ -651,6 +652,21 @@ Because we did `group_by()` with `disadvantage` then used `summarize()`, we get 
 Each value of disadvantage is its own **group**!
 
 ---
+# `.by = ` example
+
+You can also do grouping within `summarize()` or `mutate()` using `.by = `
+
+```{r}
+communities |>
+  summarize(mean_crime = mean(crime_rate),
+            sd_crime   = sd(crime_rate), 
+            n          = n(),
+            .by = disadvantage) #<<
+```
+
+I recommend using this method when possible as it automatically ungroups afterward
+
+---
 
 # Correlations
 
@@ -696,7 +712,7 @@ In this case, the correlation between `pop_density` and `crime_rate` is similar 
 `cor()` produces correlation matrices when given multiple continuous variables
 
 ```{r}
-anscombe |> # Anscombe's quarter from yesterday!
+anscombe |> # Anscombe's quartet from yesterday!
   select(x1, y1, y2, y3, y4) |> 
   cor()
 ```

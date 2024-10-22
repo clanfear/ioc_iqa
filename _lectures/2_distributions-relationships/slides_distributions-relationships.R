@@ -42,7 +42,7 @@ communities |>
   mutate(high_crime = crime_rate > mean(crime_rate)) |>
   head(4)
 
-communities <- communities |> #<<
+communities <- communities |>  # Assigning back to overwrite! #<<
   mutate(disadvantage = 
            factor(disadvantage, levels = c("Low", "Medium", "High")), #<<
          incarceration = 
@@ -126,6 +126,12 @@ communities |>
             sd_crime   = sd(crime_rate), 
             n          = n())
 
+communities |>
+  summarize(mean_crime = mean(crime_rate),
+            sd_crime   = sd(crime_rate), 
+            n          = n(),
+            .by = disadvantage) #<<
+
 cor(communities$pop_density, communities$crime_rate)
 
 with(communities, cor(pop_density, crime_rate))
@@ -136,6 +142,6 @@ communities |>
   group_by(disadvantage) |>
   summarize(R = cor(pop_density, crime_rate))
 
-anscombe |> # Anscombe's quarter from yesterday!
+anscombe |> # Anscombe's quartet from yesterday!
   select(x1, y1, y2, y3, y4) |> 
   cor()
