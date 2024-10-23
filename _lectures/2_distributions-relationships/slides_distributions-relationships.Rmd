@@ -500,7 +500,6 @@ communities |> tabyl(disadvantage, incarceration) |>
 ```
 
 ---
-count: false
 
 # Fancy Cross-Tabs 1
 
