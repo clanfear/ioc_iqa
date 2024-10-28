@@ -4,7 +4,7 @@
     <title>Statistical Inference</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.27/header-attrs.js"></script>
     <link href="libs/tabwid-1.1.3/tabwid.css" rel="stylesheet" />
     <script src="libs/tabwid-1.1.3/tabwid.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
@@ -23,7 +23,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 25 Oct 2023<br>Updated: 24 Oct 2023
+### 30 Oct 2024<br>Updated: 28 Oct 2024
 ]
 
 ---
@@ -58,7 +58,7 @@ Let's load another example dataset:
 Real Metropolitan Police recorded crime in the 32 London boroughs (no City of London) in 2021
 
 
-```r
+``` r
 library(tidyverse)
 metro_2021 &lt;- 
   read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021.csv")
@@ -74,7 +74,7 @@ I also linked them to data on deprivation and subregions, which would take more 
 
 
 
-```r
+``` r
 glimpse(metro_2021)
 ```
 
@@ -102,7 +102,7 @@ These data have monthly observations for each borough.
 If we wanted to look at only unique observations of boroughs, we can use `distinct()`
 
 
-```r
+``` r
 metro_2021 |&gt; 
   distinct(borough) |&gt;
   head()
@@ -127,7 +127,7 @@ metro_2021 |&gt;
 Just as a quick check, let's see how many boroughs and months are in the data
 
 
-```r
+``` r
 metro_2021 |&gt; 
   summarize(n_boroughs  = n_distinct(borough),
             n_months    = n_distinct(month),
@@ -144,7 +144,7 @@ metro_2021 |&gt;
 Looks like every borough is seen in 12 months
 
 
-```r
+``` r
 32 * 12
 ```
 
@@ -159,7 +159,7 @@ Looks like every borough is seen in 12 months
 A different way to see if all boroughs are observed 12 times is to count observations of each borough twice
 
 
-```r
+``` r
 metro_2021 |&gt; count(borough) |&gt; head(3)
 ```
 
@@ -177,7 +177,7 @@ metro_2021 |&gt; count(borough) |&gt; head(3)
 Okay, then count how many of each value of `n`
 
 
-```r
+``` r
 *metro_2021 |&gt; count(borough) |&gt; count(n) # This makes a warning!
 ```
 
@@ -197,7 +197,7 @@ Every value of `n` was 12, so there were 32 values of 12.
 If we think a particular subset will be used repeatedly, we can save it and give it a name like any other object:
 
 
-```r
+``` r
 westminster &lt;- metro_2021 |&gt; filter(borough == "Westminster")
 head(westminster, 4)
 ```
@@ -234,7 +234,7 @@ class: inverse
 
 .pull-left[
 
-```r
+``` r
 plot(robbery ~ month, 
      data = westminster, 
      xlab = "Month", 
@@ -256,12 +256,14 @@ plot(robbery ~ month,
 
 # `ggplot2`
   
-An alternative way of plotting many prefer (myself included)&lt;sup&gt;1&lt;/sup&gt; uses the `ggplot2` package in R, which is part of the `tidyverse`.
-
-.footnote[[1] [Though this is not without debate](http://simplystatistics.org/2016/02/11/why-i-dont-use-ggplot2/)]
+An alternative way of plotting many prefer (myself included) uses the `ggplot2` package in R, which is part of the `tidyverse`.
 
 
-```r
+
+
+
+
+``` r
 library(ggplot2)
 ```
 
@@ -273,7 +275,7 @@ The core idea underlying this package is the [**layered grammar of graphics**](h
   
 .pull-left[
 
-```r
+``` r
 ggplot(data = westminster, 
         aes(x = month, 
             y = robbery)) +
@@ -373,7 +375,7 @@ Now let's see all this jargon in action.
 .pull-left[
 .text-85[
 
-```r
+``` r
 *ggplot(data  = westminster,
 *      aes(x = month,
 *          y = robbery))
@@ -395,7 +397,7 @@ Now let's see all this jargon in action.
 .pull-left[
 .text-85[
 
-```r
+``` r
 ggplot(data  = westminster, 
        aes(x = month, 
            y = robbery)) +
@@ -418,7 +420,7 @@ ggplot(data  = westminster,
 .pull-left[
 .text-85[
 
-```r
+``` r
 ggplot(data  = westminster, 
        aes(x = month, 
            y = robbery)) +
@@ -442,7 +444,7 @@ ggplot(data  = westminster,
 .pull-left[
 .text-85[
 
-```r
+``` r
 ggplot(data  = westminster, 
        aes(x = month, 
            y = robbery)) +
@@ -467,7 +469,7 @@ ggplot(data  = westminster,
 .pull-left[
 .text-85[
 
-```r
+``` r
 ggplot(data  = westminster, 
        aes(x = month, 
            y = robbery)) +
@@ -493,7 +495,7 @@ ggplot(data  = westminster,
 .pull-left[
 .text-85[
 
-```r
+``` r
 ggplot(data  = westminster, 
        aes(x = month, 
            y = robbery)) +
@@ -521,7 +523,7 @@ ggplot(data  = westminster,
 .pull-left[
 .text-85[
 
-```r
+``` r
 ggplot(data  = westminster, 
        aes(x = month, 
            y = robbery)) +
@@ -550,7 +552,7 @@ ggplot(data  = westminster,
 .pull-left[
 .text-85[
 
-```r
+``` r
 ggplot(data  = westminster, 
        aes(x = month, 
            y = robbery)) +
@@ -587,7 +589,7 @@ We have a plot we like for Westminster...
 .pull-left[
 .text-85[
 
-```r
+``` r
  ggplot(data  = metro_2021, 
         aes(x = month, 
             y = robbery)) +
@@ -617,7 +619,7 @@ We have a plot we like for Westminster...
 .pull-left[
 .text-85[
 
-```r
+``` r
  ggplot(data  = metro_2021, 
         aes(x = month, 
             y = robbery)) +
@@ -646,7 +648,7 @@ We have a plot we like for Westminster...
 .pull-left[
 .text-85[
 
-```r
+``` r
  ggplot(data  = metro_2021, 
         aes(x = month, 
             y = robbery, 
@@ -675,7 +677,7 @@ We have a plot we like for Westminster...
 .pull-left[
 .text-85[
 
-```r
+``` r
  ggplot(data  = metro_2021, 
         aes(x = month, 
             y = robbery, 
@@ -705,7 +707,7 @@ We have a plot we like for Westminster...
 .pull-left[
 .text-85[
 
-```r
+``` r
  ggplot(data  = metro_2021, 
         aes(x = month, 
             y = robbery, 
@@ -735,7 +737,7 @@ We have a plot we like for Westminster...
 .pull-left[
 .text-85[
 
-```r
+``` r
  ggplot(data  = metro_2021, 
         aes(x = month, 
             y = robbery, 
@@ -766,7 +768,7 @@ We have a plot we like for Westminster...
 .pull-left[
 .text-85[
 
-```r
+``` r
  ggplot(data  = metro_2021, 
         aes(x = month, 
             y = robbery, 
@@ -798,7 +800,7 @@ We have a plot we like for Westminster...
 .pull-left[
 .text-85[
 
-```r
+``` r
  ggplot(data  = metro_2021, 
         aes(x = month, 
             y = robbery, 
@@ -846,6 +848,18 @@ We'll return to `ggplot2` at least for a bit in every future lecture
 ]
 ]
 
+---
+background-color: white
+
+# Bonus map
+
+&amp;nbsp;
+
+![:width 75%](img/airbnb_map.jpg)
+
+.footnote[
+&amp;zwj;Source: [Lanfear &amp; Kirk (2024) "The Promise and Perils of the Sharing Economy: The Impact of Airbnb Lettings on Crime"](https://doi.org/10.1111/1745-9125.12383)
+]
 
 ---
 class: inverse
@@ -887,7 +901,7 @@ Let's return to the `communities` data we've used before—making sure to fix th
 
 .text-85[
 
-```r
+``` r
 communities &lt;- 
   read_csv("https://clanfear.github.io/ioc_iqa/_data/communities.csv") |&gt; 
   mutate(disadvantage = 
@@ -916,7 +930,7 @@ glimpse(communities)
 Say we tabulate our data and see this association in our sample:
 
 
-```r
+``` r
 library(janitor) # For the tabyl function
 communities |&gt; tabyl(disadvantage, area) |&gt; adorn_title()
 ```
@@ -945,7 +959,7 @@ How do we figure this out?
 `janitor` adds a `chisq.test()` function that works on its special tables
 
 
-```r
+``` r
 communities |&gt; tabyl(disadvantage, area) |&gt; chisq.test()
 ```
 
@@ -966,7 +980,7 @@ This is the same result we saw in CRM yesterday: There appears to be an associat
 If you're curious how p-values are calculated, they come from cumulative probability distributions—which R has built in!
 
 
-```r
+``` r
 1 - pchisq(9.1153, df = 2)
 ```
 
@@ -984,7 +998,7 @@ If you're curious how p-values are calculated, they come from cumulative probabi
 .pull-left[
 .text-85[
 
-```r
+``` r
 tibble(x = seq(0, 15, 0.1),
        density = dchisq(x, df = 2)) |&gt; 
   ggplot(aes(x = x, y = density)) + 
@@ -1013,7 +1027,7 @@ There are many ways to make nicer looking tables in R
 For very simple tables using dataframes, I use `kable()` in `{knitr}`
 
 
-```r
+``` r
 communities |&gt; 
   tabyl(disadvantage, area) |&gt; 
   adorn_title() |&gt; 
@@ -1040,7 +1054,7 @@ Yours won't have the colored rows—that's from my website theme!
 If you want to make a publication ready table that will work in any output format, such as PDF, Word, or HTML, [your best bet is `{flextable}`](https://ardata-fr.github.io/flextable-book/)
 
 
-```r
+``` r
 library(flextable)
 communities |&gt; 
   rename(Disadvantage = disadvantage) |&gt;
@@ -1049,7 +1063,7 @@ communities |&gt;
   add_header_lines("Table 1. Disadvantage by area")
 ```
 
-&lt;div class="tabwid"&gt;&lt;style&gt;.cl-6288f642{}.cl-627e575a{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-628249d2{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-628249dc{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-62826412{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-6282641c{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-62826426{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-62826427{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-62826428{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-62826430{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}&lt;/style&gt;&lt;table data-quarto-disable-processing='true' class='cl-6288f642'&gt;&lt;thead&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;th  colspan="3"class="cl-62826412"&gt;&lt;p class="cl-628249d2"&gt;&lt;span class="cl-627e575a"&gt;Table 1. Disadvantage by area&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;th class="cl-62826412"&gt;&lt;p class="cl-628249d2"&gt;&lt;span class="cl-627e575a"&gt;Disadvantage&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-6282641c"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;Rural&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-6282641c"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;Urban&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-62826426"&gt;&lt;p class="cl-628249d2"&gt;&lt;span class="cl-627e575a"&gt;Low&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-62826427"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;63&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-62826427"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;39&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-62826426"&gt;&lt;p class="cl-628249d2"&gt;&lt;span class="cl-627e575a"&gt;Medium&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-62826427"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;49&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-62826427"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;48&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-62826428"&gt;&lt;p class="cl-628249d2"&gt;&lt;span class="cl-627e575a"&gt;High&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-62826430"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;41&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-62826430"&gt;&lt;p class="cl-628249dc"&gt;&lt;span class="cl-627e575a"&gt;60&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;div class="tabwid"&gt;&lt;style&gt;.cl-2d2b2b1a{}.cl-2d245268{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-2d26b422{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-2d26b42c{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-2d26c53e{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-2d26c548{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-2d26c549{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-2d26c54a{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-2d26c552{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-2d26c553{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}&lt;/style&gt;&lt;table data-quarto-disable-processing='true' class='cl-2d2b2b1a'&gt;&lt;thead&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;th  colspan="3"class="cl-2d26c53e"&gt;&lt;p class="cl-2d26b422"&gt;&lt;span class="cl-2d245268"&gt;Table 1. Disadvantage by area&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;th class="cl-2d26c53e"&gt;&lt;p class="cl-2d26b422"&gt;&lt;span class="cl-2d245268"&gt;Disadvantage&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-2d26c548"&gt;&lt;p class="cl-2d26b42c"&gt;&lt;span class="cl-2d245268"&gt;Rural&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;th class="cl-2d26c548"&gt;&lt;p class="cl-2d26b42c"&gt;&lt;span class="cl-2d245268"&gt;Urban&lt;/span&gt;&lt;/p&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-2d26c549"&gt;&lt;p class="cl-2d26b422"&gt;&lt;span class="cl-2d245268"&gt;Low&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-2d26c54a"&gt;&lt;p class="cl-2d26b42c"&gt;&lt;span class="cl-2d245268"&gt;63&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-2d26c54a"&gt;&lt;p class="cl-2d26b42c"&gt;&lt;span class="cl-2d245268"&gt;39&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-2d26c549"&gt;&lt;p class="cl-2d26b422"&gt;&lt;span class="cl-2d245268"&gt;Medium&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-2d26c54a"&gt;&lt;p class="cl-2d26b42c"&gt;&lt;span class="cl-2d245268"&gt;49&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-2d26c54a"&gt;&lt;p class="cl-2d26b42c"&gt;&lt;span class="cl-2d245268"&gt;48&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-2d26c552"&gt;&lt;p class="cl-2d26b422"&gt;&lt;span class="cl-2d245268"&gt;High&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-2d26c553"&gt;&lt;p class="cl-2d26b42c"&gt;&lt;span class="cl-2d245268"&gt;41&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-2d26c553"&gt;&lt;p class="cl-2d26b42c"&gt;&lt;span class="cl-2d245268"&gt;60&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
 
 It can be complicated, but it can do just about anything...
 
@@ -1078,7 +1092,7 @@ Aside from tables, you may want to plot categorical data
 
 .pull-left[
 
-```r
+``` r
 ggplot(communities, 
        aes(x = disadvantage)) + 
   geom_bar()
@@ -1099,7 +1113,7 @@ Adding a `fill` aesthetic will color the bars by a second variable
 
 .pull-left[
 
-```r
+``` r
 ggplot(communities, 
        aes(x    = disadvantage,
            fill = area)) + 
@@ -1118,7 +1132,7 @@ Adding `position = "dodge"` in `geom_bar()` will unstack them
 
 .pull-left[
 
-```r
+``` r
 ggplot(communities, 
        aes(x    = disadvantage,
            fill = area)) + 
@@ -1152,7 +1166,7 @@ We can run an OLS linear model in R using `lm()`
 It takes a **formula** as the first argument, e.g. `y ~ x`
 
 
-```r
+``` r
 cr_pd_lm &lt;- lm(crime_rate ~ pop_density, data = communities)
 cr_pd_lm
 ```
@@ -1177,7 +1191,7 @@ To get detailed output, use `summary()` on the output from `lm()`
 
 .text-85[
 
-```r
+``` r
 summary(cr_pd_lm)
 ```
 
@@ -1212,7 +1226,7 @@ summary(cr_pd_lm)
 
 .text-85[
 
-```r
+``` r
 str(cr_pd_lm, list.len=6) # Truncating the output a bit
 ```
 
@@ -1242,7 +1256,7 @@ str(cr_pd_lm, list.len=6) # Truncating the output a bit
 We can access parts of lm() output using $ like with dataframe names:
 
 
-```r
+``` r
 cr_pd_lm$coefficients
 ```
 
@@ -1254,7 +1268,7 @@ cr_pd_lm$coefficients
 We can also do this with summary(), which provides additional statistics:
 
 
-```r
+``` r
 summary(cr_pd_lm)$coefficients
 ```
 
@@ -1271,7 +1285,7 @@ summary(cr_pd_lm)$coefficients
 A quick way to get model output into an easy-to-use format is with the `{broom}` package's `tidy()` function
 
 
-```r
+``` r
 library(broom)
 tidy(cr_pd_lm)
 ```
@@ -1288,7 +1302,7 @@ tidy(cr_pd_lm)
 `tidy()` turns model output into a dataframe—now you can use `dplyr` with it!
 
 
-```r
+``` r
 tidy(cr_pd_lm) %&gt;% filter(term == "pop_density")
 ```
 
@@ -1308,7 +1322,7 @@ tidy(cr_pd_lm) %&gt;% filter(term == "pop_density")
 This includes **predicted values** and **residuals**
 
 
-```r
+``` r
 cr_pd_lm |&gt; augment() |&gt; glimpse()
 ```
 
@@ -1336,7 +1350,7 @@ We'll use this later to do model diagnostics!
 .pull-left[
 .text-85[
 
-```r
+``` r
 communities %&gt;%
   ggplot(aes(x = pop_density, 
              y = crime_rate)) + 
@@ -1367,7 +1381,7 @@ If you group your data, you can draw a regression line for each separately—equ
 .pull-left[
 .text-85[
 
-```r
+``` r
 communities %&gt;%
   ggplot(aes(x = pop_density, 
              y = crime_rate,

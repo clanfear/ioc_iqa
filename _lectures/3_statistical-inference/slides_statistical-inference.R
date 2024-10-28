@@ -111,13 +111,13 @@ ggplot(data  = westminster,
        y     = "Robbery",
        title = 
          "Robbery in London") +
-  theme_bw(base_size = 18) #<<
+  theme_bw(base_size = 18)
 
  ggplot(data  = metro_2021, 
         aes(x = month, 
             y = robbery)) +
   geom_line(color = "red", 
-            size  = 3) + #<<
+            linewidth  = 3) + #<<
   labs(x     = "Month",
        y     = "Robbery",
        title = 
@@ -129,7 +129,7 @@ ggplot(data  = westminster,
             y = robbery, 
             group = borough)) +
   geom_line(color = "red", 
-            size  = 3) + #<<
+            linewidth  = 3) + 
   labs(x     = "Month",
        y     = "Robbery",
        title = 
@@ -246,6 +246,14 @@ communities |> tabyl(disadvantage, area) |> adorn_title()
 communities |> tabyl(disadvantage, area) |> chisq.test()
 
 1 - pchisq(9.1153, df = 2)
+
+tibble(x = seq(0, 15, 0.1),
+       density = dchisq(x, df = 2)) |> 
+  ggplot(aes(x = x, y = density)) + 
+  geom_line() +
+  coord_cartesian(expand = FALSE) +
+  geom_vline(xintercept = 9.1153, 
+             color = "red")
 
 communities |> 
   tabyl(disadvantage, area) |> 

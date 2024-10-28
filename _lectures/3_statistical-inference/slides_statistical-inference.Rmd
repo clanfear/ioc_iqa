@@ -2,7 +2,7 @@
 title: "Statistical Inference"
 subtitle: "IQA Lecture 3"
 author: "Charles Lanfear"
-date: "25 Oct 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "30 Oct 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     includes:
@@ -173,9 +173,11 @@ plot(robbery ~ month,
 
 # `ggplot2`
   
-An alternative way of plotting many prefer (myself included)<sup>1</sup> uses the `ggplot2` package in R, which is part of the `tidyverse`.
+An alternative way of plotting many prefer (myself included) uses the `ggplot2` package in R, which is part of the `tidyverse`.
 
-.footnote[[1] [Though this is not without debate](http://simplystatistics.org/2016/02/11/why-i-dont-use-ggplot2/)]
+
+
+
 
 ```{r}
 library(ggplot2)
@@ -745,6 +747,18 @@ We'll return to `ggplot2` at least for a bit in every future lecture
 ]
 ]
 
+---
+background-color: white
+
+# Bonus map
+
+&nbsp;
+
+![:width 75%](img/airbnb_map.jpg)
+
+.footnote[
+&zwj;Source: [Lanfear & Kirk (2024) "The Promise and Perils of the Sharing Economy: The Impact of Airbnb Lettings on Crime"](https://doi.org/10.1111/1745-9125.12383)
+]
 
 ---
 class: inverse
