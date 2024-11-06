@@ -4,7 +4,7 @@
     <title>Linear Models I</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.27/header-attrs.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 1 Nov 2023<br>Updated: 01 Nov 2023
+### 6 Nov 2024<br>Updated: 6 Nov 2024
 ]
 
 ---
@@ -30,27 +30,22 @@ class: center, top, title-slide
 
 
 
-# Things to include
+# Today
 
-Categorical predictors
-
-* Binary
-  * T-Test
-* 3+ category
-  * ANOVA
-
-Controlling for variables
-
-* Demeaning with dummies
-* Residuals
-* Partial correlations (is that pairs plot?)
-
-How linear models work
-
-* Simulating data
-* Back doors
-* Colliders
-
+* Programming:
+   * `across()`
+* Linear models:
+   * Categorical predictors
+      * Binary: T-Test
+      * 3+ category: ANOVA
+   * Controlling for variables
+      * Demeaning with dummies
+      * Residuals
+      * Partial correlations (is that pairs plot?)
+   * How linear models work
+      * Simulating data
+      * Back doors
+      * Colliders
 
 
 ---
@@ -63,7 +58,7 @@ First, let's convert our categorical variables to factors with appropriate level
 
 .text-85[
 
-```r
+``` r
 library(tidyverse)
 library(broom) # Going to use this a bunch today
 communities &lt;- 
@@ -82,7 +77,7 @@ This is the same as doing this:
 
 .text-85[
 
-```r
+``` r
 mutate(incarceration = 
          factor(incarceration, levels = c("Low", "Medium", "High")), 
        disadvantage = 
@@ -97,7 +92,7 @@ mutate(incarceration =
 You can also give `across()` a list of functions and it will apply them to each variable
 
 
-```r
+``` r
 communities |&gt;
   group_by(incarceration) |&gt;
   summarize(across(c(crime_rate, pop_density), 
@@ -132,7 +127,7 @@ class: inverse
 
 .pull-left[
 
-```r
+``` r
 lm(crime_rate ~ pop_density, 
    data = communities) |&gt; 
   coef() # extract coefficients
@@ -150,7 +145,7 @@ It is easy to visualize what the model is doing with a line laid over a scatterp
 
 .pull-right[
 
-```r
+``` r
 ggplot(communities, 
        aes(x = pop_density, 
            y = crime_rate)) + 
@@ -176,7 +171,7 @@ What is a regression model doing when you have a binary predictor?
 
 .pull-left[
 
-```r
+``` r
 lm(crime_rate ~ area, 
    data = communities) |&gt;
   coef()
@@ -194,7 +189,7 @@ Why do the data look like this?
 
 .pull-right[
 
-```r
+``` r
 ggplot(communities, 
        aes(x = area, 
            y = crime_rate)) + 
@@ -215,7 +210,7 @@ ggplot(communities,
 
 .pull-left[
 
-```r
+``` r
 lm(crime_rate ~ area, 
    data = communities) |&gt;
   coef()
@@ -235,7 +230,7 @@ When `areaUrban` is 1 (`area` is `"Urban"`) the mean is `\(10.43 + 30.18 = 40.61
 ]
 .pull-right[
 
-```r
+``` r
 communities |&gt; 
   mutate(urban = 
     as.numeric(area=="Urban")) |&gt;
@@ -262,7 +257,7 @@ communities |&gt;
 Linear regression is just estimating means by group!
 
 
-```r
+``` r
 dummy_model &lt;- 
   lm(crime_rate ~ area, 
      data = communities)
@@ -282,7 +277,7 @@ The value for `areaUrban` is the **difference** between rural and urban places
 .pull-right[
 Compare the model to group-specific average crime rates:
 
-```r
+``` r
 communities |&gt;
   group_by(area) |&gt;
   summarize(crime_rate = 
@@ -312,7 +307,7 @@ Significance testing with dummy variables works like any others
 
 .text-85[
 
-```r
+``` r
 summary(dummy_model)$coefficients
 ```
 
@@ -329,7 +324,7 @@ This is *identical* to a two-sample t-test!
 
 .text-85[
 
-```r
+``` r
 t.test(crime_rate ~ area, data = communities, var.equal=TRUE)
 ```
 
@@ -362,7 +357,7 @@ When a variable has more than two categories, all but one category is converted 
 
 .pull-left[
 
-```r
+``` r
 lm(crime_rate ~ incarceration, 
    data = communities) |&gt; 
   tidy() |&gt; 
@@ -380,7 +375,7 @@ lm(crime_rate ~ incarceration,
 ]
 .pull-right[
 
-```r
+``` r
 communities |&gt;
   group_by(incarceration) |&gt;
   summarize(crime_rate = 
@@ -407,7 +402,7 @@ Some of you may be familiar with ANOVA for analysing how 3+ category variables r
 
 .text-85[
 
-```r
+``` r
 aov(crime_rate ~ incarceration, data = communities) |&gt; summary()
 ```
 
@@ -425,7 +420,7 @@ aov(crime_rate ~ incarceration, data = communities) |&gt; summary()
 Turns out ANOVA is just a standard linear model with a categorical variable
 
 
-```r
+``` r
 aov(crime_rate ~ incarceration, data = communities) |&gt; coef()
 ```
 
@@ -444,7 +439,7 @@ Until you get to very advanced methods (i.e., mixed effects models), ANOVA is ju
 
 .text-85[
 
-```r
+``` r
 summary(lm(crime_rate ~ incarceration, data = communities))
 ```
 
@@ -525,7 +520,7 @@ If we remove group-specific averages of both X and Y, we can get rid of that
 
 .text-85[
 
-```r
+``` r
 residualized_data &lt;- communities |&gt; group_by(area) |&gt;
   mutate(pop_density_res =  pop_density - mean(pop_density), #&lt;&lt; # Subtract mean!
 *        crime_rate_res  =  crime_rate  - mean(crime_rate))
@@ -537,7 +532,7 @@ residualized_data &lt;- communities |&gt; group_by(area) |&gt;
 .pull-left[
 .text-85[
 
-```r
+``` r
 lm(crime_rate ~ pop_density + area,
    data = communities) |&gt; 
   tidy() |&gt;
@@ -557,7 +552,7 @@ lm(crime_rate ~ pop_density + area,
 .pull-right[
 .text-85[
 
-```r
+``` r
 lm(crime_rate_res ~ pop_density_res,
    data = residualized_data)  |&gt; 
   tidy() |&gt; 
@@ -583,7 +578,7 @@ Note the identical `pop_density` slopes!
 
 .pull-left[
 
-```r
+``` r
 ggplot(communities, 
        aes(x = pop_density, 
            y = crime_rate, 
@@ -598,7 +593,7 @@ ggplot(communities,
 ]
 .pull-right[
 
-```r
+``` r
 ggplot(residualized_data, 
 *      aes(x = pop_density_res,
 *          y = crime_rate_res,
@@ -621,7 +616,7 @@ Residuals are the difference between model predictions and the actual data
 
 .text-85[
 
-```r
+``` r
 lm_res &lt;- lm(crime_rate ~ pop_density, data = communities) |&gt; augment()
 ```
 ]
@@ -629,7 +624,7 @@ lm_res &lt;- lm(crime_rate ~ pop_density, data = communities) |&gt; augment()
 .pull-left[
 .text-85[
 
-```r
+``` r
 ggplot(lm_res, 
     aes(x = pop_density, 
         y = crime_rate)) + 
@@ -643,7 +638,7 @@ ggplot(lm_res,
 .pull-right[
 .text-85[
 
-```r
+``` r
 ggplot(lm_res,           # augment()
     aes(x = pop_density, # gives us
 *       y = .resid)) +   # residuals!
@@ -669,7 +664,7 @@ This type of plot is sometimes called an **added variable plot**
 
 .pull-left[
 
-```r
+``` r
 ggplot(residualized_data, 
        aes(x = pop_density_res,
            y = crime_rate_res))+ 
@@ -684,7 +679,7 @@ ggplot(residualized_data,
 
 .pull-right[
 
-```r
+``` r
 lm(crime_rate ~ pop_density + 
    area, 
    data = communities) |&gt; 
@@ -713,7 +708,7 @@ Here we use bivariate models predicting what we want to residualise
 
 .text-85[
 
-```r
+``` r
 residualized_data &lt;- communities %&gt;%
   mutate(area_num       = as.numeric(area == "Urban"),
 *        crime_rate_res = residuals(lm(crime_rate ~ pop_density, data = .)),
@@ -726,7 +721,7 @@ residualized_data &lt;- communities %&gt;%
 .pull-left[
 .text-85[
 
-```r
+``` r
 lm(crime_rate ~ pop_density + area, 
    data = communities) |&gt; 
   tidy() |&gt; select(term, estimate)
@@ -747,7 +742,7 @@ lm(crime_rate ~ pop_density + area,
 .pull-right[
 .text-85[
 
-```r
+``` r
 *lm(crime_rate_res ~ area_res,
 *  data = residualized_data) |&gt;
   tidy() |&gt; select(term, estimate)
@@ -774,7 +769,7 @@ lm(crime_rate ~ pop_density + area,
 Original data:
 
 
-```r
+``` r
 ggplot(residualized_data, 
        aes(x = area_num, 
            y = crime_rate, 
@@ -791,7 +786,7 @@ ggplot(residualized_data,
 Residuals of `\(X\)` and `\(Y\)`:
 
 
-```r
+``` r
 ggplot(residualized_data, 
 *      aes(x = area_res,
 *          y = crime_rate_res,
@@ -818,7 +813,7 @@ Yep, that's not a mistake—our model predicted *how urban* each point was and t
 
 .pull-left[
 
-```r
+``` r
 ggplot(residualized_data, 
 *      aes(x = area_res,
 *          y = crime_rate_res,
@@ -833,7 +828,7 @@ ggplot(residualized_data,
 
 .pull-right[
 
-```r
+``` r
 lm(crime_rate ~ pop_density + 
        area, 
    data = communities) |&gt; 
@@ -868,7 +863,7 @@ If you don't like doing mathematical proofs to figure out if something works, yo
 .pull-left[
 
 
-```r
+``` r
 sample_size &lt;- 10000
 sim_data &lt;- 
   tibble(bd =
@@ -883,7 +878,7 @@ sim_data |&gt;
 ## # A tibble: 1 × 2
 ##   bd_mean bd_sd
 ##     &lt;dbl&gt; &lt;dbl&gt;
-## 1    2.99  1.00
+## 1    2.98  1.01
 ```
 ]
 
@@ -891,7 +886,7 @@ sim_data |&gt;
 
 .pull-right[
 
-```r
+``` r
 ggplot(sim_data, 
        aes(x = bd)) +
   geom_density()
@@ -909,7 +904,7 @@ Now we can add other variables to our data to generate a dataset that obeys the 
 .pull-left-60[
 .text-85[
 
-```r
+``` r
 sim_data &lt;- sim_data |&gt;
   mutate(
     x = rnorm(n(), 0.3*bd, 1),
@@ -944,7 +939,7 @@ Because we know the **data generating process**—we created it—we know what o
 
 .pull-left[
 
-```r
+``` r
 *lm(y ~ x + bd,
    data = sim_data) |&gt;
   tidy() |&gt; 
@@ -955,9 +950,9 @@ Because we know the **data generating process**—we created it—we know what o
 ## # A tibble: 3 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    3.02 
-## 2 x              0.310
-## 3 bd             0.292
+## 1 (Intercept)    3.03 
+## 2 x              0.299
+## 3 bd             0.290
 ```
 ]
 
@@ -965,7 +960,7 @@ Because we know the **data generating process**—we created it—we know what o
 
 .pull-right[
 
-```r
+``` r
 *lm(y ~ x , # Leaving out bd
    data = sim_data) |&gt;
   tidy() |&gt; 
@@ -976,8 +971,8 @@ Because we know the **data generating process**—we created it—we know what o
 ## # A tibble: 2 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    3.82 
-## 2 x              0.389
+## 1 (Intercept)    3.83 
+## 2 x              0.379
 ```
 ]
 
@@ -995,7 +990,7 @@ Again, we know what effects should be identified and how to identify them. What 
 
 .pull-left[
 
-```r
+``` r
 *lm(y ~ x + bd,
    data = sim_data) |&gt;
   tidy() |&gt; 
@@ -1006,9 +1001,9 @@ Again, we know what effects should be identified and how to identify them. What 
 ## # A tibble: 3 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    3.02 
-## 2 x              0.310
-## 3 bd             0.292
+## 1 (Intercept)    3.03 
+## 2 x              0.299
+## 3 bd             0.290
 ```
 ]
 
@@ -1016,7 +1011,7 @@ Again, we know what effects should be identified and how to identify them. What 
 
 .pull-right[
 
-```r
+``` r
 *lm(y ~ x + bd + coll,
    data = sim_data) |&gt;
   tidy() |&gt; 
@@ -1027,10 +1022,10 @@ Again, we know what effects should be identified and how to identify them. What 
 ## # A tibble: 4 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    2.90 
-## 2 x              0.259
-## 3 bd             0.284
-## 4 coll          -0.189
+## 1 (Intercept)    2.91 
+## 2 x              0.250
+## 3 bd             0.282
+## 4 coll          -0.184
 ```
 ]
 
@@ -1052,7 +1047,7 @@ Let's create the data from CRM yesterday.
 
 
 
-```r
+``` r
 coll_data &lt;- tibble(
   Skill     = runif(500, 0, 10), 
   Frequency = runif(500, 0, 10), 
@@ -1079,7 +1074,7 @@ If we only see arrested people, we've *selected* on a collider—this is just li
 
 .pull-left[
 
-```r
+``` r
 *lm(Frequency ~ Skill,
    data = everyone) |&gt;
   tidy() |&gt; 
@@ -1090,8 +1085,8 @@ If we only see arrested people, we've *selected* on a collider—this is just li
 ## # A tibble: 2 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)   5.07  
-## 2 Skill        -0.0217
+## 1 (Intercept)   4.45  
+## 2 Skill         0.0845
 ```
 ]
 
@@ -1099,7 +1094,7 @@ If we only see arrested people, we've *selected* on a collider—this is just li
 
 .pull-right[
 
-```r
+``` r
 *lm(Frequency ~ Skill,
    data = arrested) |&gt;
   tidy() |&gt; 
@@ -1110,8 +1105,8 @@ If we only see arrested people, we've *selected* on a collider—this is just li
 ## # A tibble: 2 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    4.93 
-## 2 Skill          0.522
+## 1 (Intercept)    4.40 
+## 2 Skill          0.627
 ```
 ]
 
@@ -1133,7 +1128,7 @@ We know there is no real relationship, but because we **selected** data based on
 Controlling for arrest:
 
 
-```r
+``` r
 *lm(Frequency ~ Skill + Arrested,
    data = everyone) |&gt;
   tidy() |&gt; 
@@ -1144,9 +1139,9 @@ Controlling for arrest:
 ## # A tibble: 3 × 2
 ##   term         estimate
 ##   &lt;chr&gt;           &lt;dbl&gt;
-## 1 (Intercept)    0.0326
-## 2 Skill          0.490 
-## 3 ArrestedTRUE   5.00
+## 1 (Intercept)    -0.382
+## 2 Skill           0.567
+## 3 ArrestedTRUE    4.98
 ```
 ]
 
@@ -1155,7 +1150,7 @@ Controlling for arrest:
 Only arrested people:
 
 
-```r
+``` r
 *lm(Frequency ~ Skill,
    data = arrested) |&gt;
   tidy() |&gt; 
@@ -1166,8 +1161,8 @@ Only arrested people:
 ## # A tibble: 2 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    4.93 
-## 2 Skill          0.522
+## 1 (Intercept)    4.40 
+## 2 Skill          0.627
 ```
 ]
 
@@ -1180,7 +1175,7 @@ Only arrested people:
 # Visualizing Collider Bias
 
 
-```r
+``` r
 bind_rows(arrested, everyone) |&gt;
   ggplot(aes(x = Skill, y = Frequency, color = Who)) + 
     facet_wrap(~Who) + geom_point() +
@@ -1205,7 +1200,7 @@ class: inverse
 Let's create example data with actual **potential outcomes**
 
 
-```r
+``` r
 n &lt;- 10000
 po_data &lt;- tibble(
   bd = runif( n, 0,        1), # Random uniform variable
@@ -1235,7 +1230,7 @@ Like usual, if we can *see* the back door, we can identify the effect of `\(X\)`
 
 .pull-left[
 
-```r
+``` r
 lm(y ~ x + bd, data = po_data) |&gt;
   tidy() |&gt; 
   select(term, estimate)
@@ -1245,14 +1240,14 @@ lm(y ~ x + bd, data = po_data) |&gt;
 ## # A tibble: 3 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)   0.0252
-## 2 x             0.990 
-## 3 bd            2.00
+## 1 (Intercept)  0.00277
+## 2 x            1.02   
+## 3 bd           1.97
 ```
 ]
 .pull-right[
 
-```r
+``` r
 lm(y ~ x, data = po_data) |&gt;
   tidy() |&gt; 
   select(term, estimate)
@@ -1262,8 +1257,8 @@ lm(y ~ x, data = po_data) |&gt;
 ## # A tibble: 2 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    0.694
-## 2 x              1.66
+## 1 (Intercept)    0.663
+## 2 x              1.68
 ```
 ]
 
@@ -1278,12 +1273,12 @@ lm(y ~ x, data = po_data) |&gt;
 `sample()` is an easy way to randomly select units
 
 
-```r
+``` r
 sample(0:1, 20, replace = TRUE) # randomly select 0 or 1 20 times
 ```
 
 ```
-##  [1] 1 1 1 1 0 0 0 0 1 1 0 1 0 1 0 1 0 1 1 1
+##  [1] 1 1 0 0 1 1 0 1 0 1 0 1 1 0 1 0 0 1 1 0
 ```
 
 ---
@@ -1293,7 +1288,7 @@ sample(0:1, 20, replace = TRUE) # randomly select 0 or 1 20 times
 Let's select random units to receive the treatment
 
 
-```r
+``` r
 po_data &lt;- po_data |&gt;
   mutate(treat = sample(0:1, n(), replace=TRUE),
          yt = ifelse(treat==1, y1, y0))
@@ -1305,7 +1300,7 @@ All the treatment does is determine which potential outcome we see
 
 .pull-left[
 
-```r
+``` r
 lm(y ~ x + bd, data = po_data) |&gt;
   tidy() |&gt; 
   select(term, estimate)
@@ -1315,14 +1310,14 @@ lm(y ~ x + bd, data = po_data) |&gt;
 ## # A tibble: 3 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)   0.0252
-## 2 x             0.990 
-## 3 bd            2.00
+## 1 (Intercept)  0.00277
+## 2 x            1.02   
+## 3 bd           1.97
 ```
 ]
 .pull-right[
 
-```r
+``` r
 lm(yt ~ treat, data = po_data) |&gt;
   tidy() |&gt; 
   select(term, estimate)
@@ -1332,8 +1327,8 @@ lm(yt ~ treat, data = po_data) |&gt;
 ## # A tibble: 2 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    1.04 
-## 2 treat          0.999
+## 1 (Intercept)    0.993
+## 2 treat          1.02
 ```
 ]
 
@@ -1372,7 +1367,7 @@ If we're interested in the effect of `\(X\)` here, we have to assume `\(T\)` is 
 class: inverse
 # Wrap-Up
 
-&amp;zwj;Reminder: Class on 15th **rescheduled** to Monday the 13th
+&amp;zwj;Reminder: Class on 13th **rescheduled** to Monday the 24th
 
 &amp;zwj;Assignment:
 
@@ -1385,7 +1380,7 @@ class: inverse
   * Word or equivalent + .R script file for code
      * Use comments to indicate question code applies to
   * Quarto / Rmarkdown if you're feeling fancy
-* Due 11:59 PM Friday 10 November
+* Due 11:59 PM Friday 15 November
   * **Do not spend that entire time working on it**
   * **Do ask questions**
 

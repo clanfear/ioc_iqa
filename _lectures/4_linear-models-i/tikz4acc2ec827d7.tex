@@ -1,0 +1,42 @@
+\documentclass[
+%% TIKZ_CLASSOPTION %%
+tikz
+]{standalone}
+\usepackage{amsmath}
+\usetikzlibrary{matrix}
+%% EXTRA_TIKZ_PREAMBLE_CODE %%
+\begin{document}
+%% TIKZ_CODE %%
+\usetikzlibrary{positioning}
+\definecolor{black}{HTML}{000000}
+\tikzset{
+    > = stealth,
+    every node/.append style = {
+        draw = none,
+        scale = 3
+    },
+    every path/.append style = {
+        arrows = ->,
+        draw = black,
+        fill = none,
+        scale = 1,
+        line width = 1.5mm
+    },
+    hidden/.style = {
+        draw = black,
+        shape = circle,
+        inner sep = 1pt
+    }
+}
+\tikz{
+  \node (Y) at (0,5) {$Y$};
+  \node (X) at (5, 0) {$X$};
+  \node (B) at (5, 5) {$BD$};
+  \node (C) at (0, 0) {$COLL$};
+  \path (X) edge (Y) {$0.3};
+  \path (B) edge (Y);
+  \path (B) edge (X);
+  \path (X) edge (C);
+  \path (Y) edge (C);
+  }
+\end{document}

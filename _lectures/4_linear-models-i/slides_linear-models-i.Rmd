@@ -2,7 +2,7 @@
 title: "Linear Models I"
 subtitle: "IQA Lecture 4"
 author: "Charles Lanfear"
-date: "1 Nov 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "6 Nov 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%e %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -22,27 +22,22 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, dev = 
 ```
 
 
-# Things to include
+# Today
 
-Categorical predictors
-
-* Binary
-  * T-Test
-* 3+ category
-  * ANOVA
-
-Controlling for variables
-
-* Demeaning with dummies
-* Residuals
-* Partial correlations (is that pairs plot?)
-
-How linear models work
-
-* Simulating data
-* Back doors
-* Colliders
-
+* Programming:
+   * `across()`
+* Linear models:
+   * Categorical predictors
+      * Binary: T-Test
+      * 3+ category: ANOVA
+   * Controlling for variables
+      * Demeaning with dummies
+      * Residuals
+      * Partial correlations (is that pairs plot?)
+   * How linear models work
+      * Simulating data
+      * Back doors
+      * Colliders
 
 
 ---
@@ -699,6 +694,7 @@ sim_data <- sim_data |>
 .pull-right-40[
 ```{tikz sim-dag, fig.width = 2.75, cache = TRUE, purl = FALSE, echo = FALSE}
 \usetikzlibrary{positioning}
+\usetikzlibrary{quotes}
 \definecolor{black}{HTML}{000000}
 \tikzset{
     > = stealth,
@@ -717,6 +713,9 @@ sim_data <- sim_data |>
         draw = black,
         shape = circle,
         inner sep = 1pt
+    },
+    every edge quotes/.append style = {
+    auto, font=\footnotesize, inner sep=0pt
     }
 }
 \tikz{
@@ -724,11 +723,11 @@ sim_data <- sim_data |>
   \node (X) at (5, 0) {$X$};
   \node (B) at (5, 5) {$BD$};
   \node (C) at (0, 0) {$COLL$};
-  \path (X) edge (Y);
-  \path (B) edge (Y);
-  \path (B) edge (X);
-  \path (X) edge (C);
-  \path (Y) edge (C);
+  \path (X) edge ["0.3"] (Y);
+  \path (B) edge ["0.3"] (Y);
+  \path (B) edge ["0.3"] (X);
+  \path (X) edge ["-0.2"] (C);
+  \path (Y) edge ["-0.2" '] (C);
   }
 ```
 ]
@@ -1113,7 +1112,7 @@ If we're interested in the effect of $X$ here, we have to assume $T$ is roughly 
 class: inverse
 # Wrap-Up
 
-&zwj;Reminder: Class on 15th **rescheduled** to Monday the 13th
+&zwj;Reminder: Class on 13th **rescheduled** to Monday the 24th
 
 &zwj;Assignment:
 
@@ -1126,7 +1125,7 @@ class: inverse
   * Word or equivalent + .R script file for code
      * Use comments to indicate question code applies to
   * Quarto / Rmarkdown if you're feeling fancy
-* Due 11:59 PM Friday 10 November
+* Due 11:59 PM Friday 15 November
   * **Do not spend that entire time working on it**
   * **Do ask questions**
 

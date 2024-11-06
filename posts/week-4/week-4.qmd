@@ -10,6 +10,6 @@ draft: false
 
 [.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/4_linear-models-i/slides_linear-models-i.R)
 
-[Download Assignment 1](https://clanfear.github.io/ioc_iqa/_assignments/assignment-1.docx)
+Download Assignment 1
 
 * Due Friday, 10th of November
