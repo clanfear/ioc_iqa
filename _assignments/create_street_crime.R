@@ -1,6 +1,6 @@
 library(tidyverse)
 
-set.seed(101)
+set.seed(2024)
 sample_size <- 500
 street_crime <- tibble(
   sex = sample(c("Male", "Female"), sample_size, replace=TRUE),
@@ -29,7 +29,7 @@ write_csv(street_crime, file = "_data/street_crime.csv")
 street_crime <- read_csv("_data/street_crime.csv")
 lm(sentence ~ sex + age + crime_type, data = street_crime) |> summary()
 
-lm(sentence ~ sex  + crime_type, data = street_crime) |> summary()
+lm(sentence ~ sex, data = street_crime) |> summary()
 
 
 ggplot(street_crime, aes(x = age, y = sentence)) + geom_point() + geom_smooth(method = "lm")
