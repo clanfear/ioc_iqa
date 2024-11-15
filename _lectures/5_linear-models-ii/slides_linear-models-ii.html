@@ -4,7 +4,7 @@
     <title>Linear Models II</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.27/header-attrs.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 8 Nov 2023<br>Updated: 04 Nov 2023
+### 20 Nov 2024<br>Updated: 15 Nov 2024
 ]
 
 ---
@@ -44,7 +44,7 @@ Like usual, let's start by loading the communities data and converting our categ
 
 .text-85[
 
-```r
+``` r
 library(tidyverse)
 library(broom) 
 communities &lt;- 
@@ -79,7 +79,7 @@ class: inverse
 Remember you can get help with a function using `?`:
 
 
-```r
+``` r
 ?tidy
 ```
 
@@ -96,7 +96,7 @@ These different ways of working are called **methods**—and they're secretly *d
 If you give `tidy()` output from `lm()` it actually runs `tidy.lm()`!
 
 
-```r
+``` r
 ?tidy.lm # tidy() method for lm objects
 ```
 
@@ -105,7 +105,7 @@ If you give `tidy()` output from `lm()` it actually runs `tidy.lm()`!
 `summary()` works this way too:
 
 
-```r
+``` r
 ?summary.lm # summary method for lm objects
 ```
 
@@ -156,7 +156,7 @@ These are the `\(Y\)` values on the regression line given each unit's predictors
 
 .pull-left[
 
-```r
+``` r
 lm(crime_rate ~ pop_density,
    data = communities) |&gt;
 * augment() |&gt; # add .fitted
@@ -188,7 +188,7 @@ Two tricks here:
 We can get **fitted values** using `fitted()` or `broom::augment()`
 
 
-```r
+``` r
 ex_lm &lt;- lm(crime_rate ~ pop_density + disadvantage, 
             data = communities)
 fitted(ex_lm) |&gt; head(4) # Returns them as a vector
@@ -202,7 +202,7 @@ fitted(ex_lm) |&gt; head(4) # Returns them as a vector
 --
 
 
-```r
+``` r
 augment(ex_lm) |&gt; head(4) # Returns them added to original data
 ```
 
@@ -220,11 +220,29 @@ augment(ex_lm) |&gt; head(4) # Returns them added to original data
 
 ---
 
+# Fitted Values
+
+
+
+``` r
+lm(crime_rate ~ pop_density,
+   data = communities) |&gt;
+  augment() |&gt;
+  ggplot(aes(x = pop_density, y = .fitted)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_minimal() 
+```
+
+![](slides_linear-models-ii_files/figure-html/unnamed-chunk-9-1.svg)&lt;!-- --&gt;
+
+---
+
 # Where They Come From
 
 .pull-left[
 
-```r
+``` r
 ex_lm |&gt; # getting coefficients
   tidy() |&gt;
   select(term, estimate)
@@ -243,7 +261,7 @@ ex_lm |&gt; # getting coefficients
 
 .pull-right[
 
-```r
+``` r
 communities[1, c(2, 4)]
 ```
 
@@ -254,7 +272,7 @@ communities[1, c(2, 4)]
 ## 1        18.2 Low
 ```
 
-```r
+``` r
 fitted(ex_lm)[1]
 ```
 
@@ -300,7 +318,7 @@ Plug in, multiply through:
 We can do this with `predict()` and the `newdata =` argument:
 
 
-```r
+``` r
 predict(ex_lm, newdata = data.frame(pop_density = 10, 
                                     disadvantage = "High"))
 ```
@@ -328,7 +346,7 @@ The expected crime rate for an area with *0 population density* and *low disadva
 --
 
 
-```r
+``` r
 predict(ex_lm, newdata = data.frame(pop_density = 0, 
                                     disadvantage = "Low"))
 ```
@@ -347,7 +365,7 @@ Crime rates can't be *negative*!
 --
 
 
-```r
+``` r
 communities |&gt; pull(pop_density) |&gt; min()
 ```
 
@@ -429,7 +447,7 @@ The `\(R^2\)` value is a **fit statistic** that indicates the proportion of vari
 `broom::glance()` is a quick way to get `\(R^2\)` (and some other fit statistics)
 
 
-```r
+``` r
 lm_1 &lt;- lm(crime_rate ~ disadvantage, data = communities)
 glance(lm_1)
 ```
@@ -449,7 +467,7 @@ glance(lm_1)
 # Comparing `\(R^2\)`
 
 
-```r
+``` r
 lm_2 &lt;- lm(crime_rate ~ disadvantage + pop_density, data =communities)
 lm_3 &lt;- lm(crime_rate ~ disadvantage + pop_density + area, 
            data = communities)
@@ -572,7 +590,7 @@ For example, if `\(y ~= b_1x + b_2z\)` but `\(r(x,z) = 0.9\)`
 # Collinearity Example
 
 
-```r
+``` r
 cor_mat &lt;- matrix(c(1, 0.9, 0.3, 0.9, 1, 0.3, 0.3, 0.3, 1), nrow = 3)
 ex_data &lt;- MASS::mvrnorm(n = 250, rep(0, 3), cor_mat) |&gt;
   data.frame() |&gt; setNames(c("x", "z", "y")) # add column names
@@ -589,7 +607,7 @@ cor(ex_data) # correlation matrix
 --
 
 
-```r
+``` r
 lm(y ~ x + z, data = ex_data) |&gt; tidy()
 ```
 
@@ -613,7 +631,7 @@ The  **adjusted `\(R^2\)`** favours parsimony by *penalizing* the `\(R^2\)` for 
 --
 
 
-```r
+``` r
 rbind(glance(lm_1), glance(lm_2), glance(lm_3)) |&gt; 
   select(r.squared, adj.r.squared)
 ```
@@ -635,6 +653,31 @@ Some drawbacks:
 
 * Still doesn't give us a hard rule on whether to use a variable
 * No longer can be interpreted as proportion of variance explained
+
+---
+
+# Information riteria
+
+Another set of fit statistics that encourage parsimony are the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC)
+
+
+``` r
+rbind(glance(lm_1), glance(lm_2), glance(lm_3)) |&gt; 
+  select(AIC, BIC)
+```
+
+```
+## # A tibble: 3 × 2
+##     AIC   BIC
+##   &lt;dbl&gt; &lt;dbl&gt;
+## 1 2688. 2703.
+## 2 2384. 2402.
+## 3 2384. 2407.
+```
+
+* *Lower* values of information criteria are better
+* BIC is more commonly used and penalizes extra parameters more than AIC
+* Rule of thumb: ~4 suggests notably better fit
 
 ---
 
@@ -674,7 +717,7 @@ They can be used to test if...
 The `anova()` function can be used to compare linear models
 
 
-```r
+``` r
 anova(lm_2, lm_3)
 ```
 
@@ -734,7 +777,7 @@ When we exclude a path from a DAG, we *assume a coefficient of zero for that pat
 # Another Example
 
 
-```r
+``` r
 anova(lm_1, lm_2, lm_3)
 ```
 
@@ -770,7 +813,7 @@ Adding a collider to a model will almost always improve fit
 
 .text-85[
 
-```r
+``` r
 lm_4 &lt;- lm(crime_rate ~ disadvantage + incarceration, data = communities)
 anova(lm_1, lm_4)
 ```
@@ -802,11 +845,7 @@ class: inverse
 
 Next week:
 
-* **Rescheduled to Monday at 2 PM**
-
-Assignment:
-
-* Due 11:59 PM Friday 10 November
+* **Make-up lecture on Monday at 2-4 PM**
 
 Reading:
 

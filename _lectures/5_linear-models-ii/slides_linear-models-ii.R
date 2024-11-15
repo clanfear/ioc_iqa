@@ -34,6 +34,14 @@ fitted(ex_lm) |> head(4) # Returns them as a vector
 
 augment(ex_lm) |> head(4) # Returns them added to original data
 
+lm(crime_rate ~ pop_density,
+   data = communities) |>
+  augment() |>
+  ggplot(aes(x = pop_density, y = .fitted)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_minimal() 
+
 ex_lm |> # getting coefficients
   tidy() |>
   select(term, estimate)
@@ -68,6 +76,9 @@ lm(y ~ x + z, data = ex_data) |> tidy()
 
 rbind(glance(lm_1), glance(lm_2), glance(lm_3)) |> 
   select(r.squared, adj.r.squared)
+
+rbind(glance(lm_1), glance(lm_2), glance(lm_3)) |> 
+  select(AIC, BIC)
 
 anova(lm_2, lm_3)
 

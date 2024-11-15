@@ -2,7 +2,7 @@
 title: "Linear Models II"
 subtitle: "IQA Lecture 5"
 author: "Charles Lanfear"
-date: "8 Nov 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "20 Nov 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -223,6 +223,21 @@ fitted(ex_lm) |> head(4) # Returns them as a vector
 augment(ex_lm) |> head(4) # Returns them added to original data
 ```
 
+
+---
+
+# Fitted Values
+
+
+```{r}
+lm(crime_rate ~ pop_density,
+   data = communities) |>
+  augment() |>
+  ggplot(aes(x = pop_density, y = .fitted)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_minimal() 
+```
 
 ---
 
@@ -552,6 +567,21 @@ Some drawbacks:
 
 ---
 
+# Information riteria
+
+Another set of fit statistics that encourage parsimony are the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC)
+
+```{r}
+rbind(glance(lm_1), glance(lm_2), glance(lm_3)) |> 
+  select(AIC, BIC)
+```
+
+* *Lower* values of information criteria are better
+* BIC is more commonly used and penalizes extra parameters more than AIC
+* Rule of thumb: ~4 suggests notably better fit
+
+---
+
 # Specification Tests
 
 **Specification tests** are hypothesis tests for evaluating how well a model fits
@@ -677,11 +707,7 @@ class: inverse
 
 Next week:
 
-* **Rescheduled to Monday at 2 PM**
-
-Assignment:
-
-* Due 11:59 PM Friday 10 November
+* **Make-up lecture on Monday at 2-4 PM**
 
 Reading:
 

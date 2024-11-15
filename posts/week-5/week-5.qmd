@@ -12,7 +12,3 @@ draft: false
 
 
 Lecture Recording (see Moodel)
-
-Download Assignment 1
-
-* Due Friday, 11th of November
