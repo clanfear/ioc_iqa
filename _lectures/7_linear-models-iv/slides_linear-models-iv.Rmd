@@ -2,7 +2,7 @@
 title: "Linear Models IV"
 subtitle: "IQA Lecture 7"
 author: "Charles Lanfear"
-date: "22 Nov 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "27 Nov 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -211,8 +211,10 @@ metro_2021 <- metro_2021 |>
 Things done:
 
 * Shorten a couple names for ease of use
-* Convert `month` to an integer using `{lubridate}`
+* Convert `month` to an integer using `{lubridate}`<sup>1</sup>
 * Create a population density (`pop_den`) in thousands per $km^2$
+
+.footnote[[1] `{lubridate}` is a *great* package for working with dates and times]
 
 ---
 ## Aside: Scientific notation
@@ -236,7 +238,7 @@ R will "prefer" to display standard notation until the output exceeds the width 
 
 ---
 
-# Last Week's Model
+# Model from Last Time
 
 We created a curve with a **quadratic** functional form of `month`
 
@@ -403,7 +405,7 @@ When only an independent variable is logged, we call it a **level-log** (*partia
 
 * Divide the $x$ coefficient by 100 and it is the amount $y$ differs due to a $1\%$ difference in $x$<sup>1</sup>
 
-* A $1%$ increase in `month` is associated with .64 more `violence`
+* A $1\%$ increase in `month`<sup>2</sup> is associated with .64 more `violence`
 
 .footnote[
 [1] More precisely: $p\%$ higher $x$ is associated with $b * log(1 + \frac{p}{100})$ higher $y$
@@ -655,9 +657,7 @@ class: inverse
 
 # Wrap-Up
 
-## Assignments
-
-* All marked, somehow!
+## No reading
 
 ## Last assignment
 

@@ -4,7 +4,7 @@
     <title>Linear Models III</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.27/header-attrs.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 13 Nov 2023<br>Updated: 12 Nov 2023
+### 25 Nov 2024<br>Updated: 24 Nov 2024
 ]
 
 ---
@@ -53,7 +53,7 @@ class: inverse
 Let's return to the (real!) 2021 crime data from London boroughs...
 
 
-```r
+``` r
 library(tidyverse)
 library(broom) 
 metro_wide &lt;- read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021_violence_wide.csv")
@@ -82,7 +82,7 @@ But in **wide** format this time
 
 
 
-```r
+``` r
 dim(metro_wide) # Few rows, more columns
 ```
 
@@ -90,7 +90,7 @@ dim(metro_wide) # Few rows, more columns
 ## [1] 32 17
 ```
 
-```r
+``` r
 names(metro_wide) # A column for each month!
 ```
 
@@ -150,7 +150,7 @@ Why do we want tidy data?
 The `{tidyr}` package in `{tidyverse}` was built to get data into tidy format
 
 
-```r
+``` r
 metro_long &lt;- metro_wide |&gt;
 * pivot_longer(starts_with("month"), # Take each month column
 *              names_to  = "month", # Put col names in month column
@@ -170,7 +170,7 @@ metro_long |&gt; select(borough, month, violence) |&gt; head(3)
 --
 
 
-```r
+``` r
 dim(metro_long)
 ```
 
@@ -197,7 +197,7 @@ dim(metro_long)
 To make `month` analytically friendly, we can convert it from strings like `"month_1"` to numbers using `parse_number()`
 
 
-```r
+``` r
 metro_long &lt;- metro_long |&gt;
   mutate(month = parse_number(month))
 head(metro_long)
@@ -226,7 +226,7 @@ Now we can run some models again—but first, let's see *pivoting back*
 Maybe you *want* the wider data, because your model needs it (e.g., SEM) or to make a data table
 
 
-```r
+``` r
 metro_wide_again &lt;- metro_long |&gt;
 * pivot_wider(names_from   = month, # Turn months into col names
 *             values_from  = violence, # Turn violence in col values
@@ -263,7 +263,7 @@ class: inverse
 Let's fit a simple model predicting crime by month
 
 
-```r
+``` r
 lm_viol &lt;- lm(violence ~ month, data = metro_long)
 lm_viol |&gt; tidy() |&gt; select(term, estimate, std.error)
 ```
@@ -294,7 +294,7 @@ Looking at residuals can help us figure this out
 
 .pull-left[
 
-```r
+``` r
 lm_viol |&gt; 
   augment() |&gt;
   ggplot(aes(x = month, 
@@ -325,11 +325,11 @@ With many data points it can be hard to tell if there is anything going on!
 
 `geom_smooth()` can help us diagnose problems
 
-By default, it fits a **loess** smoother or a **spline**—a flexible curved line
+By default, it fits a **LOESS** smoother or a **spline**—a flexible curved line
 
 .pull-left[
 
-```r
+``` r
 lm_viol |&gt; 
   augment() |&gt;
   ggplot(aes(x = month, 
@@ -367,7 +367,7 @@ Recall that a *squared* term (e.g. `\(x^2\)`) in an equation creates a *parabola
 --
 
 
-```r
+``` r
 curve(2 + 0.5*x + 0.25*x^2, from = -3, to = 1, ylab = "y")
 ```
 
@@ -384,7 +384,7 @@ We can create these in our regression model!
 We can create the quadratic term directly in the formula using `I(x^2)` for any `x`&lt;sup&gt;1&lt;/sup&gt;
 
 
-```r
+``` r
 lm_viol_2 &lt;- lm(violence ~ month + I(month^2), data = metro_long)
 lm_viol_2 |&gt; tidy() |&gt; select(term, estimate, std.error, p.value)
 ```
@@ -415,7 +415,7 @@ The statistical significance of the new term suggests there is indeed a **non-li
 
 .pull-left[
 
-```r
+``` r
 metro_long |&gt; 
   ggplot(aes(x = month, 
              y = violence)) + 
@@ -445,7 +445,7 @@ We can use the residuals from the new model for a diagnostic plot
 
 .pull-left[
 
-```r
+``` r
 lm_viol_2 |&gt; 
   augment() |&gt;
   ggplot(aes(x = month, 
@@ -472,7 +472,7 @@ There's still a lot of noise, but we don't appear to be **systematically** wrong
 # Interpretation
 
 
-```r
+``` r
 lm_viol_2 |&gt; tidy() |&gt; select(term, estimate, std.error, p.value)
 ```
 
@@ -550,7 +550,7 @@ Let's go a step further with a **cubic** model and compare it to the other model
 Polynomials obey a **hierarchy rule**: Always include *lower order terms*
 
 
-```r
+``` r
 lm_viol_3 &lt;- lm(violence ~ month + I(month^2) + I(month^3), 
                 data = metro_long)
 rbind(glance(lm_viol), glance(lm_viol_2), glance(lm_viol_3)) |&gt; 
@@ -579,7 +579,7 @@ Looks like the cubic model isn't helping much!
 You may find yourself running the same function repeatedly:
 
 
-```r
+``` r
 rbind(glance(lm_viol), glance(lm_viol_2), glance(lm_viol_3))
 ```
 
@@ -588,7 +588,7 @@ rbind(glance(lm_viol), glance(lm_viol_2), glance(lm_viol_3))
 `map()` or `lapply()` can iterate across elements of any object:
 
 
-```r
+``` r
 list(lm_viol, lm_viol_2, lm_viol_3) |&gt; # combine models into a list
 * map(glance) |&gt; # run glance() on each element
   list_rbind() # bind results into rows
@@ -616,7 +616,7 @@ We won't use this much, but it is *very* useful!
 We can test the models against each other formally with `anova()` as before
 
 
-```r
+``` r
 anova(lm_viol, lm_viol_2, lm_viol_3)
 ```
 
@@ -651,7 +651,7 @@ Before we plotted residuals against `month`—but a more general diagnostic is p
 
 .pull-left[
 
-```r
+``` r
 lm_viol |&gt; 
   augment() |&gt;
   ggplot(aes(x = .fitted, 
@@ -678,7 +678,7 @@ This one looks a little different with our quadratic term included
 
 .pull-left[
 
-```r
+``` r
 lm_viol_2 |&gt; 
   augment() |&gt;
   ggplot(aes(x = .fitted, 

@@ -2,7 +2,7 @@
 title: "Linear Models III"
 subtitle: "IQA Lecture 6"
 author: "Charles Lanfear"
-date: "13 Nov 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "25 Nov 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -237,7 +237,7 @@ With many data points it can be hard to tell if there is anything going on!
 
 `geom_smooth()` can help us diagnose problems
 
-By default, it fits a **loess** smoother or a **spline**—a flexible curved line
+By default, it fits a **LOESS** smoother or a **spline**—a flexible curved line
 
 .pull-left[
 ```{r viol-resid-2, fig.show='hide'}
