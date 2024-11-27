@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 27 Nov 2024<br>Updated: 24 Nov 2024
+### 27 Nov 2024<br>Updated: 27 Nov 2024
 ]
 
 ---
@@ -306,7 +306,7 @@ metro_2021 &lt;- metro_2021 |&gt;
   rename(violence = violence_and_sexual_offences,
          asb      = antisocial_behaviour) |&gt;
 * mutate(month    = lubridate::month(month),
-         pop_den = (pop/area)/1000)
+         pop_den = (pop/1000)/area)
 ```
 
 Things done:
@@ -804,7 +804,33 @@ anova(lm_int, lm_noint)
 
 ]
 
+---
 
+# Fitted Values
+
+.pull-left[
+
+
+``` r
+lm_int |&gt;
+  augment() |&gt;
+  ggplot(
+    aes(x = pop_den, 
+        y = .fitted, 
+        color = deprivation)) +
+  geom_point() +
+  geom_line()
+```
+]
+.pull-right[
+![](slides_linear-models-iv_files/figure-html/int-fitted-1.svg)
+]
+
+&amp;nbsp;
+
+The fitted values are still all along lines...
+
+... but there's a different line for each level of `deprivation`!
 
 ---
 class: inverse

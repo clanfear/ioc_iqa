@@ -45,7 +45,7 @@ metro_2021 <- metro_2021 |>
   rename(violence = violence_and_sexual_offences,
          asb      = antisocial_behaviour) |>
   mutate(month    = lubridate::month(month), #<<
-         pop_den = (pop/area)/1000)
+         pop_den = (pop/1000)/area)
 
 0.0000000032
 
@@ -101,3 +101,12 @@ lm_int |> tidy() |> select(term, estimate, statistic)
 
 lm_noint <- lm(violence ~ deprivation + pop_den, data = metro_2021)
 anova(lm_int, lm_noint)
+
+lm_int |>
+  augment() |>
+  ggplot(
+    aes(x = pop_den, 
+        y = .fitted, 
+        color = deprivation)) +
+  geom_point() +
+  geom_line()
