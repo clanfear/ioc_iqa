@@ -2,7 +2,7 @@
 # Quadratic disadvantage
 # Interaction between control and physical opportunity
 # Dis / CE -> opp
-set.seed(49)
+set.seed(2024)
 library(tidyverse)
 standardize <- function(x){
   return((x - mean(x))/sd(x))
@@ -23,7 +23,7 @@ neighb_crime <-
            opportunity_index == 5 ~ "high"
            ),
          robbery = round(1 + exp(-0.25*control + 0.2*disadvantage + 0.05*instability +
-           -0.05*(disadvantage^2) +
+           -0.1*(disadvantage^2) +
            0.5*(opportunity=="medium") + 1.25*(opportunity=="high") +
            -0.5*control*(opportunity=="low") -0.15*control*(opportunity=="medium") +
              rnorm(sample_size, 2, 0.5)), 0)

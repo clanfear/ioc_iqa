@@ -9,3 +9,5 @@ draft: false
 [Lecture Slides](https://clanfear.github.io/ioc_iqa/_lectures/8_complications/slides_complications.html)
 
 [.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/8_complications/slides_complications.R)
+
+[Assignment 2](https://clanfear.github.io/ioc_iqa/_assignmentsassignment-2.docx)
