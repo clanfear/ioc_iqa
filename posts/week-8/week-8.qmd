@@ -10,4 +10,4 @@ draft: false
 
 [.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/8_complications/slides_complications.R)
 
-[Assignment 2](https://clanfear.github.io/ioc_iqa/_assignmentsassignment-2.docx)
+[Assignment 2](https://clanfear.github.io/ioc_iqa/_assignments/assignment-2.docx)
