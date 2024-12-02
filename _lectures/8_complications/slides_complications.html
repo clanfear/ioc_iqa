@@ -4,7 +4,7 @@
     <title>A Real Example</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.23/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 29 Nov 2023<br>Updated: 29 Nov 2023
+### 04 Nov 2024<br>Updated: 02 Dec 2024
 ]
 
 ---
@@ -117,7 +117,7 @@ Merged many datasets to test:
 # Loading Data
 
 
-```r
+``` r
 library(tidyverse)
 library(broom) 
 
@@ -144,7 +144,7 @@ These data describe:
 
 .text-72[
 
-```r
+``` r
 glimpse(ccahs_block_analytical_unstd)
 ```
 
@@ -188,7 +188,7 @@ glimpse(ccahs_block_analytical_unstd)
 
 .text-72[
 
-```r
+``` r
 ccahs_block_analytical_unstd |&gt; select(where(is.numeric)) |&gt;
   pivot_longer(everything()) |&gt; group_by(name) |&gt;
   summarize(across(value, list(mean = mean, sd = sd, min = min, max = max), .names = "{.fn}")) |&gt;
@@ -246,7 +246,7 @@ The actual model (set of models, really) is more complicated:
 # Neighborhood Model
 
 
-```r
+``` r
 neighb_model &lt;- 
   lm(CRIME_violent_2004_2006 ~ CE_hlm_2001 + CE_hlm_1995 + 
        FAC_disadv_2000 + FAC_stability_2000 + FAC_hispimm_2000, 
@@ -265,7 +265,7 @@ My theory says past collective efficacy predicts present crime...
 
 .text-80[
 
-```r
+``` r
 summary(neighb_model)
 ```
 
@@ -301,7 +301,7 @@ summary(neighb_model)
 ## Neighborhood Model Results
 
 
-```r
+``` r
 neighb_model |&gt; tidy()
 ```
 
@@ -328,7 +328,7 @@ The full model adds the built environment (opportunity) path:
 
 .text-80[
 
-```r
+``` r
 full_model &lt;- 
   lm(CRIME_violent_2004_2006 ~ CE_hlm_2001 + CE_hlm_1995 + 
        FAC_disadv_2000 + FAC_stability_2000 + FAC_hispimm_2000 + density_ltdb_nc_2000 + 
@@ -355,7 +355,7 @@ There are many parameters, so `tidy()` it up:
 
 .text-80[
 
-```r
+``` r
 tidy(full_model) |&gt; mutate(across(-term, ~round(., 3)))
 ```
 
@@ -389,7 +389,7 @@ tidy(full_model) |&gt; mutate(across(-term, ~round(., 3)))
 
 .text-80[
 
-```r
+``` r
 anova(neighb_model, full_model) |&gt; tidy()
 ```
 
@@ -408,7 +408,7 @@ The model fits quite a bit better; `\(R^2\)` increases from 0.21 to 0.31 too
 
 .text-80[
 
-```r
+``` r
 tidy(full_model) |&gt; mutate(across(-term, ~round(., 3))) |&gt; 
   filter(str_detect(term, "CE"))
 ```
@@ -445,7 +445,7 @@ Why did I include that?
 
 .text-80[
 
-```r
+``` r
 full_noquad_model &lt;- 
   lm(CRIME_violent_2004_2006 ~ CE_hlm_2001 + CE_hlm_1995 + 
        FAC_disadv_2000 + FAC_stability_2000 + FAC_hispimm_2000 + density_ltdb_nc_2000 + 
@@ -475,7 +475,7 @@ anova(full_noquad_model, full_model) |&gt; tidy() |&gt; mutate(p.value = round(p
 
 
 
-```r
+``` r
 full_model |&gt; tidy() |&gt; 
   filter(str_detect(term, "density_block")) |&gt; 
   mutate(p.value = round(p.value, 3))
@@ -494,7 +494,7 @@ Effect of density: 69.87 -763*`density_block`
 --
 
 
-```r
+``` r
 ccahs_block_analytical_unstd |&gt; pull(density_block) |&gt; round(3) %&gt;% 
   {setNames(c(min(.), median(.), max(.)), c("min", "mean", "max"))}
 ```
@@ -529,7 +529,7 @@ I tested this—and we can too!
 
 .text-80[
 
-```r
+``` r
 full_int_model &lt;- 
   lm(CRIME_violent_2004_2006 ~ CE_hlm_2001 + CE_hlm_1995 + 
        FAC_disadv_2000 + FAC_stability_2000 + FAC_hispimm_2000 + density_ltdb_nc_2000 + 
@@ -564,7 +564,7 @@ I did toss the results in the appendix though
 
 .text-60[
 
-```r
+``` r
 full_int_model |&gt; tidy() |&gt; print(n=26)
 ```
 
@@ -611,7 +611,7 @@ full_int_model |&gt; tidy() |&gt; print(n=26)
 What is the effect of abandoned buildings?
 
 
-```r
+``` r
 full_int_model |&gt; tidy() |&gt; filter(str_detect(term, "abandoned"))
 ```
 
@@ -644,7 +644,7 @@ Unfortunately, it depends on *every built environment feature*!
 .pull-left[
 .text-80[
 
-```r
+``` r
 full_int_model |&gt; 
   tidy() |&gt; 
   filter(str_detect(term, "disadv")) |&gt;
@@ -675,15 +675,15 @@ full_int_model |&gt;
 
 Partial derivative with respect to disadvantage:
 
-`\(\;3.798217\)`&lt;br&gt;
-`\(+ (0.692238 * vacant)\)`&lt;br&gt;
-`\(+ (0.6444968 * abandoned)\)`&lt;br&gt;
-`\(+ (2.0297129 * commer)\)`&lt;br&gt;
-`\(+ (4.8349173 * recreation)\)`&lt;br&gt;
-`\(+ (0.3453893 * parking)\)`&lt;br&gt;
-`\(+ (0.1145244 * commercial)\)`&lt;br&gt;
-`\(+ (-9.3090589 * bar)\)`&lt;br&gt;
-`\(+ (8.0312971 * liquor)\)`&lt;br&gt;
+`\(\;3.8\)`&lt;br&gt;
+`\(+ (0.69 * vacant)\)`&lt;br&gt;
+`\(+ (0.64 * abandoned)\)`&lt;br&gt;
+`\(+ (2.03 * commer)\)`&lt;br&gt;
+`\(+ (4.83 * recreation)\)`&lt;br&gt;
+`\(+ (0.35 * parking)\)`&lt;br&gt;
+`\(+ (0.11 * commercial)\)`&lt;br&gt;
+`\(+ (-9.31 * bar)\)`&lt;br&gt;
+`\(+ (8.03 * liquor)\)`&lt;br&gt;
 ]
 
 .text-center[
@@ -705,7 +705,7 @@ class: inverse
 .pull-left[
 .text-85[
 
-```r
+``` r
 full_model |&gt;
   augment() |&gt;
   ggplot(aes(x = .fitted, 
@@ -835,7 +835,7 @@ class: inverse
 
 # Wrap-Up
 
-* Assignment 2 due Sunday 11:59
+* Assignment 2 due Friday at 11:59 PM
 
 ## Freedom
 

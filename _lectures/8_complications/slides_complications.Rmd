@@ -2,7 +2,7 @@
 title: "A Real Example"
 subtitle: "IQA Lecture 8"
 author: "Charles Lanfear"
-date: "29 Nov 2023<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "04 Nov 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -513,7 +513,7 @@ full_int_model |>
 dis_coefs <- full_int_model |> 
   tidy() |> 
   filter(str_detect(term, "disadv")) %>%
-  {setNames(.$estimate, str_remove_all(str_extract(.$term, "pr_.*_block"), "(pr_)|(_onstreet)|(_block)|(_dest)|(_bld)"))}
+  {setNames(.$estimate, str_remove_all(str_extract(.$term, "pr_.*_block"), "(pr_)|(_onstreet)|(_block)|(_dest)|(_bld)"))} |> round(2)
 dis_names <- names(dis_coefs)
 ```
 
@@ -676,7 +676,7 @@ class: inverse
 
 # Wrap-Up
 
-* Assignment 2 due Sunday 11:59
+* Assignment 2 due Friday at 11:59 PM
 
 ## Freedom
 

@@ -102,7 +102,7 @@ full_int_model |>
 dis_coefs <- full_int_model |> 
   tidy() |> 
   filter(str_detect(term, "disadv")) %>%
-  {setNames(.$estimate, str_remove_all(str_extract(.$term, "pr_.*_block"), "(pr_)|(_onstreet)|(_block)|(_dest)|(_bld)"))}
+  {setNames(.$estimate, str_remove_all(str_extract(.$term, "pr_.*_block"), "(pr_)|(_onstreet)|(_block)|(_dest)|(_bld)"))} |> round(2)
 dis_names <- names(dis_coefs)
 
 full_model |>
