@@ -15,15 +15,20 @@ By level of difficulty and complexity of maths:
 
    * Low:
       * The two textbooks for this course!
-      * [OpenIntro Statistics](https://www.openintro.org/book/os/) by Diez et al. A free and open source introduction general statistics suitable for pretty much anyone.
-      * [OpenIntro Introduction to Modern Statistics](https://www.openintro.org/book/ims/) by Cetinkaya-Rundel et al. A free and open source stats introduction emphasizing R programming. Still suitable for pretty much anyone. Has interactive R tutorials.
+      * [*OpenIntro Statistics*](https://www.openintro.org/book/os/) by Diez et al. A free and open source introduction general statistics suitable for pretty much anyone.
+      * [*OpenIntro Introduction to Modern Statistics*](https://www.openintro.org/book/ims/) by Cetinkaya-Rundel et al. A free and open source stats introduction emphasizing R programming. Still suitable for pretty much anyone. Has interactive R tutorials.
    * Medium-Low:
+      * [*Regression and Other Stories*](https://avehtari.github.io/ROS-Examples/) by Gelman et al. A more basic introduction to practical statistics than their multilevel text. Takes a slow but traditional approach to classical and Bayesian inference, linear and generalized linear regression, and causal inference. Free online!
+      * [*Data Analysis for Social Science*](https://press.princeton.edu/books/paperback/9780691199436/data-analysis-for-social-science) by Imai & Llaudet. A data science oriented introduction to applied stats suitable for undergraduate methods courses. Has a non-traditional "flipped" presentation that opens with causal inference and finishes with probability and uncertainty and is a bit more computational than mathematical.
+      * [*Statistical Rethinking*](https://xcelab.net/rm/statistical-rethinking/) by McElreath. A course in Bayesian stats that made a big impact on making these methods accessible.
+   * Medium:
       * [*Data Analysis Using Regression and Multilevel/Hierarchical Models*](http://www.stat.columbia.edu/~gelman/arm/) by Gelman & Hill. A classic introduction and reference for multilevel models. Comprehensive.
-      * [*Statistical Rethinking*](https://xcelab.net/rm/statistical-rethinking/) by McElreath. A course in bayesian stats that made a big impact on making these methods accessible.
       * [*Counterfactuals and Causal Inference*](https://doi.org/10.1017/CBO9781107587991) by Morgan & Winship. Classic introduction to causal inference for social scientists. Accessible yet one of the best desktop references.
       * *Introductory Econometrics: A Modern Approach* by Wooldridge. One of the most used introductory textbooks in public policy and sociology. Rigorous but accessible.
       * [*Causal Inference: What If*](https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/) by Hernán & Robins. A modern introduction to causal inference from the perspective of epidemiology and biostatistics that strikes a nice balance between accessibility and technicality.
+      * [*Multilevel Analysis*](https://www.stats.ox.ac.uk/~snijders/mlbook.htm) by Snijders & Bosker. A balanced introduction to multilevel modeling that moves at a bit slower pace than alternatives. Has excellent supplementary webpage with code to perform analyses using most common software and lots of references to papers and other books.
    * Medium-High:
+      * *All of Statistics* by Wasserman. A rapid and broad introduction to statistics suitable for people with little stats experience but solid math skills and who want to learn from the fundamentals up.
       * [*Hierarchical Linear Models*](https://us.sagepub.com/en-us/nam/hierarchical-linear-models/book9230) by Raudenbush & Bryk. The canonical reference for hierarchical models.
       * *Econometric Analysis of Cross Section and Panel Data* by Wooldridge. The canonical reference for econometrics. Covers nearly everything and in depth.
    * High:
