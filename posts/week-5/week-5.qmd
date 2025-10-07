@@ -2,13 +2,10 @@
 title: "Week 5: Linear Models II"
 description: "Mixing up models with continuous covariates."
 author: "Charles Lanfear"
-date: "2024-11-20"
+date: "2025-11-19"
 draft: false
 ---
 
 [Lecture Slides](https://clanfear.github.io/ioc_iqa/_lectures/5_linear-models-ii/slides_linear-models-ii.html)
 
 [.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/5_linear-models-ii/slides_linear-models-ii.R)
-
-
-Lecture Recording (see Moodel)

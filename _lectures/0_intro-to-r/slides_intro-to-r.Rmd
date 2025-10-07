@@ -2,7 +2,7 @@
 title: "Introduction to R"
 subtitle: "IQA Lecture 0"
 author: "Charles Lanfear"
-date: "10 Oct 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%e %b %Y'))`"
+date: "9 Oct 2025<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%e %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -170,7 +170,7 @@ class: inverse
 
 # Logistics
 
-Location: Computer Lab, Wed, 14:00-16:00
+Location: B3/B4, Wed, 14:00-16:00
 
 Natalia's email: [nc603@cam.ac.uk]()
 
@@ -180,10 +180,6 @@ My email: [cl948@cam.ac.uk]()
 
 * For non-troubleshooting questions—or *really* broken stuff
 
-My drop-in times:
-
-* 3.9, Tue, 14:00-15:00
-* 3.9, Wed, 12:00-13:00
 
 [Make an appointment](https://calendar.app.google/no1vwGmXcs5yHVff9)
 
@@ -277,7 +273,6 @@ If one already knows Excel, SPSS, or Stata, why use R?
 
    * Python
    * Javascript
-   * Julia
    * SQL
 
 ---
@@ -432,9 +427,8 @@ new.object <- 144
 
 --
 
-**Operators** like `<-` are functions that look like symbols but typically sit between their arguments (e.g. numbers or objects) instead of having them inside `()` like in `sqrt(x)`.<sup>1</sup>
+**Operators** like `<-` are functions that look like symbols but typically sit between their arguments (e.g. numbers or objects) instead of having them inside `()` like in `sqrt(x)`.
 
-.footnote[[1] We can call operators like other functions using backticks: <code>\`+\`(x,y)</code>]
 
 --
 
@@ -510,7 +504,7 @@ sqrt(new.object)
 We often work with data that are categorical. To create a vector of text elements—**strings** in programming terms—we must place the text in quotes:
 
 ```{r}
-string.vector <- c("Atlantic", "Pacific", "Arctic")
+string.vector <- c("Atlantic", "Pacific", "Arctic", "Pacific")
 string.vector
 ```
 
@@ -548,10 +542,9 @@ But where are these files being saved and loaded from?
 
 # Working Directories
 
-R saves files and looks for files to open in your current **working directory**<sup>1</sup>. You
+R saves files and looks for files to open in your current **working directory**. You
 can ask R what this is:
 
-.footnote[[1] For a simple R function to open an Explorer / Finder window at your working directory, [see this StackOverflow response](https://stackoverflow.com/a/12135823/10277284).]
 
 ```{r}
 getwd()
@@ -563,6 +556,10 @@ Similarly, we can set a working directory like so:
 
 ```{r, eval=FALSE}
 setwd("C:/Users/")
+```
+
+```{r}
+getwd()
 ```
 
 ---

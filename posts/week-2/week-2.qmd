@@ -2,7 +2,7 @@
 title: "Week 2: Distributions and Relationships"
 description: "Basic univariate and bivariate statistics plus more data manipulation"
 author: "Charles Lanfear"
-date: "2024-10-23"
+date: "2025-10-22"
 draft: false
 ---
 

@@ -2,7 +2,7 @@
 title: "Week 0: Introduction to R"
 description: "Overview of R and RStudio plus some basic R syntax."
 author: "Charles Lanfear"
-date: "2024-10-10"
+date: "2025-10-09"
 draft: false
 ---
 

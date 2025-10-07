@@ -4,7 +4,7 @@
     <title>Introduction to R</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.27/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.30/header-attrs.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 10 Oct 2024<br>Updated: 9 Oct 2024
+### 9 Oct 2025<br>Updated: 7 Oct 2025
 ]
 
 ---
@@ -178,7 +178,7 @@ class: inverse
 
 # Logistics
 
-Location: Computer Lab, Wed, 14:00-16:00
+Location: B3/B4, Wed, 14:00-16:00
 
 Natalia's email: [nc603@cam.ac.uk]()
 
@@ -188,10 +188,6 @@ My email: [cl948@cam.ac.uk]()
 
 * For non-troubleshooting questions—or *really* broken stuff
 
-My drop-in times:
-
-* 3.9, Tue, 14:00-15:00
-* 3.9, Wed, 12:00-13:00
 
 [Make an appointment](https://calendar.app.google/no1vwGmXcs5yHVff9)
 
@@ -289,7 +285,6 @@ If one already knows Excel, SPSS, or Stata, why use R?
 
    * Python
    * Javascript
-   * Julia
    * SQL
 
 ---
@@ -457,9 +452,8 @@ new.object &lt;- 144
 
 --
 
-**Operators** like `&lt;-` are functions that look like symbols but typically sit between their arguments (e.g. numbers or objects) instead of having them inside `()` like in `sqrt(x)`.&lt;sup&gt;1&lt;/sup&gt;
+**Operators** like `&lt;-` are functions that look like symbols but typically sit between their arguments (e.g. numbers or objects) instead of having them inside `()` like in `sqrt(x)`.
 
-.footnote[[1] We can call operators like other functions using backticks: &lt;code&gt;\`+\`(x,y)&lt;/code&gt;]
 
 --
 
@@ -570,12 +564,12 @@ We often work with data that are categorical. To create a vector of text element
 
 
 ``` r
-string.vector &lt;- c("Atlantic", "Pacific", "Arctic")
+string.vector &lt;- c("Atlantic", "Pacific", "Arctic", "Pacific")
 string.vector
 ```
 
 ```
-## [1] "Atlantic" "Pacific"  "Arctic"
+## [1] "Atlantic" "Pacific"  "Arctic"   "Pacific"
 ```
 
 --
@@ -589,7 +583,7 @@ factor.vector
 ```
 
 ```
-## [1] Atlantic Pacific  Arctic  
+## [1] Atlantic Pacific  Arctic   Pacific 
 ## Levels: Arctic Atlantic Pacific
 ```
 
@@ -620,10 +614,9 @@ But where are these files being saved and loaded from?
 
 # Working Directories
 
-R saves files and looks for files to open in your current **working directory**&lt;sup&gt;1&lt;/sup&gt;. You
+R saves files and looks for files to open in your current **working directory**. You
 can ask R what this is:
 
-.footnote[[1] For a simple R function to open an Explorer / Finder window at your working directory, [see this StackOverflow response](https://stackoverflow.com/a/12135823/10277284).]
 
 
 ``` r
@@ -641,6 +634,15 @@ Similarly, we can set a working directory like so:
 
 ``` r
 setwd("C:/Users/")
+```
+
+
+``` r
+getwd()
+```
+
+```
+## [1] "C:/Users/cclan/OneDrive/GitHub/ioc_iqa/_lectures/0_intro-to-r"
 ```
 
 ---
@@ -815,9 +817,9 @@ If you run into R problems you can't get past quickly, send an email or just set
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script src="../assets/cam_macros.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "tomorrow-night-bright",
-"highlightLines": true,
-"countIncrementalSlides": false
+  "highlightStyle": "tomorrow-night-bright",
+  "highlightLines": true,
+  "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));

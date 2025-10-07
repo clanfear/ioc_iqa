@@ -2,7 +2,7 @@
 title: "Week 3: Statistical Inference"
 description: "`ggplot2` and basic statistical inference"
 author: "Charles Lanfear"
-date: "2024-10-30"
+date: "2025-10-29"
 draft: false
 ---
 

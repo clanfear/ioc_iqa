@@ -1,14 +1,14 @@
 # Sometimes important stuff is highlighted! #<<
 7 * 49
 
-## > (11-2
-## +
+# > (11-2
+# +
 
 123 + 456 + 789
 
 sqrt(400)
 
-## ?sqrt
+# ?sqrt
 
 new.object <- 144
 
@@ -23,7 +23,7 @@ new.object
 
 sqrt(new.object)
 
-string.vector <- c("Atlantic", "Pacific", "Arctic")
+string.vector <- c("Atlantic", "Pacific", "Arctic", "Pacific")
 string.vector
 
 factor.vector <- factor(string.vector)
@@ -35,7 +35,9 @@ load("new_object.RData")
 
 getwd()
 
-## setwd("C:/Users/")
+# setwd("C:/Users/")
+
+getwd()
 
 data(USArrests)
 
@@ -45,4 +47,4 @@ str(USArrests) # str[ucture]
 
 summary(USArrests)
 
-## library(swirl)
+# library(swirl)

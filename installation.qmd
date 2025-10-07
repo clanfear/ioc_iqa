@@ -6,9 +6,10 @@ title-block-banner: true
 theme: flatly
 ---
 
-This document walks you through installing R and RStudio on your personal computer.
+This document walks you through installing R and RStudio on your personal computer. If you have an **iPad** or **Android tablet**, scroll to the bottom for **Posit Cloud instructions**.
 
-In the instructions below, anywhere it says (version), there will be a series of numbers such as `4.4.1`. The specific version does not matter, but we want to always use the most recent one.
+In the instructions below, anywhere it says (version), there will be a series of numbers such as `4.5.1`. The specific version does not matter, but we want to always use the most recent one.
+
 
 ## Installing R
 
@@ -30,7 +31,7 @@ In the instructions below, anywhere it says (version), there will be a series of
 1. Go to the [MacOS Installers page](https://cran.r-project.org/bin/macosx/).
     * Scroll to "Latest release"
     * Click `R-(version).pkg` to download: Whatever version is listed will be the most current.
-       * If your Mac is less than 5 years old, you want the arm64 version.
+       * If your Mac is less than 5 years old, you want the `arm64` version.
    
 2. Run the installer.
     * Follow the on-screen instructions.
@@ -78,6 +79,19 @@ When you open RStudio, you should see something similar to this in the bottom-le
 
 ![](img/r_first_load.PNG)
 
-If so, your installation was successful! If not, post on Slack or the mailing list.
+If so, your installation was successful! If not, send me an email.
 
 
+## Posit Cloud
+
+If you do not have a Windows or MacOS computer (or Linux), you cannot install R or RStudio. You may instead use Posit Cloud which is a browser-based version of RStudio. It has some limitations in capability and is only free for the first 25 hours, but it will do everything needed for IQA.
+
+1. Go to [posit.cloud](https://posit.cloud/)
+2. Click "Get Started"
+3. In the left column is the Cloud Free plan. Select "Learn More".
+4. Select "Sign Up" and either link it to an existing account (e.g., Google) or create a new account.
+5. Once logged in, you should see "Your Workspace" whch looks something like this:<br>![](img/posit-cloud-workspace.jpg)
+6. To bring up RStudio, you can create a "New Project" with the button in the top right and select "New RStudio Project"
+7. You should now see an interface that looks just like the usual RStudio.
+   * One key difference: You can't directly access files on your computer! They live on `posit.cloud`.
+   * To upload files, click the "Upload" button in the Files manager in the bottom right.
