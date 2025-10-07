@@ -90,8 +90,10 @@ If you do not have a Windows or MacOS computer (or Linux), you cannot install R 
 2. Click "Get Started"
 3. In the left column is the Cloud Free plan. Select "Learn More".
 4. Select "Sign Up" and either link it to an existing account (e.g., Google) or create a new account.
-5. Once logged in, you should see "Your Workspace" whch looks something like this:<br>![](img/posit-cloud-workspace.jpg)
+5. Once logged in, you should see "Your Workspace" which looks something like this:<br>![](img/posit-cloud-workspace.jpg)
 6. To bring up RStudio, you can create a "New Project" with the button in the top right and select "New RStudio Project"
 7. You should now see an interface that looks just like the usual RStudio.
    * One key difference: You can't directly access files on your computer! They live on `posit.cloud`.
-   * To upload files, click the "Upload" button in the Files manager in the bottom right.
+   * To upload files, click the "Upload" button in the Files manager in the bottom right:
+
+![](img/posit-cloud-interface.jpg)
