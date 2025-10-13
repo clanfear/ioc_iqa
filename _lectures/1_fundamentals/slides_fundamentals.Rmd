@@ -2,7 +2,7 @@
 title: "Fundamentals"
 subtitle: "IQA Lecture 1"
 author: "Charles Lanfear"
-date: "16 Oct 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "15 Oct 2025<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -153,7 +153,7 @@ $$\sum_{i=1}^{n}x_i$$
 
 --
 
-Given $x = [7, 11, 11, 13, 26]$:
+Given $x_i = [7, 11, 11, 13, 26]$:
 
 $$\sum_{i=1}^{n}x_i = x_1 + x_2 + x_3 + x_4 + x_5 = 7 + 11 + 11 + 13 + 26 = 68$$
 
