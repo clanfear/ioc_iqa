@@ -2,7 +2,7 @@
 title: "Distributions and Relationships"
 subtitle: "IQA Lecture 2"
 author: "Charles Lanfear"
-date: "23 Oct 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "22 Oct 2025<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -29,9 +29,7 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
    * Two assessments
       * *Light* data analysis and interpretation
       * Due Friday 11:59 PM the following week
-   * Natalia's office hours: 
-      * Mon 12:00-13:00 & Weds 16:00-17:00
-      * Room 1.8
+   * Reminder: Office hours
 
 * Topics for today:
 

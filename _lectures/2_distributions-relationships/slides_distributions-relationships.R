@@ -15,13 +15,13 @@ communities |> pull(disadvantage) |> table() |> proportions()
 
 communities |> filter(incarceration == "High") |> head()
 
-## communities |>
-##   filter(disadvantage == "Low" &
-##          crime_rate > 40)
+# communities |>
+#   filter(disadvantage == "Low" &
+#          crime_rate > 40)
 
-## communities |>
-##   filter(disadvantage == "Low" |
-##          crime_rate > 40)
+# communities |>
+#   filter(disadvantage == "Low" |
+#          crime_rate > 40)
 
 communities |>
   filter(disadvantage %in% c("High", "Low")) |>
@@ -57,7 +57,7 @@ communities |> count(incarceration)
 
 communities |> count(incarceration) |> mutate(proportion = n/sum(n))
 
-## install.packages("janitor")
+# install.packages("janitor")
 
 library(janitor)
 
