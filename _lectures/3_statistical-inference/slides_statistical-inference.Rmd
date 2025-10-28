@@ -27,6 +27,11 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
 
 # Today
 
+* Two notes
+
+   * Course structure
+   * Research portfolio
+
 * Code
    * `ggplot2`
    * More tables
@@ -1203,4 +1208,3 @@ class: inverse
 
    * Plus learning some more programming tools!
 
-* **Research portfolio**
