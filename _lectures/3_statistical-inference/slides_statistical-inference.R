@@ -201,36 +201,36 @@ ggplot(data  = westminster,
   theme_bw(base_size = 18) +
   theme(legend.position = "none")
 
-## library(gganimate)
-## library(ggforce)
-## 
-## samples <- rnorm(100)
-## index <- seq(1:length(samples))
-## df <- tibble(value = samples, index = index)
-## 
-## bin_width <- 0.25
-## 
-## count_data <- # some minor data transformation
-##   df %>%
-##   mutate(x = plyr::round_any(value, bin_width)) %>%
-##   group_by(x) %>%
-##   mutate(y = seq_along(x))
-## 
-## plot2 <-
-##   ggplot(count_data) +
-##   geom_ellipse(aes(group = index, x0 = x, y0 = y, a = bin_width/2, b = 0.5, angle = 0), fill = '#f0f1eb', color = NA) +
-##   coord_equal(bin_width, expand = FALSE)  +# to make the dots look nice and round
-##   theme_void() +
-##   theme(plot.background = element_rect(fill = "transparent", color = "transparent"))
-## 
-## p_anim2 <-
-##   plot2 +
-##   transition_states(states = index, transition_length = 100, state_length = 1) +
-##   shadow_mark() +
-##   enter_fly(y_loc = 15)
-## 
-## balldrop <- animate(p_anim2, fps = 60, duration = 10, bg = 'transparent', width = 1024, height = 1024)
-## anim_save("img/balldrop.gif", balldrop)
+# library(gganimate)
+# library(ggforce)
+# 
+# samples <- rnorm(100)
+# index <- seq(1:length(samples))
+# df <- tibble(value = samples, index = index)
+# 
+# bin_width <- 0.25
+# 
+# count_data <- # some minor data transformation
+#   df |>
+#   mutate(x = plyr::round_any(value, bin_width)) |>
+#   group_by(x) |>
+#   mutate(y = seq_along(x))
+# 
+# plot2 <-
+#   ggplot(count_data) +
+#   geom_ellipse(aes(group = index, x0 = x, y0 = y, a = bin_width/2, b = 0.5, angle = 0), fill = '#f0f1eb', color = NA) +
+#   coord_equal(bin_width, expand = FALSE)  +# to make the dots look nice and round
+#   theme_void() +
+#   theme(plot.background = element_rect(fill = "transparent", color = "transparent"))
+# 
+# p_anim2 <-
+#   plot2 +
+#   transition_states(states = index, transition_length = 100, state_length = 1) +
+#   shadow_mark() +
+#   enter_fly(y_loc = 15)
+# 
+# balldrop <- animate(p_anim2, fps = 60, duration = 10, bg = 'transparent', width = 1024, height = 1024)
+# anim_save("img/balldrop.gif", balldrop)
 
 communities <- 
   read_csv("https://clanfear.github.io/ioc_iqa/_data/communities.csv") |> 
@@ -295,11 +295,11 @@ summary(cr_pd_lm)$coefficients
 library(broom)
 tidy(cr_pd_lm)
 
-tidy(cr_pd_lm) %>% filter(term == "pop_density")
+tidy(cr_pd_lm) |> filter(term == "pop_density")
 
 cr_pd_lm |> augment() |> glimpse()
 
-communities %>%
+communities |>
   ggplot(aes(x = pop_density, 
              y = crime_rate)) + 
   geom_point(alpha = 0.5) +
@@ -309,7 +309,7 @@ communities %>%
               formula = "y ~ x") +
   theme_minimal(base_size = 16)
 
-communities %>%
+communities |>
   ggplot(aes(x = pop_density, 
              y = crime_rate,
              group = area,

@@ -2,7 +2,7 @@
 title: "Statistical Inference"
 subtitle: "IQA Lecture 3"
 author: "Charles Lanfear"
-date: "30 Oct 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "29 Oct 2025<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     includes:
@@ -57,7 +57,11 @@ metro_2021 <-
 
 I obtained these from `data.police.uk`—it is easy to get your own for nearly anywhere in the UK, and in any recent period.
 
-I also linked them to data on deprivation and subregions, which would take more work!
+I also linked them to data on deprivation and subregions, which would take more work!<sup>1</sup>
+
+.footnote[
+[1] We'll actually make these in CRMW next term!
+]
 
 ---
 
@@ -799,9 +803,9 @@ df <- tibble(value = samples, index = index)
 bin_width <- 0.25
 
 count_data <- # some minor data transformation
-  df %>%
-  mutate(x = plyr::round_any(value, bin_width)) %>%
-  group_by(x) %>%
+  df |>
+  mutate(x = plyr::round_any(value, bin_width)) |>
+  group_by(x) |>
   mutate(y = seq_along(x))
 
 plot2 <- 
@@ -1109,7 +1113,7 @@ tidy(cr_pd_lm)
 `tidy()` turns model output into a dataframe—now you can use `dplyr` with it!
 
 ```{r}
-tidy(cr_pd_lm) %>% filter(term == "pop_density")
+tidy(cr_pd_lm) |> filter(term == "pop_density")
 ```
 
 ---
@@ -1135,7 +1139,7 @@ We'll use this later to do model diagnostics!
 .pull-left[
 .text-85[
 ```{r comm-lm, fig.show='hide'}
-communities %>%
+communities |>
   ggplot(aes(x = pop_density, 
              y = crime_rate)) + 
   geom_point(alpha = 0.5) +
@@ -1165,7 +1169,7 @@ If you group your data, you can draw a regression line for each separately—equ
 .pull-left[
 .text-85[
 ```{r comm-lm-area, fig.show='hide'}
-communities %>%
+communities |>
   ggplot(aes(x = pop_density, 
              y = crime_rate,
              group = area,
