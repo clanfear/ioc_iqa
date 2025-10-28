@@ -1202,3 +1202,5 @@ class: inverse
 * Most of the rest of the course is figuring out how to apply all this
 
    * Plus learning some more programming tools!
+
+* **Research portfolio**
