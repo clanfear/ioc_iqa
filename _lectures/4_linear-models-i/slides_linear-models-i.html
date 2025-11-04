@@ -4,7 +4,7 @@
     <title>Linear Models I</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.27/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.30/header-attrs.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 6 Nov 2024<br>Updated: 6 Nov 2024
+### 6 Nov 2024<br>Updated: 4 Nov 2025
 ]
 
 ---
@@ -878,7 +878,7 @@ sim_data |&gt;
 ## # A tibble: 1 × 2
 ##   bd_mean bd_sd
 ##     &lt;dbl&gt; &lt;dbl&gt;
-## 1    2.98  1.01
+## 1    3.02  1.00
 ```
 ]
 
@@ -950,9 +950,9 @@ Because we know the **data generating process**—we created it—we know what o
 ## # A tibble: 3 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    3.03 
-## 2 x              0.299
-## 3 bd             0.290
+## 1 (Intercept)    2.95 
+## 2 x              0.293
+## 3 bd             0.312
 ```
 ]
 
@@ -971,8 +971,8 @@ Because we know the **data generating process**—we created it—we know what o
 ## # A tibble: 2 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    3.83 
-## 2 x              0.379
+## 1 (Intercept)    3.81 
+## 2 x              0.382
 ```
 ]
 
@@ -1001,9 +1001,9 @@ Again, we know what effects should be identified and how to identify them. What 
 ## # A tibble: 3 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    3.03 
-## 2 x              0.299
-## 3 bd             0.290
+## 1 (Intercept)    2.95 
+## 2 x              0.293
+## 3 bd             0.312
 ```
 ]
 
@@ -1022,10 +1022,10 @@ Again, we know what effects should be identified and how to identify them. What 
 ## # A tibble: 4 × 2
 ##   term        estimate
 ##   &lt;chr&gt;          &lt;dbl&gt;
-## 1 (Intercept)    2.91 
-## 2 x              0.250
-## 3 bd             0.282
-## 4 coll          -0.184
+## 1 (Intercept)    2.85 
+## 2 x              0.246
+## 3 bd             0.297
+## 4 coll          -0.190
 ```
 ]
 
@@ -1367,22 +1367,23 @@ If we're interested in the effect of `\(X\)` here, we have to assume `\(T\)` is 
 class: inverse
 # Wrap-Up
 
-&amp;zwj;Reminder: Class on 13th **rescheduled** to Monday the 24th
+&amp;zwj;Reminder: Class next week **rescheduled** to Monday
 
 &amp;zwj;Assignment:
 
-* Posted tomorrow morning:
+* Posted by tomorrow morning:
   * On website in units (both week 4 and 5)
 * Read instructions carefully
    * No trick questions intended
    * If you're writing a ton of code, you may be overthinking it
 * Doc types:
   * Word or equivalent + .R script file for code
-     * Use comments to indicate question code applies to
+     * Use comments (#) to indicate question code applies to
   * Quarto / Rmarkdown if you're feeling fancy
 * Due 11:59 PM Friday 15 November
   * **Do not spend that entire time working on it**
   * **Do ask questions**
+  * **Do make us of office hours**
 
 No reading until next week
     </textarea>
@@ -1390,9 +1391,9 @@ No reading until next week
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script src="../assets/cam_macros.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "tomorrow-night-bright",
-"highlightLines": true,
-"countIncrementalSlides": false
+  "highlightStyle": "tomorrow-night-bright",
+  "highlightLines": true,
+  "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));

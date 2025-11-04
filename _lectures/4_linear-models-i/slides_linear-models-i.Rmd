@@ -1112,21 +1112,22 @@ If we're interested in the effect of $X$ here, we have to assume $T$ is roughly 
 class: inverse
 # Wrap-Up
 
-&zwj;Reminder: Class on 13th **rescheduled** to Monday the 24th
+&zwj;Reminder: Class next week **rescheduled** to Monday
 
 &zwj;Assignment:
 
-* Posted tomorrow morning:
+* Posted by tomorrow morning:
   * On website in units (both week 4 and 5)
 * Read instructions carefully
    * No trick questions intended
    * If you're writing a ton of code, you may be overthinking it
 * Doc types:
   * Word or equivalent + .R script file for code
-     * Use comments to indicate question code applies to
+     * Use comments (#) to indicate question code applies to
   * Quarto / Rmarkdown if you're feeling fancy
 * Due 11:59 PM Friday 15 November
   * **Do not spend that entire time working on it**
   * **Do ask questions**
+  * **Do make us of office hours**
 
 No reading until next week

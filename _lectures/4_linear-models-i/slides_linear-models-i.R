@@ -6,10 +6,10 @@ communities <-
                 ~ factor(., levels = c("Low", "Medium", "High"))),
          area = factor(area, levels = c("Rural", "Urban")))
 
-## mutate(incarceration =
-##          factor(incarceration, levels = c("Low", "Medium", "High")),
-##        disadvantage =
-##          factor(disadvantage, levels = c("Low", "Medium", "High")))
+# mutate(incarceration =
+#          factor(incarceration, levels = c("Low", "Medium", "High")),
+#        disadvantage =
+#          factor(disadvantage, levels = c("Low", "Medium", "High")))
 
 communities |>
   group_by(incarceration) |>
