@@ -2,7 +2,7 @@
 title: "Linear Models I"
 subtitle: "IQA Lecture 4"
 author: "Charles Lanfear"
-date: "6 Nov 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%e %b %Y'))`"
+date: "5 Nov 2025<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%e %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -385,6 +385,52 @@ residualized_data <- communities |> group_by(area) |>
 ]
 
 --
+
+The group means that were different are now the same:
+
+.text-85[
+```{r}
+residualized_data |> group_by(area) |>
+  summarize(across(c(pop_density, crime_rate, pop_density_res, crime_rate_res),
+                   mean)) #<< 
+```
+]
+
+---
+# Shifted distributions
+
+Subtracting the mean from every value just *shifts* the distribution to be centred over *zero*.
+
+This *equalises* the means of each group!
+
+.pull-left[
+.text-85[
+```{r}
+ggplot(residualized_data, 
+       aes(x = pop_density,
+           fill = area)) + 
+  geom_histogram(alpha = 0.5, 
+                 position = "identity")
+```
+]
+]
+.pull-right[
+.text-85[
+```{r}
+ggplot(residualized_data, 
+       aes(x = pop_density_res, 
+           fill = area)) + 
+  geom_histogram(alpha = 0.75, 
+                 position = "identity")
+```
+]
+]
+
+---
+
+# Categorical Conrols
+
+*Controlling* for a categorical variable is equivalent to centering the other variables by their group categories
 
 .pull-left[
 .text-85[
@@ -922,7 +968,11 @@ class: inverse
 
 # Randomization
 
+## An advanced example<sup>1</sup>
 
+.footnote[
+[1] i.e., you don't need to know this
+]
 
 ---
 
@@ -1116,18 +1166,16 @@ class: inverse
 
 &zwj;Assignment:
 
-* Posted by tomorrow morning:
-  * On website in units (both week 4 and 5)
+* **FORMATIVE** not summative
+* On Moodle and website
 * Read instructions carefully
-   * No trick questions intended
+   * No trick questions intended; everything was covered
    * If you're writing a ton of code, you may be overthinking it
 * Doc types:
   * Word or equivalent + .R script file for code
      * Use comments (#) to indicate question code applies to
   * Quarto / Rmarkdown if you're feeling fancy
-* Due 11:59 PM Friday 15 November
+* Due 11:59 PM Friday 14 November
   * **Do not spend that entire time working on it**
   * **Do ask questions**
-  * **Do make us of office hours**
-
-No reading until next week
+  * **Do go to office hours**

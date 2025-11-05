@@ -84,6 +84,22 @@ residualized_data <- communities |> group_by(area) |>
   mutate(pop_density_res =  pop_density - mean(pop_density), #<< # Subtract mean!
          crime_rate_res  =  crime_rate  - mean(crime_rate)) #<<
 
+residualized_data |> group_by(area) |>
+  summarize(across(c(pop_density, crime_rate, pop_density_res, crime_rate_res),
+                   mean)) #<< 
+
+ggplot(residualized_data, 
+       aes(x = pop_density,
+           fill = area)) + 
+  geom_histogram(alpha = 0.5, 
+                 position = "identity")
+
+ggplot(residualized_data, 
+       aes(x = pop_density_res, 
+           fill = area)) + 
+  geom_histogram(alpha = 0.75, 
+                 position = "identity")
+
 lm(crime_rate ~ pop_density + area,
    data = communities) |> 
   tidy() |>
