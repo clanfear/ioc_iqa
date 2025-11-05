@@ -9,3 +9,9 @@ draft: false
 [Lecture Slides](https://clanfear.github.io/ioc_iqa/_lectures/5_linear-models-ii/slides_linear-models-ii.html)
 
 [.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/5_linear-models-ii/slides_linear-models-ii.R)
+
+[Download Assignment 1 (Word doc)](https://clanfear.github.io/ioc_iqa/_assignments/assignment-1.docx)
+
+* Alternate [RMarkdown version](https://clanfear.github.io/ioc_iqa/_assignments/assignment-1.Rmd)
+
+* Due Friday, 14th of November
