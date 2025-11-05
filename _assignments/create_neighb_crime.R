@@ -2,7 +2,7 @@
 # Quadratic disadvantage
 # Interaction between control and physical opportunity
 # Dis / CE -> opp
-set.seed(2024)
+set.seed(2025)
 library(tidyverse)
 standardize <- function(x){
   return((x - mean(x))/sd(x))
@@ -15,8 +15,8 @@ neighb_crime <-
   data.frame() |>
   setNames(c("disadvantage", "instability", "heterogeneity")) |>
   mutate(across(c(disadvantage, instability, heterogeneity), ~standardize(.)),
-         control = standardize(-0.3*disadvantage -0.15*instability -0.1*heterogeneity + rnorm(sample_size, 0, 1)),
-         opportunity_index = ntile(0.3*disadvantage -0.2*control + rnorm(sample_size, 0, 1), 5),
+         control = standardize(-0.3*disadvantage -0.15*instability -0.1*heterogeneity + rnorm(sample_size, 0, 0.75)),
+         opportunity_index = ntile(0.3*disadvantage -0.2*control + rnorm(sample_size, 0, 0.5), 5),
          opportunity = case_when(
            opportunity_index %in% c(1, 2) ~ "low", 
            opportunity_index %in% c(3, 4) ~ "medium", 
@@ -35,3 +35,5 @@ lm_true <- lm(log(robbery) ~ control*opportunity + disadvantage + I(disadvantage
 summary(lm_true)
 lm_simple <-lm(robbery ~ control * opportunity + disadvantage + instability + heterogeneity, data = neighb_crime)
 summary(lm_simple)
+
+neighb_crime <- read_csv("./_data/neighb_crime.csv")

@@ -75,7 +75,7 @@ Also include any code used to solve these problems in a separate R script file (
 
 ## Linear Model Interpretation
 
-> In 1.4, you created a linear model predicting `sentence` using `crime_type`, `sex`, and `age`. Provide a short **interpretation** of each coefficient (estimate) in the model including its statistical significance. Keep in mind the type of each variable (e.g., categorical) while you do this so that you correctly interpret them.
+> In 1.4, you created a linear model predicting `sentence` using `crime_type`, `sex`, and `age`. Provide a short **interpretation** of each coefficient (estimate) in the model including its statistical significance. Keep in mind the type of each variable (e.g., categorical) while you do this so that you correctly interpret them. Do not worry about whether these are causal or not causal relationships; just interpret the coefficients numerically!
 
 *Answer here.*
 
@@ -131,10 +131,10 @@ Also include any code used to solve these problems in a separate R script file (
   }
 ```
 
-> Given the DAG above, run a **linear model** that identifies the effect of `sex` on `sentence`. Present the output here and interpret the coefficient on sex including its statistical significance.
+> Given the DAG above, run a **linear model** that identifies the total effect of `sex` on `sentence`. Present the output here and interpret the coefficient on sex including its statistical significance.
 
 *Answer here.*
 
 # How's it goin?
 
-> In anything from one word to a paragraph, let me know how you're feeling about the course so far. Overwhelmed? Doing alright? No problem at all? Are there topics that leave you confused? Let me know if there are things that might make the course work better for you.
+> In anything from one word to a paragraph, let me know how you're feeling about the course so far. Overwhelmed? Doing alright? No problem at all? Are there topics that leave you confused? Let me know if there are things that might make the rest of the course work better for you.

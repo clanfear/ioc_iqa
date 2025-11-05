@@ -1,6 +1,6 @@
 library(tidyverse)
 
-set.seed(2024)
+set.seed(2025)
 sample_size <- 500
 street_crime <- tibble(
   sex = sample(c("Male", "Female"), sample_size, replace=TRUE),
