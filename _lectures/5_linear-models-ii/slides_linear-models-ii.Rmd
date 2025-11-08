@@ -705,11 +705,13 @@ class: inverse
 
 # Wrap-Up
 
-Next week:
+* **Assignment 1 due Friday**
 
-* **Make-up lecture on Monday at 2-4 PM**
+* I am away from Wednesday
+   * Ask questions soon!
+   * Go to office hours!
 
-Reading:
+* Reading:
 
-* Huntington-Klein, N. (2022) *The Effect: An Introduction to Research Design and Causality*, New York, NY: Chapman and Hall/CRC Press. 
-   * Read Chapter 12: Opening the Toolbox and Chapter 13: Regression only up to (but not including) 13.2.2 Polynomials
+   * Huntington-Klein, N. (2022) *The Effect: An Introduction to Research Design and Causality*, New York, NY: Chapman and Hall/CRC Press. 
+      * Read Chapter 12: Opening the Toolbox and Chapter 13: Regression only up to (but not including) 13.2.2 Polynomials

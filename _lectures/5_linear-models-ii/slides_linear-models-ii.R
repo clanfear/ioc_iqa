@@ -5,11 +5,11 @@ communities <-
   mutate(across(c(incarceration, disadvantage), 
                 ~ factor(., levels = c("Low", "Medium", "High"))))
 
-## ?tidy
+# ?tidy
 
-## ?tidy.lm # tidy() method for lm objects
+# ?tidy.lm # tidy() method for lm objects
 
-## ?summary.lm # summary method for lm objects
+# ?summary.lm # summary method for lm objects
 
 
 
