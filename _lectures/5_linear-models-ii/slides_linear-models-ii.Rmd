@@ -2,7 +2,7 @@
 title: "Linear Models II"
 subtitle: "IQA Lecture 5"
 author: "Charles Lanfear"
-date: "20 Nov 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "10 Nov 2025<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
