@@ -25,11 +25,30 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, dev = 
 
 # Today
 
+&nbsp;
+
 ### Pivoting Data
 
 ### Polynomials
 
 ### Residual Plots
+
+&nbsp;
+
+&nbsp;
+
+&nbsp;
+
+--
+
+.text-center[
+### *But first...*
+]
+
+---
+class: inverse
+
+# Review?
 
 
 ---
