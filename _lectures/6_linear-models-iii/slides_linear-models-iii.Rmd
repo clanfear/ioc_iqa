@@ -2,7 +2,7 @@
 title: "Linear Models III"
 subtitle: "IQA Lecture 6"
 author: "Charles Lanfear"
-date: "25 Nov 2024<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "19 Nov 2025<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     css: "../assets/cam-css.css"
@@ -137,6 +137,7 @@ dim(metro_long)
 
 ![:width 50%](img/tidyr-pivoting.gif)
 .footnote[Source: [Garrick Aden-Buie](https://github.com/gadenbuie/tidyexplain#pivot-wider-and-longer)]
+
 
 ---
 

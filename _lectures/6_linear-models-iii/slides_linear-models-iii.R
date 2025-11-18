@@ -73,7 +73,7 @@ lm_viol_3 <- lm(violence ~ month + I(month^2) + I(month^3),
 rbind(glance(lm_viol), glance(lm_viol_2), glance(lm_viol_3)) |> 
   select(r.squared, adj.r.squared)
 
-## rbind(glance(lm_viol), glance(lm_viol_2), glance(lm_viol_3))
+# rbind(glance(lm_viol), glance(lm_viol_2), glance(lm_viol_3))
 
 list(lm_viol, lm_viol_2, lm_viol_3) |> # combine models into a list
   map(glance) |> # run glance() on each element #<<
