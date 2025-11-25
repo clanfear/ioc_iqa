@@ -47,11 +47,6 @@ metro_2021 <- metro_2021 |>
   mutate(month    = lubridate::month(month), #<<
          pop_den = (pop/1000)/area)
 
-0.0000000032
-
-options(scipen = 10)
-0.0000000032
-
 lm_sq <- 
   lm(violence ~ month + I(month^2), 
    data = metro_2021) 

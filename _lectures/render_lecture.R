@@ -13,5 +13,5 @@ render_lecture <- function(x, purl = TRUE){
     list(input = .x, encoding = "UTF-8")
   ))
 }
-render_lecture(6)
+render_lecture(7)
 
