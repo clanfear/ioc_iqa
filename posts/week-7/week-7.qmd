@@ -11,6 +11,7 @@ draft: false
 [.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/7_linear-models-iv/slides_linear-models-iv.R)
 
 [Assignment 2](https://clanfear.github.io/ioc_iqa/_assignments/assignment-2.docx)
+   * [Assignment 2 Quarto template](https://clanfear.github.io/ioc_iqa/_assignments/assignment-2.qmd)
 
 Reading:
 
