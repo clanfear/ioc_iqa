@@ -131,7 +131,7 @@ Also include any code used to solve these problems in a separate R script file (
   }
 ```
 
-> Given the DAG above, run a **linear model** that identifies the total effect of `sex` on `sentence`. Present the output here and interpret the coefficient on sex including its statistical significance.
+> Given the DAG above, run a **linear model** that identifies the total effect of `sex` on `sentence`. Explain why it is identified. Present the output here and interpret the coefficient on sex including its statistical significance.
 
 *Answer here.*
 

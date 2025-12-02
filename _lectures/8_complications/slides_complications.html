@@ -4,7 +4,7 @@
     <title>A Real Example</title>
     <meta charset="utf-8" />
     <meta name="author" content="Charles Lanfear" />
-    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.30/header-attrs.js"></script>
     <link rel="stylesheet" href="../assets/cam-css.css" type="text/css" />
   </head>
   <body>
@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 04 Nov 2024<br>Updated: 02 Dec 2024
+### 3 Dec 2025<br>Updated: 02 Dec 2025
 ]
 
 ---
@@ -332,11 +332,11 @@ The full model adds the built environment (opportunity) path:
 full_model &lt;- 
   lm(CRIME_violent_2004_2006 ~ CE_hlm_2001 + CE_hlm_1995 + 
        FAC_disadv_2000 + FAC_stability_2000 + FAC_hispimm_2000 + density_ltdb_nc_2000 + 
-       BE_pr_vacant_onstreet_block_2001 + BE_pr_abandoned_bld_onstreet_block_2001 +
-       BE_pr_commer_dest_onstreet_block_2001 + BE_pr_recreation_block_2001 +
-       BE_pr_parking_block_2001  + BE_pr_commercial_block_2001 + 
-       BE_pr_bar_onstreet_block_2001 + BE_pr_liquor_onstreet_block_2001 + 
-       density_block + I(density_block^2) + street_class_near, 
+*      BE_pr_vacant_onstreet_block_2001 + BE_pr_abandoned_bld_onstreet_block_2001 +
+*      BE_pr_commer_dest_onstreet_block_2001 + BE_pr_recreation_block_2001 +
+*      BE_pr_parking_block_2001  + BE_pr_commercial_block_2001 +
+*      BE_pr_bar_onstreet_block_2001 + BE_pr_liquor_onstreet_block_2001 +
+*      density_block + I(density_block^2) + street_class_near,
      data = ccahs_block_analytical_unstd)
 ```
 ]
@@ -534,14 +534,14 @@ full_int_model &lt;-
   lm(CRIME_violent_2004_2006 ~ CE_hlm_2001 + CE_hlm_1995 + 
        FAC_disadv_2000 + FAC_stability_2000 + FAC_hispimm_2000 + density_ltdb_nc_2000 + 
        density_block + density_block_2 + street_class_near + 
-       FAC_disadv_2000*BE_pr_vacant_onstreet_block_2001 + 
-       FAC_disadv_2000*BE_pr_abandoned_bld_onstreet_block_2001 +
-       FAC_disadv_2000*BE_pr_commer_dest_onstreet_block_2001 + 
-       FAC_disadv_2000*BE_pr_recreation_block_2001 +
-       FAC_disadv_2000*BE_pr_parking_block_2001  + 
-       FAC_disadv_2000*BE_pr_commercial_block_2001 + 
-       FAC_disadv_2000*BE_pr_bar_onstreet_block_2001 + 
-       FAC_disadv_2000*BE_pr_liquor_onstreet_block_2001, 
+*      FAC_disadv_2000 * BE_pr_vacant_onstreet_block_2001 +
+*      FAC_disadv_2000 * BE_pr_abandoned_bld_onstreet_block_2001 +
+*      FAC_disadv_2000 * BE_pr_commer_dest_onstreet_block_2001 +
+*      FAC_disadv_2000 * BE_pr_recreation_block_2001 +
+*      FAC_disadv_2000 * BE_pr_parking_block_2001  +
+*      FAC_disadv_2000 * BE_pr_commercial_block_2001 +
+*      FAC_disadv_2000 * BE_pr_bar_onstreet_block_2001 +
+*      FAC_disadv_2000 * BE_pr_liquor_onstreet_block_2001,
      data = ccahs_block_analytical_unstd)
 anova(full_int_model, full_model) |&gt; tidy()
 ```
@@ -694,6 +694,8 @@ Partial derivative with respect to disadvantage:
 class: inverse
 # More Advanced Things
 
+&amp;nbsp;
+
 &gt; Any sufficiently advanced technology is indistinguishable from magic 
 
 – Sir Arthur C. Clarke
@@ -733,7 +735,7 @@ Multiple issues:
 
 These suggest a *better* model; something in the **Poisson** family&lt;sup&gt;1&lt;/sup&gt;
 
-You can learn about these in SSRMP modules or textbooks
+You can learn about these in CaRM modules or textbooks
 
 .footnote[
 [1] I used a hierarchical negative binomial model in this paper
@@ -833,9 +835,12 @@ This is *very easy* and *very common*, but see Huntington-Klein chapter 16 for m
 ---
 class: inverse
 
-# Wrap-Up
+## Wrap-Up
 
 * Assignment 2 due Friday at 11:59 PM
+
+   * Extension if needed
+   * Spend time on essays instead
 
 ## Freedom
 
@@ -845,9 +850,9 @@ class: inverse
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script src="../assets/cam_macros.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "tomorrow-night-bright",
-"highlightLines": true,
-"countIncrementalSlides": false
+  "highlightStyle": "tomorrow-night-bright",
+  "highlightLines": true,
+  "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));

@@ -28,11 +28,11 @@ neighb_model |> tidy()
 full_model <- 
   lm(CRIME_violent_2004_2006 ~ CE_hlm_2001 + CE_hlm_1995 + 
        FAC_disadv_2000 + FAC_stability_2000 + FAC_hispimm_2000 + density_ltdb_nc_2000 + 
-       BE_pr_vacant_onstreet_block_2001 + BE_pr_abandoned_bld_onstreet_block_2001 +
-       BE_pr_commer_dest_onstreet_block_2001 + BE_pr_recreation_block_2001 +
-       BE_pr_parking_block_2001  + BE_pr_commercial_block_2001 + 
-       BE_pr_bar_onstreet_block_2001 + BE_pr_liquor_onstreet_block_2001 + 
-       density_block + I(density_block^2) + street_class_near, 
+       BE_pr_vacant_onstreet_block_2001 + BE_pr_abandoned_bld_onstreet_block_2001 + #<<
+       BE_pr_commer_dest_onstreet_block_2001 + BE_pr_recreation_block_2001 + #<<
+       BE_pr_parking_block_2001  + BE_pr_commercial_block_2001 +  #<<
+       BE_pr_bar_onstreet_block_2001 + BE_pr_liquor_onstreet_block_2001 + #<< 
+       density_block + I(density_block^2) + street_class_near, #<<
      data = ccahs_block_analytical_unstd)
 
 
@@ -72,14 +72,14 @@ full_int_model <-
   lm(CRIME_violent_2004_2006 ~ CE_hlm_2001 + CE_hlm_1995 + 
        FAC_disadv_2000 + FAC_stability_2000 + FAC_hispimm_2000 + density_ltdb_nc_2000 + 
        density_block + density_block_2 + street_class_near + 
-       FAC_disadv_2000*BE_pr_vacant_onstreet_block_2001 + 
-       FAC_disadv_2000*BE_pr_abandoned_bld_onstreet_block_2001 +
-       FAC_disadv_2000*BE_pr_commer_dest_onstreet_block_2001 + 
-       FAC_disadv_2000*BE_pr_recreation_block_2001 +
-       FAC_disadv_2000*BE_pr_parking_block_2001  + 
-       FAC_disadv_2000*BE_pr_commercial_block_2001 + 
-       FAC_disadv_2000*BE_pr_bar_onstreet_block_2001 + 
-       FAC_disadv_2000*BE_pr_liquor_onstreet_block_2001, 
+       FAC_disadv_2000 * BE_pr_vacant_onstreet_block_2001 + #<<
+       FAC_disadv_2000 * BE_pr_abandoned_bld_onstreet_block_2001 + #<<
+       FAC_disadv_2000 * BE_pr_commer_dest_onstreet_block_2001 + #<<
+       FAC_disadv_2000 * BE_pr_recreation_block_2001 + #<<
+       FAC_disadv_2000 * BE_pr_parking_block_2001  + #<<
+       FAC_disadv_2000 * BE_pr_commercial_block_2001 + #<<
+       FAC_disadv_2000 * BE_pr_bar_onstreet_block_2001 + #<<
+       FAC_disadv_2000 * BE_pr_liquor_onstreet_block_2001, #<<
      data = ccahs_block_analytical_unstd)
 anova(full_int_model, full_model) |> tidy()
 
