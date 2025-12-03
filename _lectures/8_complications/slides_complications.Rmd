@@ -304,10 +304,6 @@ full_model <-
 ```
 
 
-.footnote[
-Note that only arrows going into **Crime** go into the model formula
-]
-
 ---
 ## Full Model Results
 
@@ -315,7 +311,7 @@ There are many parameters, so `tidy()` it up:
 
 .text-80[
 ```{r}
-tidy(full_model) |> mutate(across(-term, ~round(., 3)))
+tidy(full_model) |> mutate(across(-term, ~round(., 3))) # round everything
 ```
 ]
 
@@ -324,7 +320,7 @@ tidy(full_model) |> mutate(across(-term, ~round(., 3)))
 
 .text-80[
 ```{r}
-anova(neighb_model, full_model) |> tidy()
+anova(neighb_model, full_model) |> tidy() # You can tidy anova() output
 ```
 ]
 
@@ -335,7 +331,7 @@ The model fits quite a bit better; $R^2$ increases from 0.21 to 0.31 too
 .text-80[
 ```{r}
 tidy(full_model) |> mutate(across(-term, ~round(., 3))) |> 
-  filter(str_detect(term, "CE"))
+  filter(str_detect(term, "CE")) # Get only collective efficacy terms
 ```
 ]
 
@@ -365,13 +361,13 @@ Why did I include that?
 full_noquad_model <- 
   lm(CRIME_violent_2004_2006 ~ CE_hlm_2001 + CE_hlm_1995 + 
        FAC_disadv_2000 + FAC_stability_2000 + FAC_hispimm_2000 + density_ltdb_nc_2000 + 
-       density_block + street_class_near + 
+       density_block + street_class_near + #<<
        BE_pr_vacant_onstreet_block_2001 + BE_pr_abandoned_bld_onstreet_block_2001 +
        BE_pr_commer_dest_onstreet_block_2001 + BE_pr_recreation_block_2001 +
        BE_pr_parking_block_2001  + BE_pr_commercial_block_2001 + 
        BE_pr_bar_onstreet_block_2001 + BE_pr_liquor_onstreet_block_2001, 
      data = ccahs_block_analytical_unstd)
-anova(full_noquad_model, full_model) |> tidy() |> mutate(p.value = round(p.value, 3))
+anova(full_noquad_model, full_model) |> tidy() 
 ```
 ]
 
@@ -389,9 +385,7 @@ est_vec <- full_model |> tidy() |>
 ```
 
 ```{r}
-full_model |> tidy() |> 
-  filter(str_detect(term, "density_block")) |> 
-  mutate(p.value = round(p.value, 3))
+full_model |> tidy() |> filter(str_detect(term, "density_block"))
 ```
 
 Effect of density: `r est_vec[1]` `r 2*est_vec[2]`*`density_block` 
@@ -399,10 +393,13 @@ Effect of density: `r est_vec[1]` `r 2*est_vec[2]`*`density_block`
 --
 
 ```{r}
-ccahs_block_analytical_unstd |> pull(density_block) |> round(3) %>% 
-  {setNames(c(min(.), median(.), max(.)), c("min", "mean", "max"))}
+ccahs_block_analytical_unstd |> pull(density_block) |> 
+  range() |> round(3)
 ```
-Effect of density at its max: $`r est_vec[1]` `r 2*est_vec[2]`*0.236$ =  $`r est_vec[1] + (2*est_vec[2]*0.236)`$
+
+*Positive* effect of density at its min: $`r est_vec[1]` `r 2*est_vec[2]`*-0.035$ =  $`r est_vec[1] + (2*est_vec[2]*-0.035)`$<br>
+*Negative* effect of density at its max: $`r est_vec[1]` `r 2*est_vec[2]`*0.236$ =  $`r est_vec[1] + (2*est_vec[2]*0.236)`$
+
 
 ---
 
@@ -579,7 +576,7 @@ These suggest a *better* model; something in the **Poisson** family<sup>1</sup>
 You can learn about these in CaRM modules or textbooks
 
 .footnote[
-[1] I used a hierarchical negative binomial model in this paper
+[1] I used a hierarchical negative binomial regression in this paper
 ]
 
 ---
@@ -590,13 +587,13 @@ You can learn about these in CaRM modules or textbooks
 
    * Counts and other non-negative outcomes
    * Multiplicative relationships
-   * Interested in rates
+   * Interested in *rates*
 
 --
 
 * **Binomial**, e.g., logit / logistic regression
    * Binary (0/1) or fractional outcomes (0–1)
-   * Interested in probabilities
+   * Interested in *probabilities*
 
 --
 
@@ -610,7 +607,7 @@ You can learn about these in CaRM modules or textbooks
 * **Hierarchical models**
    * Nested data, e.g., blocks in neighborhoods
    * Repeated observations, e.g., person-years
-      * **Time series** and **panel models** are included here
+      * **Panel models** are included here
 
 ---
 
@@ -635,10 +632,10 @@ This is *very hard* to do, but if you want to do it, read VanderWeele (2015) *Ex
 
 ## Fixed Effects
 
-One problem with my analysis is I don't observe *change* in the built environment—I only had one time point!
+One problem with my analysis is I don't observe *change* in the built environment—I only had one time point for those measures!
 
 * There might be unmeasured differences between neighborhoods or blocks explaining my effects
-* If I'd had at least two measures, I could make a more convincing test by *looking only at changes*
+* If I'd had at least two measures, I could make a more convincing test by *looking only at change*
 
 --
 

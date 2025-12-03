@@ -21,7 +21,7 @@ class: center, top, title-slide
 ### Charles Lanfear
 ]
 .date[
-### 3 Dec 2025<br>Updated: 02 Dec 2025
+### 3 Dec 2025<br>Updated: 03 Dec 2025
 ]
 
 ---
@@ -344,10 +344,6 @@ full_model &lt;-
 ![](slides_complications_files/figure-html/mod-dag-2-1.svg)&lt;!-- --&gt;
 
 
-.footnote[
-Note that only arrows going into **Crime** go into the model formula
-]
-
 ---
 ## Full Model Results
 
@@ -356,7 +352,7 @@ There are many parameters, so `tidy()` it up:
 .text-80[
 
 ``` r
-tidy(full_model) |&gt; mutate(across(-term, ~round(., 3)))
+tidy(full_model) |&gt; mutate(across(-term, ~round(., 3))) # round everything
 ```
 
 ```
@@ -390,7 +386,7 @@ tidy(full_model) |&gt; mutate(across(-term, ~round(., 3)))
 .text-80[
 
 ``` r
-anova(neighb_model, full_model) |&gt; tidy()
+anova(neighb_model, full_model) |&gt; tidy() # You can tidy anova() output
 ```
 
 ```
@@ -410,7 +406,7 @@ The model fits quite a bit better; `\(R^2\)` increases from 0.21 to 0.31 too
 
 ``` r
 tidy(full_model) |&gt; mutate(across(-term, ~round(., 3))) |&gt; 
-  filter(str_detect(term, "CE"))
+  filter(str_detect(term, "CE")) # Get only collective efficacy terms
 ```
 
 ```
@@ -449,21 +445,21 @@ Why did I include that?
 full_noquad_model &lt;- 
   lm(CRIME_violent_2004_2006 ~ CE_hlm_2001 + CE_hlm_1995 + 
        FAC_disadv_2000 + FAC_stability_2000 + FAC_hispimm_2000 + density_ltdb_nc_2000 + 
-       density_block + street_class_near + 
+*      density_block + street_class_near +
        BE_pr_vacant_onstreet_block_2001 + BE_pr_abandoned_bld_onstreet_block_2001 +
        BE_pr_commer_dest_onstreet_block_2001 + BE_pr_recreation_block_2001 +
        BE_pr_parking_block_2001  + BE_pr_commercial_block_2001 + 
        BE_pr_bar_onstreet_block_2001 + BE_pr_liquor_onstreet_block_2001, 
      data = ccahs_block_analytical_unstd)
-anova(full_noquad_model, full_model) |&gt; tidy() |&gt; mutate(p.value = round(p.value, 3))
+anova(full_noquad_model, full_model) |&gt; tidy() 
 ```
 
 ```
 ## # A tibble: 2 × 7
-##   term              df.residual    rss    df sumsq statistic p.value
-##   &lt;chr&gt;                   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
-## 1 CRIME_violent_20…        1624 79705.    NA   NA       NA        NA
-## 2 CRIME_violent_20…        1623 79069.     1  636.      13.0       0
+##   term             df.residual    rss    df sumsq statistic  p.value
+##   &lt;chr&gt;                  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 CRIME_violent_2…        1624 79705.    NA   NA       NA   NA      
+## 2 CRIME_violent_2…        1623 79069.     1  636.      13.0  3.13e-4
 ```
 ]
 
@@ -476,17 +472,15 @@ anova(full_noquad_model, full_model) |&gt; tidy() |&gt; mutate(p.value = round(p
 
 
 ``` r
-full_model |&gt; tidy() |&gt; 
-  filter(str_detect(term, "density_block")) |&gt; 
-  mutate(p.value = round(p.value, 3))
+full_model |&gt; tidy() |&gt; filter(str_detect(term, "density_block"))
 ```
 
 ```
 ## # A tibble: 2 × 5
-##   term               estimate std.error statistic p.value
-##   &lt;chr&gt;                 &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
-## 1 density_block          69.9      12.6      5.54       0
-## 2 I(density_block^2)   -382.      106.      -3.61       0
+##   term               estimate std.error statistic      p.value
+##   &lt;chr&gt;                 &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;
+## 1 density_block          69.9      12.6      5.54 0.0000000348
+## 2 I(density_block^2)   -382.      106.      -3.61 0.000313
 ```
 
 Effect of density: 69.87 -763*`density_block` 
@@ -495,15 +489,17 @@ Effect of density: 69.87 -763*`density_block`
 
 
 ``` r
-ccahs_block_analytical_unstd |&gt; pull(density_block) |&gt; round(3) %&gt;% 
-  {setNames(c(min(.), median(.), max(.)), c("min", "mean", "max"))}
+ccahs_block_analytical_unstd |&gt; pull(density_block) |&gt; 
+  range() |&gt; round(3)
 ```
 
 ```
-##    min   mean    max 
-## -0.035 -0.006  0.236
+## [1] -0.035  0.236
 ```
-Effect of density at its max: `\(69.87 -763*0.236\)` =  `\(-110.198\)`
+
+*Positive* effect of density at its min: `\(69.87 -763*-0.035\)` =  `\(96.575\)`&lt;br&gt;
+*Negative* effect of density at its max: `\(69.87 -763*0.236\)` =  `\(-110.198\)`
+
 
 ---
 
@@ -565,39 +561,24 @@ I did toss the results in the appendix though
 .text-60[
 
 ``` r
-full_int_model |&gt; tidy() |&gt; print(n=26)
+full_int_model |&gt; tidy() 
 ```
 
 ```
 ## # A tibble: 26 × 5
-##    term                        estimate std.error statistic  p.value
-##    &lt;chr&gt;                          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-##  1 (Intercept)                  8.42e-1 0.601        1.40   1.61e- 1
-##  2 CE_hlm_2001                 -3.43e-1 0.207       -1.66   9.74e- 2
-##  3 CE_hlm_1995                 -1.43e-1 0.250       -0.572  5.68e- 1
-##  4 FAC_disadv_2000              3.80e+0 0.760        5.00   6.48e- 7
-##  5 FAC_stability_2000           6.86e-1 0.520        1.32   1.88e- 1
-##  6 FAC_hispimm_2000            -3.80e+0 0.414       -9.17   1.41e-19
-##  7 density_ltdb_nc_2000         1.38e-4 0.0000550    2.51   1.21e- 2
-##  8 density_block                4.57e+1 9.11         5.01   5.95e- 7
-##  9 density_block_2             -2.99e+1 7.70        -3.89   1.05e- 4
-## 10 street_class_near            1.56e+0 0.241        6.49   1.17e-10
-## 11 BE_pr_vacant_onstreet_bloc… -6.04e-1 0.906       -0.666  5.05e- 1
-## 12 BE_pr_abandoned_bld_onstre…  2.88e+0 1.21         2.37   1.78e- 2
-## 13 BE_pr_commer_dest_onstreet…  3.75e+0 1.15         3.27   1.10e- 3
-## 14 BE_pr_recreation_block_2001  6.70e+0 1.93         3.47   5.41e- 4
-## 15 BE_pr_parking_block_2001     2.00e+0 1.19         1.68   9.36e- 2
-## 16 BE_pr_commercial_block_2001  6.34e-1 1.10         0.578  5.63e- 1
-## 17 BE_pr_bar_onstreet_block_2… -2.74e+0 1.66        -1.64   1.01e- 1
-## 18 BE_pr_liquor_onstreet_bloc…  2.91e+0 1.99         1.46   1.43e- 1
-## 19 FAC_disadv_2000:BE_pr_vaca…  6.92e-1 1.84         0.377  7.06e- 1
-## 20 FAC_disadv_2000:BE_pr_aban…  6.44e-1 2.35         0.275  7.84e- 1
-## 21 FAC_disadv_2000:BE_pr_comm…  2.03e+0 2.28         0.890  3.74e- 1
-## 22 FAC_disadv_2000:BE_pr_recr…  4.83e+0 3.52         1.37   1.69e- 1
-## 23 FAC_disadv_2000:BE_pr_park…  3.45e-1 2.22         0.156  8.76e- 1
-## 24 FAC_disadv_2000:BE_pr_comm…  1.15e-1 2.16         0.0531 9.58e- 1
-## 25 FAC_disadv_2000:BE_pr_bar_… -9.31e+0 3.43        -2.72   6.65e- 3
-## 26 FAC_disadv_2000:BE_pr_liqu…  8.03e+0 3.87         2.08   3.81e- 2
+##    term                   estimate std.error statistic  p.value
+##    &lt;chr&gt;                     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 (Intercept)            0.842    0.601         1.40  1.61e- 1
+##  2 CE_hlm_2001           -0.343    0.207        -1.66  9.74e- 2
+##  3 CE_hlm_1995           -0.143    0.250        -0.572 5.68e- 1
+##  4 FAC_disadv_2000        3.80     0.760         5.00  6.48e- 7
+##  5 FAC_stability_2000     0.686    0.520         1.32  1.88e- 1
+##  6 FAC_hispimm_2000      -3.80     0.414        -9.17  1.41e-19
+##  7 density_ltdb_nc_2000   0.000138 0.0000550     2.51  1.21e- 2
+##  8 density_block         45.7      9.11          5.01  5.95e- 7
+##  9 density_block_2      -29.9      7.70         -3.89  1.05e- 4
+## 10 street_class_near      1.56     0.241         6.49  1.17e-10
+## # ℹ 16 more rows
 ```
 ]
 
