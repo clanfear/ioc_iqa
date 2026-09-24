@@ -1,0 +1,195 @@
+/*-- scss:defaults --*/
+
+// fonts
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700');
+
+$font-family-sans-serif: "EB Garamond", serif !default;
+$font-family-monospace: "Fira Code", courier !default;
+$presentation-heading-font: "EB Garamond", serif !default;
+$presentation-heading-font-weight: 600;
+$presentation-h1-font-size: 2.5em;
+
+// colors
+
+
+/*
+#8EE8D8
+#00BDB6
+#133844
+
+#FD8153
+#CD3572
+#A368DF
+#5366E0
+#4DB78C
+*/
+$color-bg-primary: #ECEEF1;
+$color-text-primary: #232830;
+$color-highlight-primary: #DD3025;
+$color-accent-primary: #DD3025;
+
+$color-bg-invert: #133844;
+$color-text-invert: #FD8153;
+$color-highlight-invert: #FD8153;
+$color-accent-invert: #00BDB6;
+
+
+$color-bg-code: #133844;
+$color-text-code: #ECEEF1;
+$color-highlight-code: #FD8153;
+$color-accent-code: #00BDB6;
+
+
+
+/*
+$color-bg-primary: #fff5e5;
+$color-text-primary: #333d4d;
+$color-highlight-primary: #b0514a;
+$color-accent-primary: #da9262;
+
+$color-bg-invert: #b0514a;
+$color-text-invert: #fff5e5;
+$color-highlight-invert: #7eb7cc;
+$color-accent-invert: #326b69;
+*/
+
+
+$body-bg: $color-bg-primary !default;
+$body-color: $color-text-primary !default;
+$link-color: $color-highlight-primary !default;
+$selection-bg: $color-accent-primary !default;
+
+$code-color: $color-text-primary !default;
+$code-bg: #d1ccc4 !default;
+
+$code-block-bg: #333d4d !default;
+
+$presentation-heading-color: $color-highlight-primary !default;
+$presentation-h1-font-size: 3.77em !default;
+
+/*-- scss:rules --*/
+
+.sourceCode .co {
+  color: $color-text-code; 
+}
+
+.reveal code.sourceCode .code-annotation-anchor  {
+  color: $color-text-code; 
+}
+
+mjx-container[display="true"] {
+  margin: 0em 0 !important;
+}
+
+.reveal div.sourceCode pre code > span.highlight-line {
+  display: inline-block;
+  width: 100%;
+  background-color: $color-highlight-code;
+  color: $color-bg-code;
+  border-radius: 3px;
+}
+
+.reveal table td {
+  border-bottom: none;
+}
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.reveal img, 
+.reveal figure,
+.reveal .quarto-figure {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+.reveal section img {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+li li { font-size: 80%; }
+
+// lua filter classes for h1 type slides
+.inv-title h1 {
+  color: $color-text-invert !important;
+  background-color: $color-bg-invert;
+}
+.inv-title p {
+  color: $color-text-invert !important;
+  background-color: $color-bg-invert;
+}
+.inv-title code {
+  background-color: $color-bg-invert;
+}
+
+//
+
+/* Ripped blink from stack overflow result */
+.blink {
+  animation: blinker 1s linear infinite;
+}
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+#title-slide {
+  .title {
+    font-size: 2em;
+  }
+  .subtitle {
+    font-size: 1.7em;
+    font-style: italic;
+    color: $color-highlight-primary;
+  }
+}
+
+.reveal .slide-logo {
+  max-height: 5rem !important;
+  bottom: 15px;
+  right: 15px;
+}
+
+// Dark slide
+
+body strong {
+ color: $color-accent-primary;
+}
+
+.dark-slide strong {
+ color: $color-accent-code;
+}
+
+.dark-slide {
+ background-image: "img/logo-light.svg" !important;
+}
+
+.dark-slide {
+  background-color: $color-bg-code !important;
+}
+.dark-slide body {
+  color: $color-text-code !important;
+  background-color: $color-bg-code !important;
+}
+.dark-slide h1,
+.dark-slide h2,
+.dark-slide h3 {
+  color: $color-highlight-code !important;
+  background-color: $color-bg-code !important;
+}
+.dark-slide p {
+  color: $color-text-code !important;
+  background-color: $color-bg-code !important;
+}
+
+//
+
+.center {
+  text-align: center;
+}

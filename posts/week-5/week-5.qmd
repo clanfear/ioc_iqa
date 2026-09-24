@@ -2,7 +2,8 @@
 title: "Week 5: Linear Models II"
 description: "Mixing up models with continuous covariates."
 author: "Charles Lanfear"
-date: "2025-11-10"
+date: "2026-11-09"
+week: 5
 draft: false
 ---
 

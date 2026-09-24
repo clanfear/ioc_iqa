@@ -1,7 +1,6 @@
-# Sometimes important stuff is highlighted! #<<
-7 * 49
+7 * 49 # <1>
 
-# > (11-2
+# > (11 - 2
 # +
 
 123 + 456 + 789
@@ -35,8 +34,7 @@ load("new_object.RData")
 
 getwd()
 
-# setwd("C:/Users/")
-
+setwd("C:/Users/")
 getwd()
 
 data(USArrests)

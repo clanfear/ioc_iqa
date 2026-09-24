@@ -43,3 +43,5 @@ data/
 .quarto/*
 .quarto/
 .quarto/preview/lock
+
+**/*.quarto_ipynb

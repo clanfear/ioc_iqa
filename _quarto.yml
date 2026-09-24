@@ -2,6 +2,7 @@ project:
   type: website
   pre-render:
     - delete_index.R
+    - set_dates.R
   post-render:
     - create_redirect.R
 

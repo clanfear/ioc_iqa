@@ -2,7 +2,8 @@
 title: "Week 1: Fundamentals"
 description: "Review of maths and introduction to subsetting"
 author: "Charles Lanfear"
-date: "2025-10-15"
+date: "2026-10-12"
+week: 1
 draft: false
 ---
 
@@ -10,6 +11,6 @@ draft: false
 
 [.R script to follow along](https://clanfear.github.io/ioc_iqa/_lectures/1_fundamentals/slides_fundamentals.R)
 
-Reading (for *before* the seminar):
+Reading (for *before* the seminar): 
 
 * Kaplan (2022), [Chapter 1](https://crimebythenumbers.com/a-soup-to-nuts-project-example.html) and [Chapter 2](https://crimebythenumbers.com/intro-to-r.html)

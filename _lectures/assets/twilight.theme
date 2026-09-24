@@ -1,0 +1,86 @@
+{
+  "metadata": {
+    "name": "Twilight",
+    "revision": 1
+  },
+  "editor-colors": {
+    "text-color": "#F8F8F8"
+  },
+  "text-styles": {
+    "Normal": {
+      "text-color": "#F8F8F8"
+    },
+    "Keyword": {
+      "text-color": "#CDA869"
+    },
+    "DataType": {
+      "text-color": "#9B703F"
+    },
+    "DecVal": {
+      "text-color": "#FD8153"
+    },
+    "BaseN": {
+      "text-color": "#FD8153"
+    },
+    "Float": {
+      "text-color": "#FD8153"
+    },
+    "Char": {
+      "text-color": "#E9C062"
+    },
+    "String": {
+      "text-color": "#8ad164"
+    },
+    "Comment": {
+      "text-color": "#5F5A60",
+      "italic": true
+    },
+    "Function": {
+      "text-color": "#ffc382"
+    },
+    "Variable": {
+      "text-color": "#a3bbe6"
+    },
+    "ControlFlow": {
+      "text-color": "#00BDB6"
+    },
+    "Operator": {
+      "text-color": "#00BDB6"
+    },
+    "SpecialChar": {
+      "text-color": "#00BDB6"
+    },
+    "BuiltIn": {
+      "text-color": "#DAD085"
+    },
+    "Extension": {
+      "text-color": "#9B859D"
+    },
+    "Preprocessor": {
+      "text-color": "#899E9D"
+    },
+    "Attribute": {
+      "text-color": "#a3bbe6"
+    },
+    "Information": {
+      "text-color": "#5F5A60",
+      "italic": true
+    },
+    "Warning": {
+      "text-color": "#CF6A4C",
+      "bold": true
+    },
+    "Alert": {
+      "text-color": "#CF6A4C",
+      "background-color": "#141414",
+      "bold": true
+    },
+    "Error": {
+      "text-color": "#CF6A4C",
+      "underline": true
+    },
+    "Others": {
+      "text-color": "#00BDB6"
+    }
+  }
+}

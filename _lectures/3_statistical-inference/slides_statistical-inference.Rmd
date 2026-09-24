@@ -2,7 +2,7 @@
 title: "Statistical Inference"
 subtitle: "IQA Lecture 3"
 author: "Charles Lanfear"
-date: "29 Oct 2025<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
+date: "`r source('../reference_date.R'); get_date(3)`<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%d %b %Y'))`"
 output:
   xaringan::moon_reader:
     includes:

@@ -2,7 +2,8 @@
 title: "Week 6: Linear Models III"
 description: "Functional Forms: You thought you'd escaped calculus, but you were wrong"
 author: "Charles Lanfear"
-date: "2025-11-19"
+date: "2026-11-16"
+week: 6
 draft: false
 ---
 

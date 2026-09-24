@@ -24,7 +24,7 @@ median(x)
 
 table(x)
 
-table(x)[table(x) == max(table(x))] # Subsetting!
+table(x)[table(x) == max(table(x))] # Subsetting! # <1>
 
 z <- c(2, 5, 3, 5, 95)
 mean(z)
@@ -67,7 +67,7 @@ x <- 2
 
 USArrests[1,] # First row
 
-USArrests[1:3, 3:4] # First three rows, third and fourth column #<<
+USArrests[1:3, c(3,4)] # First three rows, third and fourth column # <1>
 
 USArrests["California",]
 
@@ -101,4 +101,4 @@ vector_w_missing == NA
 
 is.na(vector_w_missing)
 
-mean(vector_w_missing[!is.na(vector_w_missing)]) #<<
+mean(vector_w_missing[!is.na(vector_w_missing)]) # <1>
