@@ -77,6 +77,18 @@ $presentation-h1-font-size: 3.77em !default;
 
 .reveal code.sourceCode .code-annotation-anchor  {
   color: $color-text-code; 
+  border-color: $color-text-code;
+}
+
+.reveal :not(pre) > code {
+  padding: 0.05em 0.1em;
+  border-radius: 3px;
+}
+
+.reveal .dark-slide :not(pre) > code {
+  background-color: rgba(lighten($code-block-bg, 10%), 0.6);
+  padding: 0.05em 0.1em;
+  border-radius: 3px;
 }
 
 mjx-container[display="true"] {

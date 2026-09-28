@@ -27,7 +27,7 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
 ```
 
 
-## Course Goals
+## Course goals
 
 
 * Cultivate basic competence with applied statistics
@@ -149,9 +149,9 @@ Data wrangling is **frustrating**
 
 &nbsp;
 
-::: {.center style="font-size: 300%; color: #DD3025;"}
+::: {.center style="font-size: 400%; color: #DD3025;"}
 
-### **NO**
+**NO**
 
 :::
 
@@ -165,7 +165,7 @@ Data wrangling is **frustrating**
 
 &nbsp;
 
-::: {.center style="font-size: 300%; color: #DD3025;"}
+::: {.center style="font-size: 400%; color: #DD3025;"}
 
 **ALSO<br>NO**
 
@@ -208,6 +208,7 @@ Data wrangling is **frustrating**
 
 :::::
 
+&nbsp;
 
 . . .
 
@@ -233,11 +234,11 @@ Data wrangling is **frustrating**
 
 Location: B3/B4, Wed, 14:00-16:00
 
-XXXX's email: []()
+Andrea's email: [ayt23@cam.ac.uk](mailto:ayt23@cam.ac.uk)
 
 * Your first point of contact for troubleshooting!
 
-My email: [cl948@cam.ac.uk]()
+My email: [cl948@cam.ac.uk](mailto:cl948@cam.ac.uk)
 
 * For non-troubleshooting questions—or *really* broken stuff
 
@@ -249,7 +250,7 @@ My email: [cl948@cam.ac.uk]()
 
 &nbsp;
 
-All course materials are on the course website: [http://clanfear.github.io/ioc_iqa](). 
+All course materials are on the course website: [http://clanfear.github.io/ioc_iqa](http://clanfear.github.io/ioc_iqa)
 
 This includes:
 
@@ -260,7 +261,7 @@ This includes:
 
 If something doesn't work, email me.
 
-## A Note on Slide Formatting
+## A Note on slide formatting
 
 **Bold** is an important term.
 
@@ -307,7 +308,7 @@ If one already knows Excel, SPSS, or Stata, why use R?
 * R has a *very* large community for support and packages.
 * R can handle virtually any data format.
 * R makes replication *easy*.
-* R is a *language* so it can do *everything*.^[Including making these slides and the course webpage.]
+* R is a *language* so it can do *everything*.
 * R is similar to other common programming languages, e.g.: Python, SQL
 
 :::
@@ -331,7 +332,7 @@ It can also...
 * Run interactive tutorials
 * Handle other languages like Python, SQL, $\LaTeX$,  and HTML
 
-## Getting Started
+## Getting started
 
 Open up RStudio now and choose *File \> New File \> R Script*.
 
@@ -350,7 +351,7 @@ Then, let's get oriented with the interface:
 
 You can change the layout in *Preferences \> Pane Layout*
 
-## Editing and Running Code
+## Editing and running code
 
 There are several ways to run R code in RStudio:
 
@@ -368,7 +369,7 @@ There are several ways to run R code in RStudio:
 
 The console will show the lines you ran followed by any printed output.
 
-## Incomplete Code
+## Incomplete code
 
 &nbsp;
 
@@ -381,7 +382,9 @@ If you mess up (e.g. leave off a parenthesis), R might show a `+` sign prompting
 
 Finish the command or hit `Esc` to get out of this.
 
-## R as a Calculator
+## R as a calculator
+
+&nbsp;
 
 In the **console**, type `123 + 456 + 789` and hit `Enter`.
 
@@ -397,7 +400,7 @@ The `[1]` in the output indicates the numeric **index** of the first element on 
 
 . . .
 
-Now in your blank R document in the **editor**, try typing the line `sqrt(400)` and either clicking *Run* or hitting `Ctrl+Enter` or `⌘+Enter`.
+<br>Now in your blank R document in the **editor**, try typing the line `sqrt(400)` and either clicking *Run* or hitting `Ctrl+Enter` or `⌘+Enter`.
 
 . . .
 
@@ -405,7 +408,9 @@ Now in your blank R document in the **editor**, try typing the line `sqrt(400)` 
 sqrt(400)
 ```
 
-## Functions and Help
+## Functions and help
+
+&nbsp;
 
 `sqrt()` is an example of a **function** in R.
 
@@ -419,17 +424,17 @@ If we didn't have a good guess as to what `sqrt()` will do, we can type `?sqrt` 
 
 . . .
 
-**Arguments** are the *inputs* to a function. In this case, the only argument to `sqrt()` is `x` which can be a number or a vector of numbers.
+<br>**Arguments** are the *inputs* to a function. In this case, the only argument to `sqrt()` is `x` which can be a number or a vector of numbers.
 
-Help files provide documentation on how to use functions and what functions produce.
+<br>Help files provide documentation on how to use functions and what functions produce.
 
-## Creating Objects
+## Creating objects
 
-R stores *everything* as an **object**, including data, functions, models, and output.
+R stores *everything* as an **object**, including data, functions, and output.
 
 . . .
 
-You can give an object a name using the **assignment operator**: `<-`
+<br>You can give an object a name using the **assignment operator**: `<-`
 
 . . .
 
@@ -439,16 +444,7 @@ new.object <- 144
 
 . . .
 
-**Operators** like `<-` are functions that look like symbols but typically sit between their arguments (e.g. numbers or objects) instead of having them inside `()` like in `sqrt(x)`.
-
-
-. . .
-
-We do math with operators, e.g., `x + y`. `+` is the addition operator!
-
-. . .
-
-Object names can contain `_` and `.` in them, but cannot *begin* with numbers. Try to be consistent in naming objects.
+<br>Object names can contain `_` and `.` in them, but cannot *begin* with numbers. Try to be consistent in naming objects.
 
 . . .
 
@@ -456,7 +452,41 @@ Auto-complete means *long names are better than vague ones*!
 
 *Good names* save confusion later.
 
-## Using Objects
+. . .
+
+&nbsp;
+
+::: {.center}
+
+*But wait, what's an operator?*
+
+:::
+
+## Operators
+
+&nbsp;
+
+**Operators** like `<-` are functions that look like symbols but typically sit between their arguments (e.g. numbers or objects) instead of having them inside `()` like in `sqrt(x)`.
+
+
+. . .
+
+<br>We do math with operators, e.g., `x + y`. `+` is the addition operator!
+
+
+Operators galore:
+
+```{r}
+8 * (33 + 92) / 4
+```
+. . .
+
+::: {.center}
+<br>*Okay, back to objects*
+
+:::
+
+## Using objects
 
 You can display or "call" an object simply by using its name.
 
@@ -466,7 +496,7 @@ new.object
 
 . . .
 
-You can treat the object's **name** as if it were the values assigned to it.
+<br>You can treat the object's **name** as if it were the values assigned to it.
 
 . . .
 
@@ -476,7 +506,7 @@ new.object + new.object
 sqrt(new.object)
 ```
 
-## Creating Vectors
+## Creating vectors
 
 A **vector** is a series of **elements**, such as numbers.
 
@@ -497,15 +527,17 @@ Assigning to an existing name *overwrites that object*.
 
 . . .
 
-You can provide a vector as an argument for many functions.
+<br>You can provide a vector as an argument for many functions.
 
 . . .
 
 ```{r Vectors 2}
-sqrt(new.object)
+sqrt(new.object) # <1>
 ```
 
-## Character Vectors
+1. This gives the square root of each number in the vector
+
+## Character vectors
 
 We often work with data that are categorical. To create a vector of text elements—**strings** in programming terms—we must place the text in quotes:
 
@@ -516,7 +548,7 @@ string.vector
 
 . . .
 
-Categorical data can also be stored as a **factor**, which has an underlying numeric representation.^[Factors have **levels** which you can use to set a reference category in models using `relevel()`. We'll use this in a few weeks.]
+<br>Categorical data can also be stored as a **factor**, which has an underlying numeric representation.^[Factors have **levels** which can be used to set a reference category in models using `relevel()`. We'll use this later!]
 
 ```{r}
 factor.vector <- factor(string.vector)
@@ -524,12 +556,16 @@ factor.vector
 ```
 
 
-## Saving and Loading Objects
+## Saving and loading objects
+
+&nbsp;
 
 You can save an R object on your computer as a file to open later:
 ```{r}
 save(new.object, file="new_object.RData")
 ```
+
+&nbsp;
 
 . . .
 
@@ -542,7 +578,9 @@ load("new_object.RData")
 
 But where are these files being saved and loaded from?
 
-## Working Directories
+## Working directories
+
+&nbsp;
 
 R saves files and looks for files to open in your current **working directory**. You
 can ask R what this is:
@@ -551,6 +589,8 @@ can ask R what this is:
 ```{r}
 getwd()
 ```
+
+&nbsp;
 
 . . .
 
@@ -562,7 +602,11 @@ getwd()
 ```
 
 
-## More Complex Objects
+. . .
+
+<br>It is generally best to *not* do this, however; we'll work with **projects** later
+
+## More complex objects
 
 The same principles can be used to create more complex objects:
 
@@ -578,7 +622,7 @@ Most data sets you will work with will be read into R and stored as a **datafram
 Consequently, we will focus on manipulating and analyzing these dataframes.
 
 
-# Data Frames
+# Data frames
 
 ## AKA flat files or spreadsheets {.dark-slide} 
 
@@ -586,30 +630,30 @@ Consequently, we will focus on manipulating and analyzing these dataframes.
 
 ![](img/flat-sassy.PNG)
 
-## What's Up with `USArrests`?
+## What's up with `USArrests`?
 
-In our R script, let's load the built-in dataframe `USArrests`. 
+In our R script, let's load the built-in dataframe `USArrests`: 
+
+
+```{r}
+data(USArrests) # <1>
+```
+
+1. This loads the dataframe into the **Global Environment**^[As a *promise*, an *unevaluated argument*. Read more about R's [lazy evaluation here](http://adv-r.had.co.nz/Functions.html).].
+
+. . .
+
+<br>`View(USArrests)` pops up a **Viewer** pane ("interactive" use only, don't put in R Markdown document!) or...
 
 . . .
 
 ```{r}
-data(USArrests)
+head(USArrests, 5) # <2> 
 ```
 
+2. This prints the first 5 rows; use `tail()` for the last rows
 
-`data(USArrests)` loads this dataframe into the **Global Environment** (as a *promise*^[Promises are *unevaluated arguments*. Read more about R's [lazy evaluation here](http://adv-r.had.co.nz/Functions.html).]).
-
-. . .
-
-`View(USArrests)` pops up a **Viewer** pane ("interactive" use only, don't put in R Markdown document!) or...
-
-. . .
-
-```{r}
-head(USArrests, 5) # prints first 5 rows, see tail() too
-```
-
-## More About `USArrests`
+## More about `USArrests`
 
 `str()` displays the structure of an object:
 
@@ -623,7 +667,7 @@ str(USArrests) # str[ucture]
 
 . . .
 
-`summary()` displays summary information:^[`summary()` provides different information for different types of objects!]
+<br>`summary()` displays summary information:^[`summary()` provides different information for different types of objects!]
 
 ::: {style="font-size: 85%;"}
 
@@ -644,13 +688,15 @@ summary(USArrests)
 
 ![](img/swirl_new_large_final.png)
 
-## Installing Packages
+## Installing packages
+
+&nbsp;
 
 Let's give you a way to practice basics on your own. To do this, we'll want to install a **package** called `{swirl}`
 
 Packages contain premade functions and/or data we can use. R's strength comes from packages!
 
-In the console, type `install.packages("swirl")`.
+<br>In the console, type `install.packages("swirl")`.
 
 ::: {.incremental}
 
@@ -659,26 +705,39 @@ In the console, type `install.packages("swirl")`.
 
 :::
 
-. . .
+## Loading packages
 
-We can load packages like `{swirl}` using the `library()` function.
+&nbsp;
+
+We can load packages like `{swirl}` using the `library()` function:
 
 ```{r, eval=FALSE}
 library(swirl)
 ```
 
+&nbsp;
+
 You could then use `swirl()` to start tutorials.
 
-## For Next Time {.dark-slide}
+. . .
+
+&nbsp;
+
+When writing scripts, it is best to always use `library()` at the beginning
+
+* It makes it clear what is needed to run the code
+* It avoids creating conflicts when re-running code
+
+## For next time {.dark-slide}
 
 
 * [Check out the IQA website](https://clanfear.github.io/ioc_iqa/_site/)
 
-* Try out some `swirl` tutorials
+* Try out some `{swirl}` tutorials
    * Use `library(swirl)` to load the package
    * Once loaded, use `swirl()` to start the tutorial interface
       * *READ THE INSTRUCTIONS*
-   * Try out `R Programming` lessons#we're up to the equivalent of about 5
+   * Try out `R Programming` lessons; we're up to the equivalent of about 5
 
 * Read first two chapters of Kaplan (2022)
    * Try to run the code in Chapter 2 as you read
