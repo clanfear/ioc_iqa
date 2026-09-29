@@ -2,7 +2,7 @@
 title: "Week 7: Linear Models IV"
 description: "Interactions: Handling heterogeneity"
 author: "Charles Lanfear"
-date: "2026-11-23"
+date: "2026-11-25"
 week: 7
 draft: false
 ---

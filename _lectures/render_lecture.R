@@ -16,5 +16,5 @@ render_lecture <- function(x, purl = TRUE){
     list(input = .x)
   ))
 }
-render_lecture(1)
+render_lecture(0)
 
