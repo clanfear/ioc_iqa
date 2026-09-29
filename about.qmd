@@ -13,8 +13,8 @@ Wednesday, 14:00–16:00<br>
 B3/B4<br>
 &nbsp;<br>
 TA:<br>
-Natalia Cabrera-Morales<br>
-[nc603@cam.ac.uk](mailto:nc603@cam.ac.uk)
+Andrea Tam<br>
+[ayt23@cam.ac.uk](mailto:ayt23@cam.ac.uk)
 
 :::
 
@@ -23,18 +23,18 @@ Natalia Cabrera-Morales<br>
 :::
 
 ::: {.g-col-4}
-Charles C. Lanfear<br> [cl948\@cam.ac.uk](cl948@cam.ac.uk "Email")<br>
+Charles C. Lanfear<br> [cl948@cam.ac.uk](mailto:cl948@cam.ac.uk)<br>
 [Schedule a meeting](https://calendar.app.google/KEYJzwgrBiASKzwH6)
 :::
 
 :::
 
-*Introduction to Quantitative Analysis* (IQA) focuses on training quantitative research methods. Students will learn how to apply the most common and flexible statistical analysis techniques and interpret their results. To facilitate analysis, students will learn modern programming approaches for preparing data for analyses using the R programming language. They will also be introduced to project management and open science principles. IQA is covers similar material to the CaRM units *Foundations in Applied Statistics* and *Basic Quantitative Analysis* as well as *Introduction to R*.
+*Introduction to Quantitative Analysis* (IQA) focuses on training quantitative research methods. Students will learn how to apply the most common and flexible statistical analysis techniques and interpret their results. To facilitate analysis, students will learn modern programming approaches for preparing data for analyses using the R programming language. They will also be introduced to project management and open science principles. IQA covers and extends beyond the material found in the CaRM units *Foundations in Applied Statistics*, *Basic Quantitative Analysis*, and *Introduction to R*.
 
 
 # Materials
 
-There are two core texts for this course. They are available free online but may be ordered in print form. For the first half of the course, you will mainly be reading about R whie you get up to speed with quantitative research design in *Criminological Research Methods*.
+There are two core texts for this course. They are available free online but may be ordered in print form. For the first half of the course, you will mainly be reading about R while you get up to speed with quantitative research design in *Criminological Research Methods*.
 
 -   [Huntington-Klein, Nick. 2021 *The Effect: An Introduction to Research Design and Causality*](https://theeffectbook.net/)
 

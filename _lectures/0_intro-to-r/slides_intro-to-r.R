@@ -11,6 +11,8 @@ sqrt(400)
 
 new.object <- 144
 
+8 * (33 + 92) / 4
+
 new.object
 
 new.object + 10
@@ -20,7 +22,7 @@ sqrt(new.object)
 new.object <- c(4, 9, 16, 25, 36)
 new.object
 
-sqrt(new.object)
+sqrt(new.object) # <1>
 
 string.vector <- c("Atlantic", "Pacific", "Arctic", "Pacific")
 string.vector
@@ -37,9 +39,9 @@ getwd()
 setwd("C:/Users/")
 getwd()
 
-data(USArrests)
+data(USArrests) # <1>
 
-head(USArrests, 5) # prints first 5 rows, see tail() too
+head(USArrests, 5) # <2> 
 
 str(USArrests) # str[ucture]
 
