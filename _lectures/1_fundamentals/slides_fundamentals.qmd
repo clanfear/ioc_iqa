@@ -2,7 +2,7 @@
 title: "Fundamentals"
 subtitle: "IQA Lecture 1"
 author: "Charles Lanfear"
-date: "`r source('../reference_date.R'); get_date(0, raw=TRUE)`"
+date: "`r source('../reference_date.R'); get_date(1, raw=TRUE)`"
 format:
   revealjs:
     theme: ../assets/ioc.scss
@@ -105,13 +105,27 @@ Matrices are indexed with subscripts for *rows*, *columns* (e.g., $x_{ij}$)
 
 . . .
 
-$$X = \begin{bmatrix}3 & 5\\4 & 6\end{bmatrix} \;\;\; x_{2,1} = 4$$
+$$X = \begin{bmatrix}3 & 5\\ {\color{red}4} & 6\end{bmatrix} \;\;\; x_{2,1} = {\color{red}4}$$
 
 
-. . .
 
+::: {.r-stack}
+
+::: {.fragment .fade-in-then-out}
 
 $$X = \begin{bmatrix}6 & 2 & 3\\1 & 9 & 5\\4 & 8 & 0\end{bmatrix} \;\;\; \text{What is } x_{3,2}?$$
+
+:::
+
+::: {.fragment}
+
+$$X = \begin{bmatrix}6 & 2 & 3\\1 & 9 & 5\\4 & {\color{red}8} & 0\end{bmatrix} \;\;\; x_{3,2} = {\color{red}8}$$
+
+:::
+
+:::
+
+
 
 
 ## Matrices in R
@@ -420,7 +434,7 @@ $a$ is the **intercept**
 $b$ is the **slope**
 
 * The units of $y$ the line rises for every unit increase in $x$
-* You can restate this as the *ratio* that $y$ increases relative to $x$
+* You can restate this as the *ratio* or *coefficient* that $y$ increases relative to $x$
 
 :::
 
@@ -437,7 +451,7 @@ $y = 1 + 0.5x$
 
 ```{r}
 #| fig.height: 3.5
-plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y", xaxs = "i", yaxs = "i")
 abline(a = 1, b = 0.5)
 ```
 
@@ -451,7 +465,7 @@ $y = 3 + 0.5x$
 
 ```{r}
 #| fig.height: 3.5
-plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y", xaxs = "i", yaxs = "i")
 abline(a = 3, b = 0.5)
 ```
 
@@ -464,7 +478,7 @@ $y = 2 + 0.5x$
 
 ```{r}
 #| fig.height: 3.5
-plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y", xaxs = "i", yaxs = "i")
 abline(a = 2, b = 0.5)
 ```
 
@@ -477,7 +491,7 @@ $y = 2 + 0.5x$
 
 ```{r}
 #| fig.height: 3.5
-plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y", xaxs = "i", yaxs = "i")
 abline(a = 2, b = 0.5)
 ```
 
@@ -489,7 +503,7 @@ $y = 2 + 0x$
 
 ```{r}
 #| fig.height: 3.5
-plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y", xaxs = "i", yaxs = "i")
 abline(a = 2, b = 0)
 ```
 
@@ -501,7 +515,7 @@ $y = 2 + 2x$
 
 ```{r}
 #| fig.height: 3.5
-plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y", xaxs = "i", yaxs = "i")
 abline(a = 2, b = 2)
 ```
 
@@ -564,14 +578,14 @@ curve(2 + 0.5*x + 0.25*x^2, from = -2, to = 2, ylab = "y")
 What is the slope of this curve?
 
 
-## Taking the Derivative
+## Taking the derivative
 
 While a curve has many different slopes, all those slopes can be defined by a single derivative
 
 
 . . .
 
-Given $y = a + x^n$, $\frac{dy}{dx} = nx^{n-1}$
+Given $y = a + x^n$, the derivative is $\frac{dy}{dx} = nx^{n-1}$
 
 Basic rules:
 
@@ -587,7 +601,7 @@ So...
 * When $x = 3$ the slope is $0.5 + 0.5*3 = 2$.
 
 
-## Cubic Derivative
+## Cubic derivative
 
 These rules work for polynomials with more terms.
 

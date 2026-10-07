@@ -42,22 +42,22 @@ abline(h=0, lty = "dashed")
 abline(v=0, lty = "dashed")
 text(x = c(0, 6, 0), y = c(0, 0, 6), labels = c("Origin", "X-Axis", "Y-Axis"), cex = 1.5, col = "red")
 
-plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y", xaxs = "i", yaxs = "i")
 abline(a = 1, b = 0.5)
 
-plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y", xaxs = "i", yaxs = "i")
 abline(a = 3, b = 0.5)
 
-plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y", xaxs = "i", yaxs = "i")
 abline(a = 2, b = 0.5)
 
-plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y", xaxs = "i", yaxs = "i")
 abline(a = 2, b = 0.5)
 
-plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y", xaxs = "i", yaxs = "i")
 abline(a = 2, b = 0)
 
-plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y")
+plot(c(0,5), c(0,5), type = "n", xlab = "x", ylab = "y", xaxs = "i", yaxs = "i")
 abline(a = 2, b = 2)
 
 curve(2 + 0.5*x + 0.25*x^2, from = -2, to = 2, ylab = "y")
