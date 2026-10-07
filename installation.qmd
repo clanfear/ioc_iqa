@@ -31,7 +31,7 @@ In the instructions below, anywhere it says (version), there will be a series of
 1. Go to the [MacOS Installers page](https://cran.r-project.org/bin/macosx/).
     * Scroll to "Latest release"
     * Click `R-(version).pkg` to download: Whatever version is listed will be the most current.
-       * If your Mac is less than 5 years old, you want the `arm64` version.
+       * Unless your Mac is incredibly ancient, you want the `arm64` version.
    
 2. Run the installer.
     * Follow the on-screen instructions.
@@ -44,8 +44,8 @@ In the instructions below, anywhere it says (version), there will be a series of
 
 ### Windows
 
-1. Go to the [Installers page](https://posit.co/download/rstudio-desktop/#download).
-   * Click `Download RStudio for Windows` or, under All Installers, the link next to  `Windows 10/11` to download: Whatever version is listed will be the most current.
+1. Go to the [Installers page](https://docs.posit.co/ide/user/#rstudio-ide-oss-downloads).
+   * Click the link next to  `Windows 11` (or whatever is current) to download: Whatever version is listed will be the most current.
 
 2. Run the installer.
    * If the installer asks, grant it administrative privileges to install.
@@ -61,8 +61,8 @@ In the instructions below, anywhere it says (version), there will be a series of
 
 ### MacOS
 
-1. Go to the [Installers page](https://posit.co/download/rstudio-desktop/#download).
-   * Click `Download RStudio for MacOS` or, under All Installers, the link next to `macOS 12+` to download: Whatever version is listed will be the most current.
+1. Go to the [Installers page](https://docs.posit.co/ide/user/#rstudio-ide-oss-downloads).
+   * Click the link next to `macOS 14+` (or whatever is current) to download: Whatever version is listed will be the most current.
 
 2. Run the installer.
    * Follow the on-screen instructions.
