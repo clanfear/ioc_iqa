@@ -70,10 +70,14 @@ knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=TRUE, warning=TRUE, dev = "s
 
 ## Vectors in R
 
+&nbsp;
+
 ```{r}
 x <- c(3, 4, 5) # Create x, a vector of length 3
 x
 ```
+
+&nbsp;
 
 . . .
 
@@ -83,11 +87,11 @@ Indexing $x_3$:
 x[3] # Get the third element of x
 ```
 
+&nbsp;
+
 . . .
 
-We can index multiple elements.
-
-Index $x_2$ and $x_3$:
+We can index multiple elements, e.g,  $x_2$ and $x_3$:
 
 ```{r}
 x[c(2,3)] # Get the second and third elements of x
@@ -119,7 +123,7 @@ $$X = \begin{bmatrix}6 & 2 & 3\\1 & 9 & 5\\4 & 8 & 0\end{bmatrix} \;\;\; \text{W
 
 ::: {.fragment}
 
-$$X = \begin{bmatrix}6 & 2 & 3\\1 & 9 & 5\\4 & {\color{red}8} & 0\end{bmatrix} \;\;\; x_{3,2} = {\color{red}8}$$
+$$X = \begin{bmatrix}6 & 2 & 3\\1 & 9 & 5\\4 & {\color{red}8} & 0\end{bmatrix} \;\;\;\;\;\;\;\;\;\;\; x_{3,2} = {\color{red}8}$$
 
 :::
 
@@ -130,6 +134,8 @@ $$X = \begin{bmatrix}6 & 2 & 3\\1 & 9 & 5\\4 & {\color{red}8} & 0\end{bmatrix} \
 
 ## Matrices in R
 
+&nbsp;
+
 ```{r}
 (X <- matrix(c(6,1,4,2,9,8,3,5,0), nrow = 3))
 ```
@@ -137,11 +143,15 @@ $$X = \begin{bmatrix}6 & 2 & 3\\1 & 9 & 5\\4 & {\color{red}8} & 0\end{bmatrix} \
 
 Note R shows indices on the margins to tell you how to subset.
 
+&nbsp;
+
 . . .
 
 ```{r}
 X[3,2] # Third row, second column
 ```
+
+&nbsp;
 
 . . .
 
@@ -205,9 +215,9 @@ The (arithmetic) mean is the *expected value* of a variable.
 
 $$\mathbb{E}[x_i] = \bar{x} = \frac{1}{n}\sum_{i=1}^{n}x_{i}$$
 
-. . .
-
 If you draw randomly from that variable, the mean would be the least wrong single guess you could make about that value.^[Technically the mean minimizes the *squared error*]
+
+. . .
 
 Put another way, the positive and negative differences between all values and the mean balance out.
 
@@ -226,11 +236,6 @@ mean(x) # Mean function is just a shortcut
 ## Median
 
 The value for which no more than half of the values are either higher *or* lower.^[Technically the median minimizes the *absolute error*]
-
-
-. . .
-
-The **median** has this heinous formula:
 
 $$m(x_i) = \begin{cases} x_{\frac{n+1}{2}},& \text{if } n \text{ odd}\\ \frac{1}{2}(x_{\frac{n}{2}} + x_{\frac{n}{2} + 1}), &\text{if } n \text{ even}\end{cases}$$
 
@@ -709,9 +714,13 @@ Time for more code
 
 
 
-## Indices and Dimensions
+## Indices and dimensions
+
+&nbsp;
 
 There are two main ways index objects: square brackets (`[]` or `[[]]`) and `$`. How you access an object depends on its *dimensions*.
+
+&nbsp;
 
 . . .
 
@@ -721,23 +730,33 @@ Dataframes have *2* dimensions: **rows** and **columns**. Brackets **subset** us
 USArrests[1,] # First row
 ```
 
-. . .
+## Multiple elements
+
+&nbsp;
+
+We can supply vectors in each position to get multiple rows or columns.
 
 ```{r}
-USArrests[1:3, c(3,4)] # First three rows, third and fourth column # <1>
+USArrests[1:5, c(2,3)] # First three rows, third and fourth column 
 ```
 
-1. The **colon operator** (`:`) generates a vector using the sequence of integers from its first argument to its second. `1:3` is equivalent to `c(1,2,3)`
+&nbsp;
+
+The **colon operator** (`:`) generates a vector using the sequence of integers from its first argument to its second: `1:5` is equivalent to `c(1, 2, 3, 4, 5)`
 
 
 
-## Using Names
+## Using names
+
+&nbsp;
 
 We can also subset using the names of rows or columns:
 
 ```{r}
 USArrests["California",]
 ```
+
+&nbsp;
 
 . . .
 
@@ -749,15 +768,19 @@ head(USArrests[, c("Murder", "UrbanPop")])
 
 ## Single columns
 
+&nbsp;
+
 If you subset to a single column, it returns it as a vector instead of a dataframe:
 
 ```{r}
 USArrests[, "Murder"]
 ```
 
+&nbsp;
+
 . . .
 
-*Columns* in dataframes can also be accessed using names with the `$` extract operator:
+*Columns* in can also be accessed using names with the `$` extract operator:
 
 ```{r}
 USArrests$Murder
@@ -766,28 +789,36 @@ USArrests$Murder
 
 ## Extract: `$`
 
+&nbsp;
+
 You may have noticed `$` before when we used `str()`:
 
 ```{r}
 str(USArrests)
 ```
 
-Like the matrix subsetting suggestions, it is a hint you can select columns that way.
+&nbsp;
 
-## Mix and Match
+Like matrix subsetting suggestions, it is a hint you can select columns that way.
+
+## Mix and match
+
+&nbsp;
+
+You can mix subsetting formats! 
 
 ```{r}
 USArrests$Murder[1:10]
 ```
 
-Note here I *also* used brackets to select just the first 10 elements of that column.
-
 . . .
 
-You can mix subsetting formats! In this case I provided only a single value (no column index) because **vectors** have *only one dimension* (length).
+* R first processes the `$Murder`, giving a vector
+* Then it processes the `[1:10]`, giving the first ten elements
 
-* R first processes the `$Murder`
-* Then it processes the `[1:10]`
+In this case I provided only a single value in brackets (no column index) because **vectors** have *only one dimension* (length).
+
+&nbsp;
 
 . . .
 
@@ -795,7 +826,7 @@ If you try to subset something and get a warning about "incorrect number of dime
 
 
 
-# Logical Expressions
+# Logical expressions
 
 
 &nbsp;
@@ -804,7 +835,9 @@ If you try to subset something and get a warning about "incorrect number of dime
 
 
 
-## Indexing by Expression
+## Indexing by expression
+
+&nbsp;
 
 We can also index using expressions—logical *tests*.
 
@@ -812,12 +845,14 @@ We can also index using expressions—logical *tests*.
 USArrests[USArrests$Murder > 15, ]
 ```
 
+&nbsp;
+
 . . .
 
 What does this give us?
 
 
-## How Expressions Work
+## How expressions work
 
 What does `USArrests$Murder > 15` actually do? 
 
@@ -831,7 +866,9 @@ USArrests$Murder > 15
 
 It returns a vector of `TRUE` or `FALSE` values.
 
-When used with the subset operator (`[]`), elements for which a `TRUE` is given are returned while those corresponding to `FALSE` are dropped.
+&nbsp;
+
+When used with the subset operator (`[]`), elements for which a `TRUE` is given are returned while those corresponding to `FALSE` are dropped:
 
 . . .
 
@@ -840,11 +877,7 @@ c(1,2,3,4)[c(TRUE, FALSE, TRUE, FALSE)]
 ```
 
 
-## Logical Operators
-
-We used `>` for testing "greater than": `USArrests$Murder > 15`.
-
-. . .
+## Logical operators
 
 There are many other [logical operators](http://www.statmethods.net/management/operators.html):
 
@@ -853,7 +886,7 @@ There are many other [logical operators](http://www.statmethods.net/management/o
 * `==`: equal to
 * `!=`: not equal to
 * `>`, `>=`, `<`, `<=`: less than, less than or equal to, etc.
-* `%in%`: used with checking equal to one of several values
+* `%in%` and `%notin%`: checking (not) equal to any of several values
 
 :::
 
@@ -865,7 +898,7 @@ Or we can combine multiple logical conditions:
 
 * `&`: both conditions need to hold (AND)
 * `|`: at least one condition needs to hold (OR)
-* `!`: inverts a logical condition (`TRUE` becomes `FALSE`, `FALSE` becomes `TRUE`)
+* `!`: inverts logicals (`TRUE` becomes `FALSE`, `FALSE` becomes `TRUE`)
 
 :::
 
@@ -897,6 +930,8 @@ Missing values are coded as `NA` entries without quotes:
 vector_w_missing <- c(1, 2, NA, 4, 5, 6, NA)
 ```
 
+&nbsp;
+
 . . .
 
 Even one `NA` "poisons the well": You'll get `NA` out of your calculations unless you remove them manually or use the extra argument `na.rm = TRUE` in some functions:
@@ -904,6 +939,8 @@ Even one `NA` "poisons the well": You'll get `NA` out of your calculations unles
 ```{r}
 mean(vector_w_missing)
 ```
+
+&nbsp;
 
 . . .
 
@@ -915,11 +952,13 @@ mean(vector_w_missing, na.rm=TRUE)
 
 ## Finding Missing Values
 
-**WARNING:** You can't test for missing values by seeing if they "equal" (`==`) `NA`:
+You can't test for missing values by seeing if they equal (`==`) `NA`:
 
 ```{r}
 vector_w_missing == NA
 ```
+
+&nbsp;
 
 . . .
 
@@ -928,6 +967,8 @@ But you can use the `is.na()` function:
 ```{r}
 is.na(vector_w_missing)
 ```
+
+&nbsp;
 
 . . .
 
@@ -942,6 +983,8 @@ mean(vector_w_missing[!is.na(vector_w_missing)]) # <1>
 
 ## For Next Time {.dark-slide}
 
-* Read Kaplan chapters 3 and 4
+&nbsp;
 
+* Read Kaplan chapters 3 and 4
+   * Make it your lowest priority though!
 * Try a bit more `swirl`
