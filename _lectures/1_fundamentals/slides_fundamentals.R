@@ -67,7 +67,7 @@ x <- 2
 
 USArrests[1,] # First row
 
-USArrests[1:3, c(3,4)] # First three rows, third and fourth column # <1>
+USArrests[1:5, c(2,3)] # First three rows, third and fourth column 
 
 USArrests["California",]
 
