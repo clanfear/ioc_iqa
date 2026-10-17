@@ -28,7 +28,8 @@ communities |>
   tail()
 
 communities |>
-  arrange(disadvantage, desc(crime_rate)) |> head()
+  arrange(disadvantage, desc(crime_rate)) |> 
+  head()
 
 communities |> select(area, pop_density, crime_rate) |> head()
 
@@ -38,13 +39,15 @@ communities |> select(Area = area) |> head()
 
 communities |> rename(Area = area) |> head()
 
+communities |> pull(disadvantage) |> table()
+
 communities |>
   mutate(high_crime = crime_rate > mean(crime_rate)) |>
-  head(4)
+  head()
 
-communities <- communities |>  # Assigning back to overwrite! #<<
+communities <- communities |>  # Assigning back to overwrite!
   mutate(disadvantage = 
-           factor(disadvantage, levels = c("Low", "Medium", "High")), #<<
+           factor(disadvantage, levels = c("Low", "Medium", "High")),
          incarceration = 
            factor(incarceration, levels = c("Low", "Medium", "High"))
          )
@@ -68,10 +71,12 @@ communities |>
             sd_crime_rate   = sd(crime_rate), 
             n               = n())
 
-communities |> tabyl(disadvantage, incarceration)
+communities |> 
+  tabyl(disadvantage, incarceration)
 
-communities |> tabyl(disadvantage, incarceration) |>
-  adorn_percentages() # converts to cell percentages #<<
+communities |> 
+  tabyl(disadvantage, incarceration) |>
+  adorn_percentages() # converts to cell percentages 
 
 communities |> 
   tabyl(disadvantage, incarceration) # make table
@@ -95,33 +100,33 @@ communities |>
   tabyl(disadvantage, incarceration) |> # make table
   adorn_totals(c("row", "col")) |> # add row/col totals
   adorn_percentages() |> # make cells percentages
-  adorn_pct_formatting(digits = 1) |> # round to 2 digits
+  adorn_pct_formatting(digits = 1) |> # percents with 1 digit
   adorn_ns() # add counts in parentheses
 
 communities |> 
   tabyl(disadvantage, incarceration) |> # make table
   adorn_totals(c("row", "col")) |> # add row/col totals
   adorn_percentages() |> # make cells percentages
-  adorn_pct_formatting(digits = 1) |> # round to 2 digits
+  adorn_pct_formatting(digits = 1) |> # percents with 1 digit
   adorn_ns() |> # add counts in parentheses
   adorn_title() # add col variable name
 
 communities |>
-  filter(disadvantage=="High") |> #<<
+  filter(disadvantage=="High") |> 
   summarize(
    mean_crime = mean(crime_rate),
    sd_crime   = sd(crime_rate), 
    n          = n())
 
 communities |>
-  filter(disadvantage=="Low") |> #<<
+  filter(disadvantage=="Low") |> 
   summarize(
    mean_crime = mean(crime_rate),
    sd_crime   = sd(crime_rate), 
    n          = n())
 
 communities |>
-  group_by(disadvantage) |> #<<
+  group_by(disadvantage) |> 
   summarize(mean_crime = mean(crime_rate),
             sd_crime   = sd(crime_rate), 
             n          = n())
@@ -130,7 +135,7 @@ communities |>
   summarize(mean_crime = mean(crime_rate),
             sd_crime   = sd(crime_rate), 
             n          = n(),
-            .by = disadvantage) #<<
+            .by = disadvantage) 
 
 cor(communities$pop_density, communities$crime_rate)
 
@@ -139,8 +144,7 @@ with(communities, cor(pop_density, crime_rate))
 communities |> summarize(R = cor(pop_density, crime_rate))
 
 communities |>
-  group_by(disadvantage) |>
-  summarize(R = cor(pop_density, crime_rate))
+  summarize(R = cor(pop_density, crime_rate), .by = disadvantage)
 
 anscombe |> # Anscombe's quartet from yesterday!
   select(x1, y1, y2, y3, y4) |> 
