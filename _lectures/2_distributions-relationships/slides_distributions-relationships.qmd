@@ -506,6 +506,7 @@ It comes in *really* handy for **cross-tabs**—we'll see them soon!
 * Calculate the mean (`mean()`)
 * Calculate the standard deviation (`sd()`)
 * Obtain a sample size (`n()`)
+
 . . .
 
 ```{r}

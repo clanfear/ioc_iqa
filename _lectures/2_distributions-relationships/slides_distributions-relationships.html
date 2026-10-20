@@ -1587,8 +1587,9 @@ Attaching package: &#39;janitor&#39;</code></pre>
 <ul>
 <li>Calculate the mean (<code>mean()</code>)</li>
 <li>Calculate the standard deviation (<code>sd()</code>)</li>
-<li>Obtain a sample size (<code>n()</code>) . . .</li>
+<li>Obtain a sample size (<code>n()</code>)</li>
 </ul>
+<div class="fragment">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href aria-label="1"></a>communities <span class="sc">|&gt;</span></span>
 <span id="cb50-2"><a href aria-label="2"></a>  <span class="fu">summarize</span>(<span class="at">mean_crime_rate =</span> <span class="fu">mean</span>(crime_rate),</span>
@@ -1599,6 +1600,7 @@ Attaching package: &#39;janitor&#39;</code></pre>
   mean_crime_rate sd_crime_rate     n
             &lt;dbl&gt;         &lt;dbl&gt; &lt;int&gt;
 1            25.2          21.8   300</code></pre>
+</div>
 </div>
 </div>
 <div class="fragment">
