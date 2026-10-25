@@ -205,3 +205,15 @@ body strong {
 .center {
   text-align: center;
 }
+
+.bottom {
+  position: fixed;
+  bottom: 20px;
+  left: 0px;
+  font-size: inherit;
+  color: inherit;
+}
+
+.reveal .no-scroll pre code {
+  max-height: none;
+}
