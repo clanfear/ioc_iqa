@@ -317,7 +317,7 @@ Now let's see all this jargon in action.
 
 ## Westminster robbery
 
-1: Base Plot
+1: Base plot
 
 ::::: {.columns}
 
@@ -378,7 +378,7 @@ Add a scatterplot **layer**
 
 ## Westminster robbery
 
-3: Point Color and Size
+3: Point color and size
 
 ::::: {.columns}
 
@@ -410,7 +410,7 @@ ggplot(data  = westminster,
 
 ## Westminster robbery
 
-4: X-Axis Label
+4: X-axis label
 
 ::::: {.columns}
 
@@ -443,7 +443,7 @@ Add a label layer to capitalize the x-axis label
 
 ## Westminster robbery
 
-5: Y-Axis Label
+5: Y-axis label
 
 ::::: {.columns}
 
@@ -513,7 +513,7 @@ Add a title
 
 ## Westminster robbery
 
-7: theme
+7: Theme
 
 ::::: {.columns}
 
@@ -550,7 +550,7 @@ Pick a basic theme with a new layer
 
 ## Westminster robbery
 
-8: Text Size
+8: Text size
 
 
 ::::: {.columns}
@@ -597,7 +597,7 @@ We have a plot we like for Westminster...
 
 ## Plotting all boroughs
 
-1: A Mess!
+1: A mess!
 
 
 ::::: {.columns}
@@ -868,7 +868,7 @@ The x-axis labels are overlapping!
 
 ## Plotting all boroughs
   
-8: Axis Labels
+8: Axis labels
 
 
 ::::: {.columns}
@@ -1224,7 +1224,42 @@ ggplot(communities,
 
 :::::
 
+## Column plots
 
+&nbsp;
+
+If you've already tabulated the data, you can use `geom_col()`:
+
+::::: {.columns}
+
+:::: {.column}
+
+```{r colplot-1, fig.show='hide'}
+communities |>
+  count(disadvantage) |>
+  ggplot(aes(y = n, 
+             x = disadvantage)) + 
+  geom_col()
+```
+
+
+
+`geom_col()` creates a bar as tall as $y$
+
+::::
+
+:::: {.column}
+
+![](`r knitr::fig_chunk("colplot-1", "svg")`)
+
+::::
+
+:::::
+
+
+&nbsp;
+
+All `geom_bar()` does differently is run `count()` for you!
 
 ## Filled bar plots
 
@@ -1344,13 +1379,13 @@ str(cr_pd_lm, list.len=6) # Truncating the output a bit
 
 ## Digging into a list
 
-We can access parts of lm() output using $ like with dataframe names:
+We can access parts of `lm()` output using `$` like with dataframe names:
 
 ```{R}
 cr_pd_lm$coefficients
 ```
 
-We can also do this with summary(), which provides additional statistics:
+We can also do this with `summary()`, which provides additional statistics:
 
 ```{r}
 summary(cr_pd_lm)$coefficients
@@ -1369,7 +1404,7 @@ tidy(cr_pd_lm)
 
 . . .
 
-`tidy()` turns model output into a dataframe—now you can use `dplyr` with it!
+`tidy()` turns model output into a dataframe---so you can use `dplyr`!
 
 ```{r}
 tidy(cr_pd_lm) |> filter(term == "pop_density")
@@ -1381,7 +1416,7 @@ tidy(cr_pd_lm) |> filter(term == "pop_density")
 
 `{broom}` can also add regression results back to your original data using `augment()`
 
-This includes **predicted values** and **residuals**
+This includes **predicted values** (`.fitted`) and **residuals** (`.resid`):
 
 ```{r}
 cr_pd_lm |> augment() |> glimpse()
