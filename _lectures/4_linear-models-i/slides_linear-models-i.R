@@ -43,7 +43,7 @@ lm(crime_rate ~ area,
 
 communities |> 
   mutate(urban = 
-    as.numeric(area=="Urban")) |>
+           as.numeric(area=="Urban")) |>
   ggplot(aes(x = urban, 
              y = crime_rate)) + 
   geom_point() + 
@@ -81,12 +81,12 @@ aov(crime_rate ~ incarceration, data = communities) |> coef()
 summary(lm(crime_rate ~ incarceration, data = communities))
 
 residualized_data <- communities |> group_by(area) |>
-  mutate(pop_density_res =  pop_density - mean(pop_density), #<< # Subtract mean!
-         crime_rate_res  =  crime_rate  - mean(crime_rate)) #<<
+  mutate(pop_density_res =  pop_density - mean(pop_density), # Subtract mean!
+         crime_rate_res  =  crime_rate  - mean(crime_rate))
 
 residualized_data |> group_by(area) |>
   summarize(across(c(pop_density, crime_rate, pop_density_res, crime_rate_res),
-                   mean)) #<< 
+                   mean)) 
 
 ggplot(residualized_data, 
        aes(x = pop_density,
@@ -97,7 +97,7 @@ ggplot(residualized_data,
 ggplot(residualized_data, 
        aes(x = pop_density_res, 
            fill = area)) + 
-  geom_histogram(alpha = 0.75, 
+  geom_histogram(alpha = 0.5, 
                  position = "identity")
 
 lm(crime_rate ~ pop_density + area,
@@ -119,8 +119,8 @@ ggplot(communities,
               color = "black") 
 
 ggplot(residualized_data, 
-       aes(x = pop_density_res, #<<
-           y = crime_rate_res, #<<
+       aes(x = pop_density_res,
+           y = crime_rate_res,
            color = area))+ 
   geom_point() + 
   geom_smooth(method = "lm",
@@ -136,7 +136,7 @@ ggplot(lm_res,
 
 ggplot(lm_res,           # augment()
     aes(x = pop_density, # gives us
-        y = .resid)) +   # residuals! #<< 
+        y = .resid)) +   # residuals! 
   geom_point() + 
   geom_smooth(method = "lm")
 
@@ -154,15 +154,15 @@ lm(crime_rate ~ pop_density +
 
 residualized_data <- communities %>%
   mutate(area_num       = as.numeric(area == "Urban"),
-         crime_rate_res = residuals(lm(crime_rate ~ pop_density, data = .)), #<<
-         area_res       = residuals(lm(area_num ~ pop_density, data = .))) #<<
+         crime_rate_res = residuals(lm(crime_rate ~ pop_density, data = .)),
+         area_res       = residuals(lm(area_num ~ pop_density, data = .)))
 
 lm(crime_rate ~ pop_density + area, 
    data = communities) |> 
   tidy() |> select(term, estimate)
 
-lm(crime_rate_res ~ area_res, #<<
-   data = residualized_data) |> #<<
+lm(crime_rate_res ~ area_res,
+   data = residualized_data) |>
   tidy() |> select(term, estimate)
 
 ggplot(residualized_data, 
@@ -174,16 +174,16 @@ ggplot(residualized_data,
               color = "black") 
 
 ggplot(residualized_data, 
-       aes(x = area_res, #<<
-           y = crime_rate_res, #<<
+       aes(x = area_res,
+           y = crime_rate_res,
            color = area))+ 
   geom_point() + 
   geom_smooth(method = "lm",
               color = "black")
 
 ggplot(residualized_data, 
-       aes(x = area_res, #<<
-           y = crime_rate_res, #<<
+       aes(x = area_res,
+           y = crime_rate_res,
            color = area))+ 
   geom_point() + 
   geom_smooth(method = "lm",
@@ -198,8 +198,8 @@ lm(crime_rate ~ pop_density +
 sample_size <- 10000
 sim_data <- 
   tibble(bd =
-    rnorm(sample_size, #<<
-          mean = 3, sd = 1)) #<<
+    rnorm(sample_size,
+          mean = 3, sd = 1))
 sim_data |>
   summarize(bd_mean = mean(bd), 
             bd_sd   = sd(bd))
@@ -211,27 +211,27 @@ ggplot(sim_data,
 sim_data <- sim_data |>
   mutate(
     x = rnorm(n(), 0.3*bd, 1),
-    y = rnorm(n(), 3 + 0.3*x + 0.3*bd, 1), #<<
+    y = rnorm(n(), 3 + 0.3*x + 0.3*bd, 1),
     coll = rnorm(n(), -0.2*x + -0.2*y, 1))
 
 
 
-lm(y ~ x + bd, #<<
+lm(y ~ x + bd,
    data = sim_data) |>
   tidy() |> 
   select(term, estimate)
 
-lm(y ~ x , # Leaving out bd  #<<
+lm(y ~ x , # Leaving out bd 
    data = sim_data) |>
   tidy() |> 
   select(term, estimate)
 
-lm(y ~ x + bd, #<<
+lm(y ~ x + bd,
    data = sim_data) |>
   tidy() |> 
   select(term, estimate)
 
-lm(y ~ x + bd + coll, #<<
+lm(y ~ x + bd + coll,
    data = sim_data) |>
   tidy() |> 
   select(term, estimate)
@@ -243,29 +243,30 @@ coll_data <- tibble(
 arrested <- coll_data |> filter(Arrested) |> mutate(Who = "Arrested")
 everyone <- coll_data |> mutate(Who = "Everyone")
 
-lm(Frequency ~ Skill, #<<
+lm(Frequency ~ Skill,
    data = everyone) |>
   tidy() |> 
   select(term, estimate)
 
-lm(Frequency ~ Skill, #<<
+lm(Frequency ~ Skill,
    data = arrested) |>
   tidy() |> 
   select(term, estimate)
 
-lm(Frequency ~ Skill + Arrested, #<<
+lm(Frequency ~ Skill + Arrested,
    data = everyone) |>
   tidy() |> 
   select(term, estimate)
 
-lm(Frequency ~ Skill, #<<
+lm(Frequency ~ Skill,
    data = arrested) |>
   tidy() |> 
   select(term, estimate)
 
 bind_rows(arrested, everyone) |>
   ggplot(aes(x = Skill, y = Frequency, color = Who)) + 
-    facet_wrap(~Who) + geom_point() +
+    facet_wrap(~Who) + 
+    geom_point() +
     geom_smooth(method = "lm", color = "black") +
     labs(x = "Skill at Crime", y = "Frequency of Crime") +
     theme_minimal(base_size = 16) + theme(legend.position = "none")
@@ -275,7 +276,7 @@ po_data <- tibble(
   bd = runif( n, 0,        1), # Random uniform variable
   x  = rbinom(n, 1,        bd), # Random binary variable
   y0 = rnorm( n, 2*bd,     1),  # untreated outcome
-  y1 = rnorm( n, 2*bd + 1, 1)) |> # treated outcome #<<
+  y1 = rnorm( n, 2*bd + 1, 1)) |> # treated outcome
   mutate(y = ifelse(x==1, y1, y0)) # Treatment just selects outcome
 
 lm(y ~ x + bd, data = po_data) |>

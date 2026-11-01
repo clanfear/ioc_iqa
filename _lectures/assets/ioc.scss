@@ -214,6 +214,15 @@ body strong {
   color: inherit;
 }
 
+.foot {
+  position: absolute;
+  bottom: 10px;
+  left: 0px;
+  font-size: inherit;
+  color: inherit;
+  font-size: 75%;
+}
+
 .reveal .no-scroll pre code {
   max-height: none;
 }

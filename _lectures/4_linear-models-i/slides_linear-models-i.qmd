@@ -1,0 +1,1354 @@
+---
+title: "Linear models I"
+subtitle: "IQA lecture 4"
+author: "Charles Lanfear"
+date: "`r source('../reference_date.R'); get_date(4, raw=TRUE)`"
+format:
+  revealjs:
+    theme: ../assets/ioc.scss
+    incremental: false
+    self-contained: true
+    width: 1200
+    height: 800
+    auto-stretch: true
+    highlight-style: ../assets/twilight.theme
+    title-slide-attributes:
+      data-background-image: ../assets/ioc_entrance_narrow.jpg
+      data-background-position: bottom
+      data-background-size: contain
+filters: 
+  - ../assets/invert-h1.lua
+---
+
+```{r setup, purl=FALSE}
+#| include: false
+options(width = 68)
+knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, dev = "svg", fig.height = 4)
+library(ggplot2)
+theme_set(theme_gray(base_size = 18))
+```
+
+
+## Today
+
+* Programming:
+   * `across()`
+* Linear models:
+   * Categorical predictors
+      * Binary: T-Test
+      * 3+ category: ANOVA
+   * Controlling for variables
+      * Demeaning with dummies
+      * Residuals
+      * Partial correlations
+   * How linear models work
+      * Simulating data
+      * Back doors
+      * Colliders
+
+
+
+
+## Setup
+
+Like usual, let's start by loading the communities data
+
+First, let's convert our categorical variables to factors with appropriate levels
+
+
+```{r, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(broom) # Going to use this a bunch today
+communities <- 
+  read_csv("https://clanfear.github.io/ioc_iqa/_data/communities.csv") |>
+  mutate(across(c(incarceration, disadvantage), 
+                ~ factor(., levels = c("Low", "Medium", "High"))),
+         area = factor(area, levels = c("Rural", "Urban")))
+```
+
+
+We can use `across()` as a shortcut to perform the same operation on multiple variables
+
+. . .
+
+This is the same as doing this:
+
+```{r, eval = FALSE}
+mutate(incarceration = 
+         factor(incarceration, levels = c("Low", "Medium", "High")), 
+       disadvantage = 
+         factor(disadvantage, levels = c("Low", "Medium", "High")))
+```
+
+
+
+
+## Another `across()`
+
+You can also give `across()` a list of functions and it will apply them to each variable
+
+```{r}
+communities |>
+  group_by(incarceration) |>
+  summarize(across(c(crime_rate, pop_density), 
+                   list(mu = ~mean(.), 
+                        sd = ~sd(.))))
+```
+
+This calculated a `mean()` and `sd()` each for `crime_rate` and `pop_density` within each level of `incarceration` with very little code!
+
+
+
+
+# Linear models
+
+&nbsp;
+
+With different predictors
+
+## Continuous
+
+
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r}
+lm(crime_rate ~ pop_density, 
+   data = communities) |> 
+  coef() # extract coefficients
+```
+
+We've seen a lot of linear models with continuous predictors
+
+It is easy to visualize what the model is doing with a line laid over a scatterplot
+
+::::
+
+:::: {.column width="50%"}
+
+```{r, message = FALSE, warning = FALSE}
+ggplot(communities, 
+       aes(x = pop_density, 
+           y = crime_rate)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+
+::::
+
+:::::
+
+
+
+## Dummy variables
+
+What is a regression model doing when you have a binary predictor?
+
+. . .
+
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r}
+lm(crime_rate ~ area, 
+   data = communities) |>
+  coef()
+```
+
+::::
+
+:::: {.column width="50%"}
+
+```{r, message = FALSE, warning = FALSE}
+ggplot(communities, 
+       aes(x = area, 
+           y = crime_rate)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+
+::::
+
+:::::
+
+
+The data look weird and `geom_smooth()` doesn't even do anything!
+
+Why do the data look like this?
+
+
+
+
+
+
+
+## A slight modification
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r}
+lm(crime_rate ~ area, 
+   data = communities) |>
+  coef()
+```
+
+It turns out the linear model actually treats a binary variable as a numeric one that takes values of 0 or 1.
+
+::::
+
+:::: {.column width="50%"}
+
+```{r, message = FALSE, warning = FALSE}
+communities |> 
+  mutate(urban = 
+           as.numeric(area=="Urban")) |>
+  ggplot(aes(x = urban, 
+             y = crime_rate)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+
+::::
+
+:::::
+
+When `areaUrban` is 0 (`area` is `"Rural"`) the mean `crime_rate` is $10.43$
+
+When `areaUrban` is 1 (`area` is `"Urban"`) the mean `crime_rate` is $10.43 + 30.18 = 40.61$
+
+
+
+## Mean differences
+
+Linear regression is just estimating means by group!
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r}
+dummy_model <- 
+  lm(crime_rate ~ area, 
+     data = communities)
+dummy_model |> coef()
+```
+
+The intercept is the average crime rate for rural places
+
+`areaUrban` is the **difference** between rural and urban places
+
+::::
+
+:::: {.column width="50%"}
+
+```{r}
+communities |>
+  group_by(area) |>
+  summarize(crime_rate = 
+              mean(crime_rate))
+```
+
+Compare the model to group-specific average crime rates:
+
+
+$\text{Urban} = 40.61 = 10.43 + 30.18$
+
+::::
+
+:::::
+
+
+These are saying the exact same thing!
+
+
+
+
+## Hypothesis testing
+
+Significance testing with dummy variables works like any others
+
+```{r}
+summary(dummy_model)$coefficients
+```
+
+. . .
+
+This is *identical* to a two-sample t-test!
+
+```{r}
+t.test(crime_rate ~ area, data = communities, var.equal=TRUE)
+```
+
+
+
+
+## More categories
+
+When a variable has more than two categories, all but one category is converted to a mutually exclusive binary variable
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r}
+lm(crime_rate ~ incarceration, 
+   data = communities) |> 
+  tidy() |> 
+  select(term, estimate)
+
+```
+::::
+
+:::: {.column width="50%"}
+
+```{r}
+communities |>
+  group_by(incarceration) |>
+  summarize(crime_rate = 
+              mean(crime_rate))
+```
+
+::::
+
+:::::
+
+
+Here our intercept represents the mean when `incarceration` is neither `"Medium"` nor `"High"`. Our **reference category** is `"Low"`
+
+
+
+## ANOVA
+
+Some of you may be familiar with ANOVA for analysing how 3+ category variables relate to a continuous outcome
+
+
+```{r}
+aov(crime_rate ~ incarceration, data = communities) |> summary()
+```
+
+. . .
+
+Turns out ANOVA is just a standard linear model with a categorical variable
+
+```{r}
+aov(crime_rate ~ incarceration, data = communities) |> coef()
+```
+
+. . .
+
+Until you get to very advanced methods (i.e., mixed effects models), ANOVA is just a less flexible linear model with more complicated terminology
+
+
+
+## As an `lm()`
+
+
+```{r}
+summary(lm(crime_rate ~ incarceration, data = communities))
+```
+
+
+::: {.aside}
+
+Note the F-statistic for the regression is the F value for the ANOVA
+
+:::
+
+
+
+# Controls
+
+&nbsp;
+
+
+![](img/yoda.gif)
+
+
+
+## Controlling for variables
+
+Remember that we control for variables for the purpose of **identifying** something we're interested in
+
+. . .
+
+In causal research, this is some **treatment effect**.
+
+* In the following examples, we'll assume we want to identify $X \rightarrow Y$
+
+. . .
+
+In other cases, it may just be some association we're interested in.
+
+. . .
+
+To know if a control does what you want (e.g., closes a back door), it is important to understand:
+
+* What including that control implies for your model
+* Exactly what including it really does numerically
+
+
+
+## Categorical controls
+
+
+
+We include a categorical control $Z$ if we believe some of $X$ and $Y$'s apparent relationship is due to *some $Z$ groups having different average levels of X and Y*
+
+. . .
+
+If we remove group-specific averages of both X and Y, we can get rid of that
+
+
+```{r}
+residualized_data <- communities |> group_by(area) |>
+  mutate(pop_density_res =  pop_density - mean(pop_density), # Subtract mean!
+         crime_rate_res  =  crime_rate  - mean(crime_rate))
+```
+
+
+. . .
+
+The group means that were different are now the same:
+
+
+```{r}
+residualized_data |> group_by(area) |>
+  summarize(across(c(pop_density, crime_rate, pop_density_res, crime_rate_res),
+                   mean)) 
+```
+
+
+::: {.foot}
+
+Due to numeric imprecision, the means may show as *slightly* nonzero
+
+:::
+
+## Shifted distributions
+
+Subtracting the mean from every value just *shifts* the distribution to be centred over *zero*.
+
+This *equalises* the means of each group!
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r}
+ggplot(residualized_data, 
+       aes(x = pop_density,
+           fill = area)) + 
+  geom_histogram(alpha = 0.5, 
+                 position = "identity")
+```
+
+::::
+
+:::: {.column width="50%"}
+
+```{r}
+ggplot(residualized_data, 
+       aes(x = pop_density_res, 
+           fill = area)) + 
+  geom_histogram(alpha = 0.5, 
+                 position = "identity")
+```
+
+::::
+
+:::::
+
+
+## Categorical controls
+
+*Controlling* for a categorical variable is equivalent to centering the other variables by their group categories
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r}
+lm(crime_rate ~ pop_density + area,
+   data = communities) |> 
+  tidy() |>
+  select(term, estimate)
+```
+
+::::
+
+:::: {.column width="50%"}
+
+```{r}
+lm(crime_rate_res ~ pop_density_res,
+   data = residualized_data)  |> 
+  tidy() |> 
+  select(term, estimate)
+```
+
+::::
+
+:::::
+
+
+Note the identical `pop_density` slopes!
+
+
+
+
+## Visualising it
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r, message = FALSE}
+ggplot(communities, 
+       aes(x = pop_density, 
+           y = crime_rate, 
+           color = area)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", 
+              color = "black") 
+```
+
+::::
+
+:::: {.column width="50%"}
+
+```{r, message = FALSE}
+ggplot(residualized_data, 
+       aes(x = pop_density_res,
+           y = crime_rate_res,
+           color = area))+ 
+  geom_point() + 
+  geom_smooth(method = "lm",
+              color = "black")
+```
+
+::::
+
+:::::
+
+
+Rural and urban data points now occupy a similar area due to subtracting their average $X$ and $Y$ values—this gives us their **residuals**
+
+
+
+## Residuals
+
+Residuals are the difference between model predictions and the actual data
+
+
+```{r}
+lm_res <- lm(crime_rate ~ pop_density, data = communities) |> augment()
+```
+
+`augment()` returns the original data with added residuals (`.resid`)
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r}
+ggplot(lm_res, 
+    aes(x = pop_density, 
+        y = crime_rate)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+
+::::
+
+:::: {.column width="50%"}
+
+```{r}
+ggplot(lm_res,           # augment()
+    aes(x = pop_density, # gives us
+        y = .resid)) +   # residuals! 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+
+::::
+
+:::::
+
+. . .
+
+::: {.center}
+
+The residuals are what our model *doesn't explain*
+
+:::
+
+
+## `car::avPlot()`
+
+This type of plot is sometimes called an **added variable plot**
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r, message = FALSE}
+ggplot(residualized_data, 
+       aes(x = pop_density_res,
+           y = crime_rate_res))+ 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+
+::::
+
+:::: {.column width="50%"}
+
+```{r}
+lm(crime_rate ~ pop_density + 
+   area, 
+   data = communities) |> 
+  car::avPlot(
+    variable = "pop_density")
+```
+
+::::
+
+:::::
+
+
+These show the regression line after *controlling for other variables*—and unlike `ggplot2`, `avPlot()` can accept more than one added variables at once
+
+
+
+## Continuous variables
+
+We include continuous controls if some of $X$ and $Y$'s relationship is because $Z$ makes $X$ and $Y$ higher/lower—sometimes called **spuriousness**
+
+. . .
+
+If we remove variation in $X$ and $Y$ due to $Z$, we can fix this
+
+. . .
+
+Here we use bivariate models predicting what we want to residualise
+
+
+```{r}
+residualized_data <- communities %>%
+  mutate(area_num       = as.numeric(area == "Urban"),
+         crime_rate_res = residuals(lm(crime_rate ~ pop_density, data = .)),
+         area_res       = residuals(lm(area_num ~ pop_density, data = .)))
+```
+
+
+. . .
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r}
+lm(crime_rate ~ pop_density + area, 
+   data = communities) |> 
+  tidy() |> select(term, estimate)
+```
+
+::::
+
+:::: {.column width="50%"}
+
+```{r}
+lm(crime_rate_res ~ area_res,
+   data = residualized_data) |>
+  tidy() |> select(term, estimate)
+```
+
+::::
+
+:::::
+
+
+## Visualising it
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+
+Original data:
+
+
+```{r, message = FALSE}
+ggplot(residualized_data, 
+       aes(x = area_num, 
+           y = crime_rate, 
+           color = area)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", 
+              color = "black") 
+```
+
+::::
+
+:::: {.column width="50%"}
+
+Residuals of $X$ and $Y$:
+
+```{r, message = FALSE}
+ggplot(residualized_data, 
+       aes(x = area_res,
+           y = crime_rate_res,
+           color = area))+ 
+  geom_point() + 
+  geom_smooth(method = "lm",
+              color = "black")
+```
+
+::::
+
+:::::
+
+
+. . .
+
+&nbsp;
+
+::: {.center}
+
+*Wait, wat? I thought `area` was binary?*
+
+:::
+
+
+## wat
+
+Yep, that's not a mistake—our model predicted *how urban* each point was and the residual is the *unexpected level of urban* on a 0 to 1 scale—weird!
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r, message = FALSE}
+ggplot(residualized_data, 
+       aes(x = area_res,
+           y = crime_rate_res,
+           color = area))+ 
+  geom_point() + 
+  geom_smooth(method = "lm",
+              color = "black")
+```
+
+::::
+
+:::: {.column width="50%"}
+
+```{r}
+lm(crime_rate ~ pop_density + 
+       area, 
+   data = communities) |> 
+    car::avPlot(
+        variable = "areaUrban")
+```
+
+::::
+
+::::: 
+
+
+# How it works
+
+&nbsp;
+
+![](img/trebuchet.jpg)
+
+
+
+## Generating data
+
+If you don't like doing mathematical proofs to figure out if something works, you can often test things with simulation
+
+. . .
+
+`rnorm()` and similar functions randomly generate data *drawn* from a particular distribution
+
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r}
+sample_size <- 10000
+sim_data <- 
+  tibble(bd =
+    rnorm(sample_size,
+          mean = 3, sd = 1))
+sim_data |>
+  summarize(bd_mean = mean(bd), 
+            bd_sd   = sd(bd))
+```
+
+::::
+
+:::: {.column width="50%"}
+
+```{r}
+ggplot(sim_data, 
+       aes(x = bd)) +
+  geom_density()
+```
+
+::::
+
+:::::
+
+
+## Simulation
+
+Now we can add other variables to our data to generate a dataset that obeys the DAG on the right
+
+::::: {.columns}
+
+:::: {.column width="60%"}
+
+```{r}
+sim_data <- sim_data |>
+  mutate(
+    x = rnorm(n(), 0.3*bd, 1),
+    y = rnorm(n(), 3 + 0.3*x + 0.3*bd, 1),
+    coll = rnorm(n(), -0.2*x + -0.2*y, 1))
+```
+
+::::
+
+:::: {.column width="40%"}
+
+```{tikz sim-dag, fig.width = 2.75, cache = TRUE, purl = FALSE, echo = FALSE}
+\usetikzlibrary{positioning}
+\usetikzlibrary{quotes}
+\definecolor{black}{HTML}{000000}
+\tikzset{
+    > = stealth,
+    every node/.append style = {
+        draw = none,
+        scale = 3
+    },
+    every path/.append style = {
+        arrows = ->,
+        draw = black,
+        fill = none,
+        scale = 1,
+        line width = 1.5mm
+    },
+    hidden/.style = {
+        draw = black,
+        shape = circle,
+        inner sep = 1pt
+    },
+    every edge quotes/.append style = {
+    auto, font=\footnotesize, inner sep=0pt
+    }
+}
+\tikz{
+  \node (Y) at (0,5) {$Y$};
+  \node (X) at (5, 0) {$X$};
+  \node (B) at (5, 5) {$BD$};
+  \node (C) at (0, 0) {$COLL$};
+  \path (X) edge ["0.3"] (Y);
+  \path (B) edge ["0.3"] (Y);
+  \path (B) edge ["0.3"] (X);
+  \path (X) edge ["-0.2"] (C);
+  \path (Y) edge ["-0.2" '] (C);
+  }
+```
+
+::::
+
+:::::
+
+. . .
+
+"Y is equal to 3 plus $0.3*X$ plus $0.3*BD$, with about 1 SD of error on average"
+
+. . .
+
+Note that we generate the variables in causal order of the diagram
+
+* We started with `bd` (on prior slide)
+* We finished with `coll`
+
+
+
+## Estimates with back doors
+
+Because we know the **data generating process**—we created it—we know what our estimates should be
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r}
+lm(y ~ x + bd,
+   data = sim_data) |>
+  tidy() |> 
+  select(term, estimate)
+```
+
+::::
+
+:::: {.column width="50%"}
+
+::: {.fragment}
+
+```{r}
+lm(y ~ x , # Leaving out bd 
+   data = sim_data) |>
+  tidy() |> 
+  select(term, estimate)
+```
+
+:::
+
+::::
+
+:::::
+
+
+Excluding `bd` makes the effect of `x` larger than it should be—it is **magnified**
+
+. . .
+
+This occurs whenever a back door has effects with the *same sign* on both $X$ and $Y$ (e.g., both positive)—opposite signs would **attenuate** the estimate
+
+
+
+## Estimates with colliders
+
+Again, we know what effects should be identified and how to identify them. What if we add the collider?
+
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r}
+lm(y ~ x + bd,
+   data = sim_data) |>
+  tidy() |> 
+  select(term, estimate)
+```
+
+::::
+
+:::: {.column width="50%"}
+
+::: {.fragment}
+
+```{r}
+lm(y ~ x + bd + coll,
+   data = sim_data) |>
+  tidy() |> 
+  select(term, estimate)
+```
+
+:::
+
+::::
+
+:::::
+
+
+. . .
+
+
+This **attenuates** $X$ but does little to $BD$—it isn't a collider for $BD$!
+
+::: {.center}
+
+*Let's look at a more severe example*
+
+:::
+
+
+
+
+## Selection (collider) bias
+
+Let's create the data from CRM yesterday.
+
+
+```{r, fig.height = 3.5}
+coll_data <- tibble(
+  Skill     = runif(500, 0, 10), 
+  Frequency = runif(500, 0, 10), 
+  Arrested  = Frequency > Skill) 
+arrested <- coll_data |> filter(Arrested) |> mutate(Who = "Arrested")
+everyone <- coll_data |> mutate(Who = "Everyone")
+```
+
+What's going on here?
+
+* *No relationship* between `Skill` at crime and `Frequency` of crime
+  * Just two uniformly distributed variables
+* Anyone who commits more crime than their skill gets arrested
+  * Only these people are in `arrested`
+
+. . .
+
+If we only see arrested people, we've *selected* on a collider—this is just like including one in a model
+
+
+
+
+## Collider model
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r}
+lm(Frequency ~ Skill,
+   data = everyone) |>
+  tidy() |> 
+  select(term, estimate)
+```
+
+::::
+
+:::: {.column width="50%"}
+
+```{r}
+lm(Frequency ~ Skill,
+   data = arrested) |>
+  tidy() |> 
+  select(term, estimate)
+```
+
+::::
+
+:::::
+
+
+. . .
+
+
+We know there is no real relationship, but because we **selected** data based on an outcome of Frequency and Skill, it creates a **spurious** relationship
+
+. . .
+
+::: {.center}
+
+*The collider is still producing bias without being explicitly in the model!*
+
+:::
+
+
+## What about controlling?
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+Controlling for arrest:
+
+```{r}
+lm(Frequency ~ Skill + Arrested,
+   data = everyone) |>
+  tidy() |> 
+  select(term, estimate)
+```
+
+::::
+
+:::: {.column width="50%"}
+
+Only arrested people:
+
+```{r}
+lm(Frequency ~ Skill,
+   data = arrested) |>
+  tidy() |> 
+  select(term, estimate)
+```
+
+::::
+
+:::::
+
+
+
+::: {.center}
+
+*We get bias either way!*
+
+:::
+
+
+
+## Visualizing collider bias
+
+```{r coll-plot, fig.height = 3.5}
+bind_rows(arrested, everyone) |>
+  ggplot(aes(x = Skill, y = Frequency, color = Who)) + 
+    facet_wrap(~Who) + 
+    geom_point() +
+    geom_smooth(method = "lm", color = "black") +
+    labs(x = "Skill at Crime", y = "Frequency of Crime") +
+    theme_minimal(base_size = 16) + theme(legend.position = "none")
+```
+
+
+
+
+# Randomization
+
+## An advanced example
+
+&nbsp;
+
+&nbsp;
+
+You don't need to know this...
+
+
+&nbsp;
+
+... but it shows what's *really* going on
+
+
+## Non-randomized treatment
+
+Let's create example data with actual **potential outcomes**
+
+```{r}
+n <- 10000
+po_data <- tibble(
+  bd = runif( n, 0,        1), # Random uniform variable
+  x  = rbinom(n, 1,        bd), # Random binary variable
+  y0 = rnorm( n, 2*bd,     1),  # untreated outcome
+  y1 = rnorm( n, 2*bd + 1, 1)) |> # treated outcome
+  mutate(y = ifelse(x==1, y1, y0)) # Treatment just selects outcome
+```
+
+
+* `x` is a binary **treatment** with effect size of **1**
+* `y0` is the outcome if the unit is **untreated**
+* `y1` is the outcome if the unit is **treated**
+* `bd` is a backdoor predicting treatment *and* `y`
+   * `bd` improves both potential outcomes *the same* amount
+   * `bd` also makes treatment more likely
+
+::: {.center}
+
+*Units that get treated tend to have higher potential outcomes*
+
+:::
+
+
+
+## Estimation
+
+Like usual, if we can *see* the back door, we can identify the effect of $X$ on $Y$
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r}
+lm(y ~ x + bd, data = po_data) |>
+  tidy() |> 
+  select(term, estimate)
+```
+
+::::
+
+:::: {.column width="50%"}
+
+```{r}
+lm(y ~ x, data = po_data) |>
+  tidy() |> 
+  select(term, estimate)
+```
+
+::::
+
+:::::
+
+. . .
+
+::: {.center}
+
+*But even if we can't, we can randomize it away*
+
+:::
+
+. . .
+
+`sample()` is an easy way to randomly select units
+
+```{r}
+sample(0:1, 20, replace = TRUE) # randomly select 0 or 1 20 times
+```
+
+
+
+## Random assignment
+
+Let's select random units to receive the treatment
+
+```{r}
+po_data <- po_data |>
+  mutate(treat = sample(0:1, n(), replace=TRUE),
+         yt = ifelse(treat==1, y1, y0))
+```
+
+All the treatment does is determine which potential outcome we see
+
+. . .
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r}
+lm(y ~ x + bd, data = po_data) |>
+  tidy() |> 
+  select(term, estimate)
+```
+
+::::
+
+:::: {.column width="50%"}
+
+```{r}
+lm(yt ~ treat, data = po_data) |>
+  tidy() |> 
+  select(term, estimate)
+```
+
+::::
+
+:::::
+
+
+::: {.center}
+
+*Randomization closes back doors without adjustment!*
+
+:::
+
+
+
+## Randomization DAGs
+
+Randomization breaks back doors—even when we can't observe the responsible variables!
+
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+Confounded by an unobservable $BD$
+
+```{tikz bd-dag, fig.width = 2.75, cache = TRUE, purl = FALSE, echo = FALSE}
+\usetikzlibrary{positioning}
+\definecolor{black}{HTML}{000000}
+\tikzset{
+    > = stealth,
+    every node/.append style = {
+        draw = none,
+        scale = 3
+    },
+    every path/.append style = {
+        arrows = ->,
+        draw = black,
+        fill = none,
+        scale = 1,
+        line width = 1.5mm
+    },
+    hidden/.style = {
+        draw = black,
+        shape = circle,
+        inner sep = 1pt
+    }
+}
+\tikz{
+  \node (Y) at (0, 5) {$Y$};
+  \node[hidden] (BD) at (5, 0) {$BD$};
+  \node (X) at (5, 5) {$X$};
+  \path (X) edge (Y);
+  \path (BD) edge (Y);
+  \path (BD) edge (X);
+  }
+```
+
+::::
+
+:::: {.column width="50%"}
+
+$BD$ is irrelevant if we can randomize!
+
+```{tikz ran-dag, fig.width = 2.75, cache = TRUE, purl = FALSE, echo = FALSE}
+\usetikzlibrary{positioning}
+\definecolor{black}{HTML}{000000}
+\tikzset{
+    > = stealth,
+    every node/.append style = {
+        draw = none,
+        scale = 3
+    },
+    every path/.append style = {
+        arrows = ->,
+        draw = black,
+        fill = none,
+        scale = 1,
+        line width = 1.5mm
+    },
+    hidden/.style = {
+        draw = black,
+        shape = circle,
+        inner sep = 1pt
+    }
+}
+\tikz{
+  \node (Y) at (0, 5) {$Y$};
+  \node[hidden] (BD) at (5, 0) {$BD$};
+  \node (T) at (5, 5) {$T$};
+  \path (T) edge (Y);
+  \path (BD) edge (Y);
+  }
+```
+
+::::
+
+:::::
+
+
+. . .
+
+&nbsp;
+
+If we're interested in the effect of $X$ here, we have to assume $T$ is roughly equivalent to $X$ (it is **consistent** with $X$)
+
+
+
+## Wrap-up {.dark-slide}
+
+
+**FORMATIVE** assignment on Moodle and website
+
+* Read instructions carefully
+   * No trick questions intended; everything was covered
+   * If you're writing a ton of code, you may be overthinking it
+* Doc types:
+  * Word or equivalent + .R script file for code
+     * Use comments (#) to indicate question code applies to
+  * Quarto / Rmarkdown if you're feeling fancy
+* Due noon Saturday 14 November
+  * **Do not spend that entire time working on it**
+  * **Do ask questions**
+  * **Do go to office hours** (Wednesday)
