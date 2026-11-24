@@ -1,0 +1,671 @@
+---
+title: "Linear models III"
+subtitle: "IQA lecture 6"
+author: "Charles Lanfear"
+date: "`r source('../reference_date.R'); get_date(7, raw=TRUE)`"
+format:
+  revealjs:
+    theme: ../assets/ioc.scss
+    incremental: false
+    self-contained: true
+    width: 1200
+    height: 800
+    auto-stretch: true
+    highlight-style: ../assets/twilight.theme
+    title-slide-attributes:
+      data-background-image: ../assets/ioc_entrance_narrow.jpg
+      data-background-position: bottom
+      data-background-size: contain
+filters: 
+  - ../assets/invert-h1.lua
+---
+
+```{r setup, purl=FALSE}
+#| include: false
+options(width = 68)
+set.seed(7)
+knitr::opts_chunk$set(eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, dev = "svg", fig.height = 4)
+```
+
+
+## Today {.dark-slide}
+
+&nbsp;
+
+Pivoting data
+
+Polynomials
+
+Residual plots
+
+&nbsp;
+
+&nbsp;
+
+. . .
+
+::: {.center}
+
+*But first...*
+
+:::
+
+
+
+# Review?
+
+
+
+## Pivoting data {.dark-slide}
+
+![](img/tidyr-pivoting.gif)
+
+::: {.foot}
+
+Source: [Garrick Aden-Buie](https://github.com/gadenbuie/tidyexplain#pivot-wider-and-longer)
+
+:::
+
+
+
+## London boroughs
+
+Let's return to the (real!) 2021 crime data from London boroughs...
+
+```{r}
+library(tidyverse)
+library(broom) 
+metro_wide <- read_csv("https://clanfear.github.io/ioc_iqa/_data/metro_2021_violence_wide.csv")
+head(metro_wide, 4)
+```
+
+But in **wide** format this time
+
+
+
+## Wide data
+
+**Wide data** are data where at least one variable occupies *multiple columns*
+
+
+```{r}
+dim(metro_wide) # Few rows, more columns
+names(metro_wide) # A column for each month!
+```
+
+Here the **month** variable is in the *column names* and counts of **violent** crime are under each month
+
+. . .
+
+How could we plot crime by month with these data?
+
+. . .
+
+::: {.center}
+
+*It'd be pretty hard with `ggplot2`!*
+
+:::
+
+
+
+## Tidy data
+
+What we want is data in **tidy** format (aka "long data"):
+
+. . .
+
+1. The values for a single observation are in their own row
+2. The values for a single variable are in their own column
+3. There is only one value per cell
+
+. . .
+
+Why do we want tidy data?
+
+* Easier to understand many rows than many columns
+* Required for plotting in ggplot2 and most statistical procedures
+* Fewer issues with missing values
+
+. . .
+
+::: {.center}
+
+*So how do we **tidy** things up?*
+
+:::
+
+## Pivoting
+
+The `{tidyr}` package in `{tidyverse}` gets data into tidy format
+
+```{r}
+metro_long <- metro_wide |>
+  pivot_longer(starts_with("month"), # Take each month column 
+               names_to  = "month", # Put col names in month column 
+               values_to = "violence") # Put values in violence column 
+metro_long |> select(borough, month, violence) |> head(3)
+```
+
+. . .
+
+&nbsp;
+
+```{r}
+dim(metro_long)
+```
+
+
+::: {.foot}
+
+Way fewer columns and way more rows!
+
+:::
+
+
+
+## How it works {.dark-slide}
+
+![](img/tidyr-pivoting.gif)
+
+::: {.foot}
+
+Source: [Garrick Aden-Buie](https://github.com/gadenbuie/tidyexplain#pivot-wider-and-longer)
+
+:::
+
+
+
+## `parse_number()`
+
+To make `month` analytically friendly, we can convert it from strings like `"month_1"` to numbers using `parse_number()`
+
+```{r}
+metro_long <- metro_long |>
+  mutate(month = parse_number(month))
+head(metro_long)
+```
+
+. . .
+
+Now we can run some models again—but first, let's see *pivoting back*
+
+
+
+## `pivot_wider()`
+
+Maybe you *want* the wider data, because your model needs it (e.g., SEM) or to make a data table
+
+```{r}
+metro_wide_again <- metro_long |>
+  pivot_wider(names_from   = month, # Turn months into col names 
+              values_from  = violence, # Turn violence in col values 
+              names_prefix = "month_") # Start col names with month_ 
+metro_wide_again |>  head(3)
+```
+
+
+
+# Polynomials
+
+&nbsp;
+
+![](img/curves.png)
+
+
+
+## Usual `lm()`
+
+Let's fit a simple model predicting crime by month
+
+```{r}
+lm_viol <- lm(violence ~ month, data = metro_long)
+lm_viol |> tidy() |> select(term, estimate, std.error)
+```
+
+. . .
+
+But would we expect crime to increase (or decrease) from January to December?
+
+* What would that imply about crime year-to-year?
+
+. . .
+
+Or is it more likely to range *up and down* throughout the year?
+
+
+
+## Looking at residuals
+
+Looking at residuals can help us figure this out
+
+* Recall that residuals are *what our model isn't predicting*
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r viol-resid-1, fig.show='hide'}
+lm_viol |> 
+  augment() |>
+  ggplot(aes(x = month, 
+             y = .resid)) + 
+  geom_point() +
+  geom_hline(yintercept = 0,
+             color = "red") 
+```
+
+::::
+
+:::: {.column width="50%"}
+
+![](`r knitr::fig_chunk("viol-resid-1", "svg")`)
+
+::::
+
+:::::
+
+
+. . .
+
+The residuals should have a mean of zero at every value of month
+
+* i.e., they should not appear to follow a *curve*
+
+. . .
+
+With many data points it can be hard to tell if there is anything going on!
+
+
+
+## Looking at residuals
+
+`geom_smooth()` can help us diagnose problems
+
+By default, it fits a **LOESS** smoother or a **spline**—a flexible curved line
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r viol-resid-2, fig.show='hide'}
+lm_viol |> 
+  augment() |>
+  ggplot(aes(x = month, 
+             y = .resid)) + 
+  geom_point() +
+  geom_hline(yintercept = 0, 
+             color = "red") +
+  geom_smooth() 
+```
+
+::::
+
+:::: {.column width="50%"}
+
+![](`r knitr::fig_chunk("viol-resid-2", "svg")`)
+
+::::
+
+:::::
+
+
+. . .
+
+It looks like we're failing to account for a curved relationship
+
+* We're underpredicting crime in the summer
+* We're overpredicting crime in the winter
+
+. . .
+
+::: {.center}
+
+*So why not make a curved line?*
+
+:::
+
+
+
+## Polynomial curves
+
+Recall that a *squared* term (e.g. $x^2$) in an equation creates a *parabola*:
+
+$$y = 2 + 0.5x + 0.25x^2$$
+
+. . .
+
+```{r}
+#| fig.height: 3
+#| fig.width: 6
+#| fig.align: "left"
+curve(2 + 0.5*x + 0.25*x^2, from = -3, to = 1, ylab = "y")
+```
+
+. . .
+
+We can create these in our regression model!
+
+
+
+## Quadratic polynomials
+
+We can create a quadratic term in the formula using `I(x^2)` for any `x`<sup>1</sup>
+
+```{r}
+lm_viol_2 <- lm(violence ~ month + I(month^2), data = metro_long)
+lm_viol_2 |> tidy() |> select(term, estimate, std.error, p.value)
+```
+
+::: {.foot}
+
+[1] We could also create a squared term in the data using `mutate(x2 = x^2)`
+
+:::
+
+. . .
+
+The statistical significance of the new term suggests there is indeed a **non-linear** association between `month` and `violence`
+
+* We could also compare it to the model without the term (and we'd come to the same conclusion)
+
+
+
+## Our new line
+
+`geom_smooth()` can produce polynomials using the same formula
+
+. . .
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r viol-curve, fig.show='hide'}
+metro_long |> 
+  ggplot(aes(x = month, 
+             y = violence)) + 
+  geom_point() +
+  geom_smooth(
+    method = "lm",
+    formula = y ~ x + I(x^2)) 
+```
+
+::::
+
+:::: {.column width="50%"}
+
+![](`r knitr::fig_chunk("viol-curve", "svg")`)
+
+::::
+
+:::::
+
+
+. . .
+
+That's a pretty strong curve!
+
+Looks like violence peaks in the summer—something we'd expect theoretically!
+
+
+
+## Plotting residuals
+
+We can use the residuals from the new model for a diagnostic plot
+
+. . .
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r viol-resid-3, fig.show='hide'}
+lm_viol_2 |> 
+  augment() |>
+  ggplot(aes(x = month, 
+             y = .resid)) + 
+  geom_point() +
+  geom_hline(yintercept = 0, 
+             color = "red") +
+  geom_smooth() 
+```
+
+::::
+
+:::: {.column width="50%"}
+
+![](`r knitr::fig_chunk("viol-resid-3", "svg")`)
+
+::::
+
+:::::
+
+
+. . .
+
+Looks like the quadratic term fixed the problem!
+
+There's still a lot of noise, but we don't appear to be **systematically** wrong anymore
+
+
+
+## Interpretation
+
+```{r}
+lm_viol_2 |> tidy() |> select(term, estimate, std.error, p.value)
+```
+
+How do we interpret this model?
+
+. . .
+
+* Does it make sense to interpret the `month` terms *separately*?
+
+. . .
+
+* *`month` squared* can't increase without `month` increasing—we can't *hold one constant*
+
+. . .
+
+::: {.center}
+
+*Remember: Coefficients are the **slopes** of lines, and curves have different slopes in different places!*
+
+:::
+
+
+
+## Revenge of the derivatives
+
+In week one we used derivatives to calculate the slope of a curve
+
+. . .
+
+Given $y = a + x^n$, $\frac{dy}{dx} = nx^{n-1}$
+
+* Delete any terms without $x$ (e.g., $a$ gets dropped)
+* Premultiply by exponents, then divide by $x$ (e.g.,  $x^3$ becomes $3x^2$ )
+
+. . .
+
+So...
+
+* $violent = 431 + 62.5month -4month^2$
+* $\frac{dy}{dx} = 62.5 -8month$
+
+. . .
+
+The "effect" of "adding another month" in *June* is $62.5 - (6*8) = 14.5$
+
+. . .
+
+::: {.center}
+
+*We'll spend more time with this later!*
+
+:::
+
+
+
+# Comparing polynomials
+
+![](img/curve_fitting.png)
+
+
+
+## Using $R^2$
+
+Let's go a step further with a **cubic** model and compare it to the other models
+
+. . .
+
+Polynomials obey a **hierarchy rule**: Always include *lower order terms*
+
+```{r}
+lm_viol_3 <- lm(violence ~ month + I(month^2) + I(month^3), 
+                data = metro_long)
+rbind(glance(lm_viol), glance(lm_viol_2), glance(lm_viol_3)) |> 
+  select(r.squared, adj.r.squared)
+```
+
+How do they compare?
+
+. . .
+
+Looks like the cubic model isn't helping much!
+
+
+
+## Quick aside: `map()`
+
+You may find yourself running the same function repeatedly:
+
+```{r, eval = FALSE}
+rbind(glance(lm_viol), glance(lm_viol_2), glance(lm_viol_3))
+```
+
+. . .
+
+`map()` or `lapply()` can iterate across elements of any object:
+
+```{r}
+list(lm_viol, lm_viol_2, lm_viol_3) |> # combine models into a list
+  map(glance) |> # run glance() on each element 
+  list_rbind() # bind results into rows
+```
+
+. . .
+
+We won't use this much, but it is *very* useful!
+
+
+
+## Using `anova()`
+
+We can test the models against each other formally with `anova()` as before
+
+```{r}
+anova(lm_viol, lm_viol_2, lm_viol_3)
+```
+
+
+How do they compare?
+
+. . .
+
+No support for the cubic model here either!
+
+
+
+## Fitted vs. residuals
+
+Before we plotted residuals against `month`—but a more general diagnostic is plotting residuals against the fitted values
+
+* This takes into account *all included variables*
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r resid-fit, fig.show='hide'}
+lm_viol |> 
+  augment() |>
+  ggplot(aes(x = .fitted, 
+             y = .resid)) + 
+  geom_point() +
+  geom_hline(yintercept = 0, 
+             color = "red") +
+  geom_smooth()
+```
+
+::::
+
+:::: {.column width="50%"}
+
+![](`r knitr::fig_chunk("resid-fit", "svg")`)
+
+::::
+
+:::::
+
+
+. . .
+
+This looks very familiar—it still suggests there's a curve!
+
+
+
+## Again
+
+This one looks a little different with our quadratic term included
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+
+```{r resid-fit-2, fig.show='hide'}
+lm_viol_2 |> 
+  augment() |>
+  ggplot(aes(x = .fitted, 
+             y = .resid)) + 
+  geom_point() +
+  geom_hline(yintercept = 0, 
+             color = "red") +
+  geom_smooth()
+```
+
+::::
+
+:::: {.column width="50%"}
+
+![](`r knitr::fig_chunk("resid-fit-2", "svg")`)
+
+::::
+
+:::::
+
+
+. . .
+
+It still looks like we're doing a good job, though maybe there's a *bit* of poor prediction for very high values
+
+. . .
+
+Basic guidelines:
+
+* The line should be fairly straight
+* Residuals should be similarly spread out at every fitted value
+* Keep an eye out for **outliers**—points very far from the line
+
+
+
+## Wrap-up {.dark-slide}
+
+Reading:
+
+* Huntington-Klein, N. (2022) *The Effect: An Introduction to Research Design and Causality*, New York, NY: Chapman and Hall/CRC Press. 
+   * Read the rest of Chapter 13: Regression
+
+* Kaplan, J. (2022) *Crime by the Numbers: A Criminologist's Guide to R*
+   * Read [Chapter 13: Reshaping data](https://crimebythenumbers.com/reshaping.html)
